@@ -1,0 +1,154 @@
+# dashboard
+
+Живить віджет **останніх подій** і вікно **чату**. Потрібні `DASHBOARD_EVENTS` та/або `DASHBOARD_CHAT` (див. кожен метод).
+
+## Реєстрація платформи
+
+Викликайте під час завантаження, щоб UI міг розв'язувати id платформ:
+
+```js
+await dashboard.registerPlatform({
+  id: 'myplatform',
+  name: { en: 'My Platform', ru: 'Моя платформа', uk: 'Моя платформа' },
+});
+```
+
+Використовуйте той самий `id` у полі `platform` для `addRecord` / `addChatMessage`.
+
+## Користувачі
+
+```js
+await dashboard.upsertUser({
+  id: 'user-1',
+  name: 'Viewer',
+  avatar: 'https://example.com/avatar.png',
+  platform: 'myplatform',
+  color: '#7fff00',
+  icons: ['badge-vip'], // ids from registerChatBadges
+});
+```
+
+## Віджет подій — `addRecord`
+
+**Потрібно:** `DASHBOARD_EVENTS`
+
+```js
+await dashboard.addRecord(
+  {
+    id: random.id(),
+    type: 'donation', // donation | subscribe | follow | custom | timer
+    platform: 'myplatform',
+    amount: [10, 'USD'],
+    message: { en: 'Thanks!', ru: 'Спасибо!' },
+    from: 'user-1',
+  },
+  { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
+  { trigger: { type: 'donation', key: 'USD', value: 10 } }, // optional overlay trigger
+);
+```
+
+`message` приймає звичайний `string`, `{ en, ru?, uk? }` або кортеж app `LangData`.
+
+Кілька тригерів: `{ triggers: [...] }`.
+
+## Чат — `addChatMessage`
+
+**Потрібно:** `DASHBOARD_CHAT`
+
+```js
+await dashboard.addChatMessage(
+  {
+    content: 'Hello chat!',
+    platform: 'myplatform',
+    from: 'user-1',
+    emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
+  },
+  { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
+);
+```
+
+## Значки і емotes чату
+
+```js
+await dashboard.registerChatBadges([
+  { id: 'badge-vip', url: 'https://example.com/vip.png', title: 'VIP' },
+]);
+
+await dashboard.registerChatEmotes({
+  platforms: ['myplatform'],
+  emotes: [{ word: 'hello', url: 'https://example.com/hello.png' }],
+});
+```
+
+API читання (потрібні `DASHBOARD_CHAT` або `DASHBOARD_CHAT_INCOMING`):
+
+- `listChatBadges()`
+- `listChatEmotes()`
+- `listPlatforms()`
+
+## Відправка / вхідний чат
+
+**Відправка (composer):** `DASHBOARD_CHAT`
+
+```js
+await dashboard.onChatSend(async ({ text }) => {
+  // send text to your platform API
+});
+dashboard.offChatSend();
+```
+
+**Вхідні рядки:** `DASHBOARD_CHAT_INCOMING`
+
+```js
+dashboard.onChatMessage(msg => {
+  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+});
+dashboard.offChatMessage();
+```
+
+## Тригери оверлею — `registerTriggers`
+
+**Потрібно:** `DASHBOARD_EVENTS`
+
+Реєструє типи подій, які користувач може прив'язати до оверлеїв у налаштуваннях. Передавайте відповідний `trigger` в опціях `addRecord`.
+
+```js
+await dashboard.registerTriggers([
+  {
+    type: 'follow',
+    label: { en: 'New follower', ru: 'Новый фолловер' },
+  },
+  {
+    type: 'custom',
+    key: 'bits',
+    label: { en: 'Cheer (bits)' },
+    valueType: 'number',
+    valueMatch: 'minimum',
+    valueHint: { en: 'Minimum bits' },
+  },
+]);
+```
+
+### Поля опцій тригера
+
+| Поле | Опис |
+| --- | --- |
+| `type` | `donation`, `subscribe`, `subgift`, `follow`, `custom` |
+| `key` | Фіксований дискримінатор (`bits`, `redeems`, …) |
+| `label` | Локалізована назва в налаштуваннях оверлею |
+| `valueType` | `text`, `number`, `select`, `dynamic` |
+| `valueOptions` | Для `select` |
+| `valueProvider` | Для `dynamic` — обробляйте події `overlayTriggerValue:{provider}:list\|create\|release` |
+| `valueMatch` | `exact` (за замовчуванням) або `minimum` |
+| `keyOptions` / `keyLabel` | Ключі, що обирає користувач (наприклад, валюта) |
+
+### Події dynamic provider
+
+```js
+events.On('overlayTriggerValue:rewards:list', async () => ({
+  success: true,
+  items: [{ id: 'abc', label: 'My reward', meta: '100' }],
+}));
+```
+
+Повний контракт — у JSDoc `registerTriggers` у згенерованих типах.

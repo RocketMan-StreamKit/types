@@ -1,0 +1,88 @@
+# Схема настроек (`GenerateConfig`)
+
+Вызывайте `GenerateConfig([...])` при загрузке аддона, чтобы объявить поля настроек. Схемы хранятся в конфиге приложения; значения — в `addonsParams[id]`. Значения по умолчанию подмешиваются при регистрации и при открытии страницы настроек.
+
+## Структура поля
+
+У каждого поля есть:
+
+| Свойство | Описание |
+| --- | --- |
+| `key` | Ключ хранения в объекте params |
+| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
+| `default` | Начальное значение |
+| `editor` | Если задан — поле показывается в UI настроек с подписью, валидацией и т.д. |
+| `options` | Для `select`: `{ value, label? }[]` |
+| `items` | Для `array`: `'text'` или `'number'` |
+| `fields` | Для `object`: вложенные поля |
+| `event` | Для `button`: имя события при клике (обрабатывается через `events.On`) |
+
+Поля **без** `editor` сохраняются (внутренние счётчики, токены), но не показываются в UI.
+
+## Поля в одной строке
+
+Оберните несколько полей во вложенный массив, чтобы отобразить их в одной строке настроек:
+
+```js
+GenerateConfig([
+  fieldA,
+  [fieldB, fieldC],
+  fieldD,
+]);
+```
+
+## Поддерживаемые типы
+
+- **text** — строка
+- **color** — hex-строка (`#ff1744`)
+- **number** — число
+- **boolean** — логическое значение
+- **array** — массив текста или чисел (`items: 'text' | 'number'`)
+- **object** — вложенный объект с `fields`
+- **select** — `options: { value, label? }[]`; `default` должен совпадать с опцией, иначе берётся первая
+- **button** — значение не хранится; при клике вызывает `events.On(event, …)` (только для объявленных имён событий)
+
+## Пример
+
+```js
+GenerateConfig([
+  {
+    key: 'api_server',
+    type: 'text',
+    default: 'https://example.com:2083',
+    editor: {
+      label: { en: 'API server', ru: 'API сервер', uk: 'API сервер' },
+    },
+  },
+  {
+    key: 'theme',
+    type: 'select',
+    default: 'dark',
+    options: [
+      { value: 'dark', label: { en: 'Dark', ru: 'Тёмная', uk: 'Темна' } },
+      { value: 'light', label: { en: 'Light', ru: 'Светлая', uk: 'Світла' } },
+    ],
+    editor: { label: { en: 'Theme', ru: 'Тема', uk: 'Тема' } },
+  },
+  { key: 'last_sync', type: 'number', default: 0 },
+  {
+    key: 'reconnect',
+    type: 'button',
+    event: 'onReconnect',
+    editor: { label: { en: 'Reconnect', ru: 'Переподключиться', uk: 'Перепідключитися' } },
+  },
+]);
+
+events.On('onReconnect', async () => {
+  // пользователь нажал «Переподключиться» в настройках
+});
+```
+
+## Чтение params
+
+```js
+const params = await api.config.getParams();
+await api.config.updateParams({ last_sync: Date.now() });
+```
+
+Лимит размера: **10 000** байт JSON на аддон, если не выдано `INCREASE_CONFIG_SIZE` (**1 000 000** байт).
