@@ -7,6 +7,7 @@
 | Global | Призначення |
 | --- | --- |
 | `isDeveloperMode` | `true` у dev-збірках або коли користувач увімкнув Developer mode |
+| `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — міст до локалі UI застосунку |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Метадані екземпляра: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — прив'язка HTTP/Socket.IO callback |

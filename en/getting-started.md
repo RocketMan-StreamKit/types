@@ -47,7 +47,7 @@ Endpoint URL:
 http://localhost:{WEB_SERVER_PORT}/addon/{addonId}/hook
 ```
 
-Replace `{addonId}` with the `id` from `manifest.json` (folder name convention) and `{WEB_SERVER_PORT}` with the app's local web server port.
+Replace `{addonId}` with the `id` from `manifest.json` and `{WEB_SERVER_PORT}` with the app's local web server port.
 
 ## Project layout (recommended)
 

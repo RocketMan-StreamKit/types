@@ -7,6 +7,7 @@ All APIs are **global** in the integration worker VM. Source of truth for typing
 | Global | Purpose |
 | --- | --- |
 | `isDeveloperMode` | `true` in dev builds or when user enables Developer mode |
+| `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — app UI locale bridge |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Instance metadata: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — bind HTTP/Socket.IO callbacks |

@@ -29,13 +29,14 @@ The manifest describes the addon identity, category, permissions, and optional w
 
 | Field | Type | Description |
 | --- | --- | --- |
+| `id` | `string` | Stable addon identifier (used in URLs, `depends_on`, and install records) |
 | `name` | `{ en, ru?, uk? }` | Display name in settings |
 | `description` | `{ en, ru?, uk? }` | Short description in settings |
 | `type` | `string` | Addon category (see [Addon categories](#addon-categories)) |
 | `version` | `string` | Semantic version string |
 | `permissions` | `string[]` | Capability flags (see [Permissions](./permissions.md)) |
 
-`id` is typically the folder name; it is used in URLs (`/addon/{id}/…`, `/addon_static/{id}/…`).
+The `id` must be unique among installed addons. It is used in URLs (`/addon/{id}/…`, `/addon_static/{id}/…`) and does not have to match the folder name.
 
 ## Optional fields
 

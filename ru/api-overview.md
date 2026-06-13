@@ -7,6 +7,7 @@
 | Глобальный объект | Назначение |
 | --- | --- |
 | `isDeveloperMode` | `true` в dev-сборках или при включённом режиме разработчика |
+| `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — мост к локали UI приложения |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Метаданные экземпляра: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — привязка HTTP/Socket.IO callback |

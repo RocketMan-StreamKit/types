@@ -47,7 +47,7 @@ URL ендпоінта:
 http://localhost:{WEB_SERVER_PORT}/addon/{addonId}/hook
 ```
 
-Замініть `{addonId}` на `id` з `manifest.json` (за конвенцією — ім'я папки), а `{WEB_SERVER_PORT}` — на локальний порт web-сервера застосунку.
+Замініть `{addonId}` на `id` з `manifest.json`, а `{WEB_SERVER_PORT}` — на локальний порт web-сервера застосунку.
 
 ## Структура проєкту (рекомендовано)
 
