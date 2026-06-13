@@ -164,6 +164,32 @@ events.On('overlayTriggerValue:rewards:list', async () => ({
   success: true,
   items: [{ id: 'abc', label: 'My reward', meta: '100' }],
 }));
+
+events.On('overlayTriggerValue:rewards:create', async ({ title, context }) => ({
+  success: true,
+  valueId: 'abc',
+  label: title,
+  notify: {
+    variant: 'success',
+    title: { en: 'Reward created' },
+    message: { en: `Cost: ${context?.cost}` },
+  },
+}));
 ```
+
+Responses may include optional `notify` — a modal in settings (`variant`: `success` | `error` | `info`; `title?`, `message`).
+
+### Trigger bindings after settings save
+
+When saved trigger rules for your addon change, the main process fires:
+
+```js
+events.On('triggers:applied-changed', ({ previous, current }) => {
+  // previous / current group rules by system:
+  // overlay, timer, game, gameInput, sounds, hotkeys
+});
+```
+
+Use this to release internal resources when bindings are removed.
 
 See JSDoc on `registerTriggers` in generated typings for full contract.

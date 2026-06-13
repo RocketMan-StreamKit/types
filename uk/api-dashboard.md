@@ -164,6 +164,32 @@ events.On('overlayTriggerValue:rewards:list', async () => ({
   success: true,
   items: [{ id: 'abc', label: 'My reward', meta: '100' }],
 }));
+
+events.On('overlayTriggerValue:rewards:create', async ({ title, context }) => ({
+  success: true,
+  valueId: 'abc',
+  label: title,
+  notify: {
+    variant: 'success',
+    title: { uk: 'Нагороду створено' },
+    message: { uk: `Вартість: ${context?.cost}` },
+  },
+}));
 ```
+
+У відповідях можна передати `notify` — модальне вікно в налаштуваннях (`variant`: `success` | `error` | `info`; `title?`, `message`).
+
+### Прив'язки тригерів після збереження налаштувань
+
+Коли збережені правила для вашого аддона змінюються, main process викликає:
+
+```js
+events.On('triggers:applied-changed', ({ previous, current }) => {
+  // previous / current групують правила за системами:
+  // overlay, timer, game, gameInput, sounds, hotkeys
+});
+```
+
+Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив'язок.
 
 Повний контракт — у JSDoc `registerTriggers` у згенерованих типах.
