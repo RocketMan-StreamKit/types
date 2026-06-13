@@ -52,16 +52,17 @@ http://localhost:{WEB_SERVER_PORT}/addon/{addonId}/hook
 ## Структура проєкту (рекомендовано)
 
 ```
-my_addon/
-├── manifest.json
-├── index.js          # або index.ts + tsconfig.json (збірка в index.js)
-├── logo.png          # іконка з маніфесту
-├── index.html        # якщо потрібен web UI
-└── ...               # додаткові ресурси з web_contents
+MyOrg-my-stream-addon/
+├── manifest.json       # id: "MyOrg/my-stream-addon"
+├── index.js            # або index.ts + tsconfig.json (збірка в index.js)
+├── logo.png            # іконка з маніфесту
+├── index.html          # якщо потрібен web UI
+└── ...                 # додаткові ресурси з web_contents
 ```
 
 ## Пов'язані матеріали
 
-- [manifest.json](./manifest.md) — обов'язкові поля
+- [manifest.json](./manifest.md) — обов'язкові поля, зокрема `id`
+- [Публікація та релізи](./publishing.md) — файли GitHub-релізу (`main.zip`, `manifest.json`, іконка)
 - [Налаштування TypeScript](./typescript.md) — типи з `data/addon.d.ts`
 - [Дозволи](./permissions.md) — оголошуйте лише те, що потрібно

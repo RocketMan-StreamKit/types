@@ -52,16 +52,17 @@ Replace `{addonId}` with the `id` from `manifest.json` and `{WEB_SERVER_PORT}` w
 ## Project layout (recommended)
 
 ```
-my_addon/
-├── manifest.json
-├── index.js          # or index.ts + tsconfig.json (build to index.js)
-├── logo.png          # icon referenced by manifest
-├── index.html        # if web UI is required
-└── ...               # additional assets listed in web_contents
+MyOrg-my-stream-addon/
+├── manifest.json       # id: "MyOrg/my-stream-addon"
+├── index.js            # or index.ts + tsconfig.json (build to index.js)
+├── logo.png            # icon referenced by manifest
+├── index.html          # if web UI is required
+└── ...                 # additional assets listed in web_contents
 ```
 
 ## Related reading
 
-- [manifest.json](./manifest.md) — required fields
+- [manifest.json](./manifest.md) — required fields, especially `id`
+- [Publishing and releases](./publishing.md) — GitHub release assets (`main.zip`, `manifest.json`, icon)
 - [TypeScript setup](./typescript.md) — typings from `data/addon.d.ts`
 - [Permissions](./permissions.md) — declare only what you need

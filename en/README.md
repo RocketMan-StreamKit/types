@@ -9,6 +9,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [Getting started](./getting-started.md) | Architecture, installation, project layout |
 | [Lifecycle](./lifecycle.md) | How addons are loaded and executed |
 | [manifest.json](./manifest.md) | Manifest fields, types, and validation rules |
+| [Publishing and releases](./publishing.md) | GitHub release layout and addon ID tied to repository |
 | [TypeScript setup](./typescript.md) | `tsconfig.json`, typings, build output |
 | [Permissions](./permissions.md) | Capability flags and user approval |
 | [Settings schema](./settings-schema.md) | `GenerateConfig()` and settings UI |
