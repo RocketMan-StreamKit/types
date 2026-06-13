@@ -23,6 +23,7 @@
 | `DASHBOARD_EVENTS` | Виджет последних событий: `dashboard.addRecord`, `registerTriggers`, … |
 | `DASHBOARD_CHAT` | Вывод и отправка в окне чата: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_INCOMING` | Подписка на строки чата: `onChatMessage` / `offChatMessage` |
+| `DASHBOARD_EVENTS_INCOMING` | Подписка на записи событий: `onRecord` / `offRecord` |
 
 ## Пример
 

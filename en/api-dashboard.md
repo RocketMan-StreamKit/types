@@ -106,6 +106,21 @@ dashboard.onChatMessage(msg => {
 dashboard.offChatMessage();
 ```
 
+## Events incoming — `onRecord`
+
+**Requires:** `DASHBOARD_EVENTS_INCOMING`
+
+Subscribe to new records in the latest-events dashboard widget. The payload includes the stored `record` (with system `attach` entries for matched overlays, sounds, hotkeys, and timers), resolved user, `triggers` used for matching, and `sourceAddonId`.
+
+Unlike chat incoming, the source addon also receives its own records — useful to inspect match results after `dashboard.addRecord`.
+
+```js
+dashboard.onRecord(payload => {
+  console.log(payload.record.type, payload.record.attach, payload.triggers);
+});
+dashboard.offRecord();
+```
+
 ## Overlay triggers — `registerTriggers`
 
 **Requires:** `DASHBOARD_EVENTS`

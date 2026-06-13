@@ -23,6 +23,7 @@
 | `DASHBOARD_EVENTS` | Віджет останніх подій: `dashboard.addRecord`, `registerTriggers`, … |
 | `DASHBOARD_CHAT` | Вивід і відправка в вікно чату: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_INCOMING` | Підписка на рядки чату: `onChatMessage` / `offChatMessage` |
+| `DASHBOARD_EVENTS_INCOMING` | Підписка на записи подій: `onRecord` / `offRecord` |
 
 ## Приклад
 

@@ -16,7 +16,7 @@ The manifest describes the addon identity, category, permissions, and optional w
     "ru": "Краткое описание для настроек.",
     "uk": "Короткий опис для налаштувань."
   },
-  "id": "my_addon",
+  "id": "MyOrg/my-stream-addon",
   "type": "platform.streaming",
   "version": "1.0.0",
   "author": "Your Name",
@@ -29,14 +29,16 @@ The manifest describes the addon identity, category, permissions, and optional w
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `id` | `string` | Stable addon identifier (used in URLs, `depends_on`, and install records) |
+| `id` | `string` | Stable addon identifier tied to your GitHub repository (`ORG/REPO`). Used in URLs, `depends_on`, and install records |
 | `name` | `{ en, ru?, uk? }` | Display name in settings |
 | `description` | `{ en, ru?, uk? }` | Short description in settings |
 | `type` | `string` | Addon category (see [Addon categories](#addon-categories)) |
 | `version` | `string` | Semantic version string |
 | `permissions` | `string[]` | Capability flags (see [Permissions](./permissions.md)) |
 
-The `id` must be unique among installed addons. It is used in URLs (`/addon/{id}/…`, `/addon_static/{id}/…`) and does not have to match the folder name.
+The `id` must be unique among installed addons. It is used in URLs (`/addon/{id}/…`, `/addon_static/{id}/…`) and does not have to match the folder name on disk.
+
+Set `id` to **`ORG/REPO`** — the GitHub owner (organization or user) and repository name. Example: repository `https://github.com/MyOrg/my-stream-addon` → `"id": "MyOrg/my-stream-addon"`. See [Publishing and releases](./publishing.md) for release layout and update checks.
 
 ## Optional fields
 

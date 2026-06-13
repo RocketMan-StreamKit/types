@@ -23,6 +23,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `DASHBOARD_EVENTS` | Latest-events widget: `dashboard.addRecord`, `registerTriggers`, … |
 | `DASHBOARD_CHAT` | Chat window output and send: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_INCOMING` | Subscribe to chat lines: `onChatMessage` / `offChatMessage` |
+| `DASHBOARD_EVENTS_INCOMING` | Subscribe to event records: `onRecord` / `offRecord` |
 
 ## Example
 

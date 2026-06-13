@@ -33,6 +33,12 @@ notify.Send({
 
 When `id` is set, the previous notification with the same id is replaced. Use stable ids for connection-state updates.
 
+```js
+notify.Remove(`${data.id}_status`);
+```
+
+Removes a notification only when this addon created it. Notifications from other addons or the main process are ignored.
+
 ## ui.auth
 
 OAuth result pages on the local web server:

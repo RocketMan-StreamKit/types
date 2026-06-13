@@ -106,6 +106,21 @@ dashboard.onChatMessage(msg => {
 dashboard.offChatMessage();
 ```
 
+## Вхідні події — `onRecord`
+
+**Потрібно:** `DASHBOARD_EVENTS_INCOMING`
+
+Підписка на нові записи у віджеті останніх подій. Payload містить збережений `record` (з системним `attach` для спрацьованих оверлеїв, звуків, хоткеїв і таймера), користувача, `triggers`, використані для матчингу, та `sourceAddonId`.
+
+На відміну від чату, аддон-джерело також отримує свої записи — зручно перевіряти результат матчингу після `dashboard.addRecord`.
+
+```js
+dashboard.onRecord(payload => {
+  console.log(payload.record.type, payload.record.attach, payload.triggers);
+});
+dashboard.offRecord();
+```
+
 ## Тригери оверлею — `registerTriggers`
 
 **Потрібно:** `DASHBOARD_EVENTS`
