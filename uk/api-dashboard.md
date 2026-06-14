@@ -62,10 +62,45 @@ await dashboard.addChatMessage(
     platform: 'myplatform',
     from: 'user-1',
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
+    style: {
+      color: '#7c4dff',
+      header: { en: 'Highlighted', uk: 'Виділено' },
+      icon: 'megaphone',
+    },
   },
   { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
 );
 ```
+
+`content` приймає звичайний `string` або `{ en, ru?, uk? }` — не кортежі `LangData` застосунку (аддони використовують власні об'єкти локалізації).
+
+Опційний `style` додає кольорову рамку та опційну шапку:
+
+| Поле | Опис |
+| --- | --- |
+| `color` | Колір рамки та фону шапки (CSS-колір, напр. `#ff9800`) |
+| `header` | Текст шапки (`string` або `{ en, ru?, uk? }`); без поля — лише рамка |
+| `icon` | `exclamation`, `question`, `megaphone` або `list` |
+
+## Системний чат — `addSystemChatMessage`
+
+**Потрібно:** `DASHBOARD_CHAT`
+
+Системні рядки не від користувачів платформи. В UI показується іконка цього аддона. Опційний `sender` виводиться перед текстом.
+
+```js
+await dashboard.addSystemChatMessage({
+  content: { en: 'Connected to chat', uk: 'Підключено до чату' },
+  sender: { en: 'My addon' },
+  style: {
+    color: '#4caf50',
+    header: { en: 'Notice' },
+    icon: 'exclamation',
+  },
+});
+```
+
+`content`, `sender` і `style.header` приймають лише `string` або `{ en, ru?, uk? }`.
 
 ## Значки і емotes чату
 

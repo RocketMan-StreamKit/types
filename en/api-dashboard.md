@@ -62,10 +62,45 @@ await dashboard.addChatMessage(
     platform: 'myplatform',
     from: 'user-1',
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
+    style: {
+      color: '#7c4dff',
+      header: { en: 'Highlighted', ru: 'Выделено' },
+      icon: 'megaphone',
+    },
   },
   { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
 );
 ```
+
+`content` accepts plain `string` or `{ en, ru?, uk? }` — not app `LangData` tuples (addons use their own localized objects).
+
+Optional `style` adds a colored border and optional header bar:
+
+| Field | Description |
+| --- | --- |
+| `color` | Border and header background (CSS color, e.g. `#ff9800`) |
+| `header` | Header text (`string` or `{ en, ru?, uk? }`); omit for border only |
+| `icon` | `exclamation`, `question`, `megaphone`, or `list` |
+
+## System chat — `addSystemChatMessage`
+
+**Requires:** `DASHBOARD_CHAT`
+
+System lines are not from platform users. The UI shows this addon's icon. Optional `sender` is shown before the message text.
+
+```js
+await dashboard.addSystemChatMessage({
+  content: { en: 'Connected to chat', ru: 'Подключено к чату' },
+  sender: { en: 'My addon' },
+  style: {
+    color: '#4caf50',
+    header: { en: 'Notice' },
+    icon: 'exclamation',
+  },
+});
+```
+
+`content`, `sender`, and `style.header` accept `string` or `{ en, ru?, uk? }` only.
 
 ## Chat badges and emotes
 
