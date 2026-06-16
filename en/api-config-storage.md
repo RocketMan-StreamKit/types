@@ -34,6 +34,8 @@ Opens URL in the system default browser. No special permission.
 
 Restarts this addon's worker process.
 
+Does not apply when the addon was **stopped after repeated crashes** — the user must restart it from addon settings (↻). See [Lifecycle — Crash loop protection](./lifecycle.md#crash-loop-protection).
+
 ## `storage`
 
 Private JSON file at `{data.path}/storage_data.json`. **No permission required.** Not shown in settings UI.

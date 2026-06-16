@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Localization — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html" class="is-active">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Localization</h1>
+<p>Integration addons run in an isolated worker and <strong>must not</strong> use the StreamKit+ app language system (<code>src/shared/lang/</code>). Do not use translation keys, import app language files, or copy strings from them.</p>
+<h2>App UI locale (<code>LANG</code>)</h2>
+<p>The sandbox exposes a read-only bridge to the user&#39;s <strong>UI locale</strong> in settings:</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LANG.current</code></td>
+<td><code>&#39;en&#39;</code>, <code>&#39;ru&#39;</code>, or <code>&#39;uk&#39;</code> — matches the app language setting</td>
+</tr>
+<tr>
+<td><code>LANG.onChangeLanguage(cb)</code></td>
+<td>Called when the user changes language; returns <code>{ Destroy }</code> to unsubscribe</td>
+</tr>
+</tbody></table>
+<p>No permission is required. Use <code>LANG.current</code> to pick the right string from your own per-locale objects (see below). This does <strong>not</strong> give access to app translation keys or JSON files.</p>
+<pre><code class="language-js">const labels = {
+  en: &#39;Connected&#39;,
+  ru: &#39;Подключено&#39;,
+  uk: &#39;Підключено&#39;,
+};
+
+status.Update({ current: &#39;online&#39;, message: { [LANG.current]: labels[LANG.current] } });
+
+const sub = LANG.onChangeLanguage((lang) =&gt; {
+  console.log(&#39;UI locale:&#39;, lang);
+});
+// later: sub.Destroy();
+</code></pre>
+<h2>Per-locale objects</h2>
+<p>Provide user-visible text as objects with locale keys:</p>
+<pre><code class="language-js">{
+  en: &#39;Connected&#39;,
+  ru: &#39;Подключено&#39;,
+  uk: &#39;Підключено&#39;,
+}
+</code></pre>
+<p><code>en</code> is required where the API expects <code>DashboardLocalizedText</code>. The UI falls back to <code>en</code> when the user&#39;s locale is missing.</p>
+<h2>Where this applies</h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Localized fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manifest.name</code> / <code>description</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>GenerateConfig</code> editor <code>label</code>, <code>description</code>, <code>placeholder</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>status.Update({ message })</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>notify.Send({ title, message })</code></td>
+<td>per-locale or plain string</td>
+</tr>
+<tr>
+<td><code>dashboard.registerPlatform({ name })</code></td>
+<td>per-locale</td>
+</tr>
+<tr>
+<td><code>dashboard.addRecord({ message })</code></td>
+<td>string, per-locale object, or app <code>LangData</code> tuple*</td>
+</tr>
+<tr>
+<td><code>dashboard.addChatMessage({ content })</code></td>
+<td>same as <code>message</code></td>
+</tr>
+<tr>
+<td><code>dashboard.registerTriggers</code> labels</td>
+<td>per-locale</td>
+</tr>
+</tbody></table>
+<p>* <code>LangData</code> tuples in dashboard messages are resolved by the <strong>app</strong> UI, not by addon translation files. Prefer explicit <code>{ en, ru?, uk? }</code> objects in third-party addons for self-contained localization.</p>
+<h2>Plain strings</h2>
+<p>Many APIs also accept a plain <code>string</code> when you do not need multiple locales.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

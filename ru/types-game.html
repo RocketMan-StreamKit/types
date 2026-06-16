@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Игровые интеграции — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html" class="is-active">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Игровые интеграции</h1>
+<p><code>manifest.type</code> должен быть <code>game</code>. Такие аддоны запускают worker и связывают события стрима с эффектами в игре.</p>
+<h2>Пример manifest</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: { &quot;en&quot;: &quot;GTA V integration&quot;, &quot;ru&quot;: &quot;Интеграция GTA V&quot; },
+  &quot;description&quot;: { &quot;en&quot;: &quot;In-game effects from viewers.&quot;, &quot;ru&quot;: &quot;Внутриигровые эффекты от зрителей.&quot; },
+  &quot;type&quot;: &quot;game&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;author&quot;: &quot;Your Name&quot;,
+  &quot;icon&quot;: &quot;logo.png&quot;,
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;]
+}
+</code></pre>
+<h2>Регистрация внутриигровых действий</h2>
+<p>Вызовите один раз при загрузке аддона:</p>
+<pre><code class="language-js">await game.registerInputTriggers([
+  { id: &#39;spawn_car&#39;, label: { en: &#39;Spawn car&#39;, ru: &#39;Заспавнить машину&#39; } },
+  { id: &#39;explosion&#39;, label: { en: &#39;Explosion&#39;, ru: &#39;Взрыв&#39; } },
+]);
+
+events.On(&#39;gameInputTrigger&#39;, ({ actionId, trigger, record, user }) =&gt; {
+  if (actionId === &#39;spawn_car&#39;) {
+    // эффект в игре
+  }
+});
+</code></pre>
+<p>Пользователь привязывает события дашборда к действиям в <strong>Настройки → Игровые интеграции</strong>.</p>
+<h2>Опциональные триггеры для оверлеев</h2>
+<p>С правом <code>DASHBOARD_EVENTS</code> можно вызывать <code>dashboard.registerTriggers()</code> и отправлять события через <code>dashboard.addRecord(..., { trigger })</code>.</p>
+<h2>Поля пути (<code>folder</code> / <code>file</code>)</h2>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;game_exe&#39;,
+    type: &#39;file&#39;,
+    default: &#39;&#39;,
+    pathPicker: {
+      title: { en: &#39;GTA V executable&#39;, ru: &#39;Исполняемый файл GTA V&#39; },
+      filename: &#39;GTAV.exe&#39;,
+      filters: [{ name: &#39;Executable&#39;, extensions: [&#39;exe&#39;] }],
+    },
+    editor: { label: { en: &#39;Game executable&#39;, ru: &#39;Файл игры&#39; }, required: true },
+  },
+]);
+</code></pre>
+<p>См. также: <a href="./api-dashboard.html">API dashboard</a>, <a href="./config.html">Схема конфигурации</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

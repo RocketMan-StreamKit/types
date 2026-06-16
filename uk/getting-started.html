@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Початок роботи — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html" class="is-active">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Початок роботи</h1>
+<h2>Що таке інтеграційний аддон?</h2>
+<p>Інтеграційний аддон — це папка, яку користувач обирає під час встановлення. Вона містить як мінімум <code>manifest.json</code>. Залежно від категорії аддона можуть також бути:</p>
+<ul>
+<li><code>index.js</code> — код worker, що виконується у VM-пісочниці</li>
+<li>Статичні web-файли (<code>index.html</code>, CSS, зображення) для UI оверлею, віджета або застосунку</li>
+<li>Медіафайли для простого відтворення оверлею</li>
+</ul>
+<p>Застосунок зберігає шлях встановлення в <code>Config.data.addonsInstalled[].path</code>. Аддони <strong>не</strong> входять до основного бінарного файлу застосунку.</p>
+<h2>Архітектура</h2>
+<table>
+<thead>
+<tr>
+<th>Шар</th>
+<th>Роль</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Папка аддона</strong></td>
+<td><code>manifest.json</code> + <code>index.js</code> та/або web-ресурси</td>
+</tr>
+<tr>
+<td><strong>Main process</strong></td>
+<td>Запускає worker, застосовує дозволи, маршрутизує HTTP/config IPC, обслуговує статичні маршрути</td>
+</tr>
+<tr>
+<td><strong>Worker sandbox</strong></td>
+<td><code>GenerateContext()</code> + <code>vm.runInContext</code> — глобальні об&#39;єкти, доступні коду аддона</td>
+</tr>
+</tbody></table>
+<p>Код аддона має використовувати <strong>глобальні</strong> імена з контексту пісочниці. <code>import</code> SDK StreamKit+ всередині VM не підтримується.</p>
+<h2>Встановлення аддона</h2>
+<ol>
+<li>Зберіть або підготуйте папку з <code>manifest.json</code> (і необхідними файлами).</li>
+<li>Відкрийте <strong>Settings</strong> → розділ, що відповідає <code>type</code> вашого аддона (Platforms, Overlay, Widgets, Applications).</li>
+<li><strong>Install from folder</strong> і оберіть каталог.</li>
+<li>Підтвердіть запитані <strong>permissions</strong> під час встановлення.</li>
+<li>Увімкніть аддон і налаштуйте параметри, якщо worker викликає <code>GenerateConfig()</code>.</li>
+</ol>
+<p>Для worker-аддонів на TypeScript: скомпілюйте в <code>index.js</code> перед встановленням або встановіть папку з виходом webpack.</p>
+<h2>Мінімальний приклад worker</h2>
+<pre><code class="language-js">await network.endpoints.create(&#39;hook&#39;, &#39;POST&#39;, &#39;onHook&#39;);
+
+events.On(&#39;onHook&#39;, ({ body }) =&gt; {
+  console.log(&#39;Webhook payload&#39;, body);
+  return { ok: true };
+});
+</code></pre>
+<p>URL ендпоінта:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon/{addonId}/hook
+</code></pre>
+<p>Замініть <code>{addonId}</code> на <code>id</code> з <code>manifest.json</code>, а <code>{WEB_SERVER_PORT}</code> — на локальний порт web-сервера застосунку.</p>
+<h2>Структура проєкту (рекомендовано)</h2>
+<pre><code>MyOrg-my-stream-addon/
+├── manifest.json       # id: &quot;MyOrg/my-stream-addon&quot;
+├── index.js            # або index.ts + tsconfig.json (збірка в index.js)
+├── logo.png            # іконка з маніфесту
+├── index.html          # якщо потрібен web UI
+└── ...                 # додаткові ресурси з web_contents
+</code></pre>
+<h2>Пов&#39;язані матеріали</h2>
+<ul>
+<li><a href="./manifest.html">manifest.json</a> — обов&#39;язкові поля, зокрема <code>id</code></li>
+<li><a href="./publishing.html">Публікація та релізи</a> — файли GitHub-релізу (<code>main.zip</code>, <code>manifest.json</code>, іконка)</li>
+<li><a href="./typescript.html">Налаштування TypeScript</a> — типи з <code>@rocketman-streamkit/types</code></li>
+<li><a href="./permissions.html">Дозволи</a> — оголошуйте лише те, що потрібно</li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

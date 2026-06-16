@@ -10,9 +10,9 @@ Each release is published as a **version branch** in this repository (branch nam
 
 Full addon developer documentation (English, Русский, Українська):
 
-**[Open documentation →](./index.md)**
+**[Open documentation (web) →](https://rocketman-streamkit.github.io/types/)**
 
-Start with the language picker, then follow the table of contents for your locale.
+Browse markdown in this repository from [`index.md`](./index.md) or [`index.html`](./index.html) on a version branch.
 
 ---
 
@@ -34,7 +34,7 @@ Install the package version that matches the StreamKit+ release you target.
 
 | Path | Description |
 | --- | --- |
-| [`index.md`](./index.md) | Language picker — entry point for all docs |
+| [`index.md`](./index.md) / [`index.html`](./index.html) | Language picker — entry point for all docs |
 | [`en/`](./en/) | English documentation |
 | [`ru/`](./ru/) | Russian documentation |
 | [`uk/`](./uk/) | Ukrainian documentation |

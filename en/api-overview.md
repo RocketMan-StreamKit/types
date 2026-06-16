@@ -1,6 +1,6 @@
 # API overview
 
-All APIs are **global** in the integration worker VM. Source of truth for typings: `data/addon.d.ts` (generated from sandbox JSDoc).
+All APIs are **global** in the integration worker VM. Typings ship in the npm package `@rocketman-streamkit/types` (`addon.d.ts`).
 
 ## Globals
 

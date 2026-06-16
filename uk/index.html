@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Документація для розробників аддонів StreamKit+ — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Документація для розробників аддонів StreamKit+</h1>
+<p>Інтеграційні аддони розширюють StreamKit+ з ізольованого worker-процесу. Код аддона виконується у VM-пісочниці та використовує <strong>глобальні</strong> API (<code>network</code>, <code>events</code>, <code>api</code>, …) — імпорт SDK всередині worker недоступний.</p>
+<h2>Розділи</h2>
+<table>
+<thead>
+<tr>
+<th>Розділ</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./getting-started.html">Початок роботи</a></td>
+<td>Архітектура, встановлення, структура проєкту</td>
+</tr>
+<tr>
+<td><a href="./lifecycle.html">Життєвий цикл</a></td>
+<td>Завантаження, перезапуск аддона та захист від циклу падінь</td>
+</tr>
+<tr>
+<td><a href="./manifest.html">manifest.json</a></td>
+<td>Поля маніфесту, типи, правила валідації</td>
+</tr>
+<tr>
+<td><a href="./publishing.html">Публікація та релізи</a></td>
+<td>Структура GitHub-релізу та ID, прив&#39;язаний до репозиторію</td>
+</tr>
+<tr>
+<td><a href="./typescript.html">Налаштування TypeScript</a></td>
+<td><code>tsconfig.json</code>, типи, збірка</td>
+</tr>
+<tr>
+<td><a href="./permissions.html">Дозволи</a></td>
+<td>Прапорці можливостей і підтвердження користувачем</td>
+</tr>
+<tr>
+<td><a href="./settings-schema.html">Схема налаштувань</a></td>
+<td><code>GenerateConfig()</code> і UI налаштувань</td>
+</tr>
+<tr>
+<td><a href="./localization.html">Локалізація</a></td>
+<td>Багатомовні рядки в коді аддона</td>
+</tr>
+<tr>
+<td><a href="./security.html">Безпека</a></td>
+<td>Обмеження мережі, токени, ліміти пісочниці</td>
+</tr>
+<tr>
+<td><a href="./oauth-and-secrets.html">OAuth і секрети</a></td>
+<td>Обмін токенів через вихідний HTTP</td>
+</tr>
+</tbody></table>
+<h3>API пісочниці</h3>
+<table>
+<thead>
+<tr>
+<th>Розділ</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./api-overview.html">Огляд API</a></td>
+<td>Усі глобальні об&#39;єкти</td>
+</tr>
+<tr>
+<td><a href="./api-events.html">events</a></td>
+<td>Шина подій і прив&#39;язка HTTP-обробників</td>
+</tr>
+<tr>
+<td><a href="./api-network.html">network</a></td>
+<td>HTTP-клієнт, ендпоінти, WebSocket, Socket.IO</td>
+</tr>
+<tr>
+<td><a href="./api-config-storage.html">api.config і storage</a></td>
+<td>Параметри, конфіг застосунку, файлове сховище</td>
+</tr>
+<tr>
+<td><a href="./api-addons-rpc.html">addons (RPC)</a></td>
+<td>Запити між аддонами</td>
+</tr>
+<tr>
+<td><a href="./api-dashboard.html">dashboard</a></td>
+<td>Віджет подій, чат, тригери оверлею</td>
+</tr>
+<tr>
+<td><a href="./api-status-notify-ui.html">status, notify, ui</a></td>
+<td>Рядок стану, сповіщення, сторінки OAuth</td>
+</tr>
+<tr>
+<td><a href="./api-utilities.html">Утиліти</a></td>
+<td>Таймери, crypto, console, режим розробника</td>
+</tr>
+</tbody></table>
+<h3>Категорії аддонів</h3>
+<table>
+<thead>
+<tr>
+<th>Розділ</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./types-platform.html">Платформені аддони</a></td>
+<td><code>platform.streaming</code>, <code>platform.donation</code></td>
+</tr>
+<tr>
+<td><a href="./types-overlay.html">Оверлеї</a></td>
+<td>Ефекти, статичний web, просте медіа</td>
+</tr>
+<tr>
+<td><a href="./types-widget.html">Віджети</a></td>
+<td>Постійні web-сторінки та OBS Browser Source</td>
+</tr>
+<tr>
+<td><a href="./types-application.html">Застосунки</a></td>
+<td>Вікна всередині основного застосунку</td>
+</tr>
+<tr>
+<td><a href="./types-game.html">Ігрові інтеграції</a></td>
+<td>Внутрішньоігрові ефекти та вхідні тригери</td>
+</tr>
+</tbody></table>
+<h2>Типізація</h2>
+<p>Встановіть оголошення пісочниці з npm — версія пакета має збігатися з цільовою версією StreamKit+:</p>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types
+</code></pre>
+<p>Див. <a href="./typescript.html">Налаштування TypeScript</a> — <code>tsconfig.json</code> і глобали (<code>declare global</code>, без імпортів у коді аддона).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

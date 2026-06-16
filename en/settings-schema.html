@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings schema (`GenerateConfig`) — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html" class="is-active">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Settings schema (<code>GenerateConfig</code>)</h1>
+<p>Call <code>GenerateConfig([...])</code> at addon load time to declare settings fields. Schemas are stored in app config; values live in <code>addonsParams[id]</code>. Defaults are merged on registration and when the settings page opens.</p>
+<h2>Field structure</h2>
+<p>Each field has:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>key</code></td>
+<td>Storage key in params object</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>text</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code></td>
+</tr>
+<tr>
+<td><code>pathPicker</code></td>
+<td>For <code>folder</code> / <code>file</code>: <code>title</code>, <code>filters</code> (file only), <code>filename</code> (exact basename, file only)</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>Initial value</td>
+</tr>
+<tr>
+<td><code>editor</code></td>
+<td>If present, field appears in settings UI with label, validation, etc.</td>
+</tr>
+<tr>
+<td><code>options</code></td>
+<td>For <code>select</code>: <code>{ value, label? }[]</code></td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td>For <code>array</code>: <code>&#39;text&#39;</code> or <code>&#39;number&#39;</code></td>
+</tr>
+<tr>
+<td><code>fields</code></td>
+<td>For <code>object</code>: nested fields</td>
+</tr>
+<tr>
+<td><code>event</code></td>
+<td>For <code>button</code>: event name fired on click (handle with <code>events.On</code>)</td>
+</tr>
+</tbody></table>
+<p>Fields <strong>without</strong> <code>editor</code> are persisted (internal counters, tokens) but not shown in the UI.</p>
+<h2>Inline rows</h2>
+<p>Wrap multiple fields in a nested array to render them on one settings row:</p>
+<pre><code class="language-js">GenerateConfig([
+  fieldA,
+  [fieldB, fieldC],
+  fieldD,
+]);
+</code></pre>
+<h2>Supported types</h2>
+<ul>
+<li><strong>text</strong> — string</li>
+<li><strong>color</strong> — hex string (<code>#ff1744</code>)</li>
+<li><strong>number</strong> — number</li>
+<li><strong>boolean</strong> — boolean</li>
+<li><strong>array</strong> — array of text or numbers (<code>items: &#39;text&#39; | &#39;number&#39;</code>)</li>
+<li><strong>object</strong> — nested object with <code>fields</code></li>
+<li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> must match an option or the first option is used</li>
+<li><strong>button</strong> — no stored value; triggers <code>events.On(event, …)</code> when clicked (gated to declared event names)</li>
+<li><strong>folder</strong> — absolute folder path string; native folder picker in settings UI</li>
+<li><strong>file</strong> — absolute file path string; native file picker with optional <code>pathPicker.filters</code> and <code>pathPicker.filename</code></li>
+</ul>
+<h2>Example</h2>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;api_server&#39;,
+    type: &#39;text&#39;,
+    default: &#39;https://example.com:2083&#39;,
+    editor: {
+      label: { en: &#39;API server&#39;, ru: &#39;API сервер&#39;, uk: &#39;API сервер&#39; },
+    },
+  },
+  {
+    key: &#39;theme&#39;,
+    type: &#39;select&#39;,
+    default: &#39;dark&#39;,
+    options: [
+      { value: &#39;dark&#39;, label: { en: &#39;Dark&#39;, ru: &#39;Тёмная&#39;, uk: &#39;Темна&#39; } },
+      { value: &#39;light&#39;, label: { en: &#39;Light&#39;, ru: &#39;Светлая&#39;, uk: &#39;Світла&#39; } },
+    ],
+    editor: { label: { en: &#39;Theme&#39;, ru: &#39;Тема&#39;, uk: &#39;Тема&#39; } },
+  },
+  { key: &#39;last_sync&#39;, type: &#39;number&#39;, default: 0 },
+  {
+    key: &#39;reconnect&#39;,
+    type: &#39;button&#39;,
+    event: &#39;onReconnect&#39;,
+    editor: { label: { en: &#39;Reconnect&#39;, ru: &#39;Переподключиться&#39;, uk: &#39;Перепідключитися&#39; } },
+  },
+]);
+
+events.On(&#39;onReconnect&#39;, async () =&gt; {
+  // user clicked Reconnect in settings
+});
+</code></pre>
+<h2>Reading params</h2>
+<pre><code class="language-js">const params = await api.config.getParams();
+await api.config.updateParams({ last_sync: Date.now() });
+</code></pre>
+<p>Size limit: <strong>10 000</strong> bytes JSON per addon unless <code>INCREASE_CONFIG_SIZE</code> is granted (<strong>1 000 000</strong> bytes).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | Section | Description |
 | --- | --- |
 | [Getting started](./getting-started.md) | Architecture, installation, project layout |
-| [Lifecycle](./lifecycle.md) | How addons are loaded and executed |
+| [Lifecycle](./lifecycle.md) | How addons are loaded, restarted, and crash-loop protection |
 | [manifest.json](./manifest.md) | Manifest fields, types, and validation rules |
 | [Publishing and releases](./publishing.md) | GitHub release layout and addon ID tied to repository |
 | [TypeScript setup](./typescript.md) | `tsconfig.json`, typings, build output |
@@ -42,10 +42,10 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 
 ## Typings
 
-After sandbox API changes, regenerate declarations:
+Install sandbox declarations from npm — version must match the StreamKit+ release you target:
 
 ```bash
-npm run type:addons
+npm install --save-dev @rocketman-streamkit/types
 ```
 
-Output: `data/addon.d.ts` (`declare global` — use in addon TypeScript without imports).
+See [TypeScript setup](./typescript.md) for `tsconfig.json` and globals (`declare global` — no imports in addon code).

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аддоны оверлея — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html" class="is-active">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Аддоны оверлея</h1>
+<p>Оверлеи — кратковременные эффекты, запускаемые правилами, таймерами или событиями дашборда.</p>
+<h2>Манифест</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>overlay</code> или <code>overlay.info</code></td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>overlay</code> (когда задан <code>web</code>)</td>
+</tr>
+</tbody></table>
+<p>Панели <code>overlay.info</code> показываются после или во время основного эффекта, когда у родительского оверлея включён <code>showInfo</code>.</p>
+<h2>Варианты</h2>
+<h3>Простой медиа-оверлей (без воркера)</h3>
+<p><code>manifest.overlay</code> с путями <code>audio</code> / <code>video</code>. Без <code>index.js</code>, без разрешений. Воспроизведение через встроенный iframe простого плеера.</p>
+<p>Настройки: громкость, цикл, скрытие в конце, длительность (могут ограничиваться в манифесте).</p>
+<h3>Статический веб-оверлей (без воркера)</h3>
+<p><code>web</code> + <code>web_type: &quot;overlay&quot;</code>, без <code>index.js</code>. Требует <code>WEB_CONTENT</code> и файлы из <code>web_contents</code>.</p>
+<p>Статический URL: <code>/addon_static/{id}/</code></p>
+<p>Параметры рантайма (громкость, длительность) можно читать из:</p>
+<pre><code>GET /overlay/settings/{overlayId}?token=
+</code></pre>
+<h3>Полный аддон оверлея (с воркером)</h3>
+<p><code>type: &quot;overlay&quot;</code>, воркер <code>index.js</code>, <code>WEB_CONTENT</code> для кастомного HTML-эффекта.</p>
+<p>Аддоны платформ с <code>DASHBOARD_EVENTS</code> могут регистрировать триггеры оверлея через <code>dashboard.registerTriggers()</code> и передавать <code>trigger</code> в <code>addRecord()</code>.</p>
+<h2>Разрешения</h2>
+<table>
+<thead>
+<tr>
+<th>Паттерн</th>
+<th>Разрешения</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Только статический HTML</td>
+<td><code>WEB_CONTENT</code></td>
+</tr>
+<tr>
+<td>Воркер + HTTP для страницы</td>
+<td><code>WEB_CONTENT</code>, <code>WEB_END_POINTS</code>, часто <code>SOCKET_END_POINTS</code></td>
+</tr>
+</tbody></table>
+<p>Проверяйте <code>data.token</code> на эндпоинтах, предназначенных только для веб-страницы оверлея.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

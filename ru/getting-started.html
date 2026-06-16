@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Начало работы — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html" class="is-active">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Начало работы</h1>
+<h2>Что такое интеграционный аддон?</h2>
+<p>Интеграционный аддон — это папка, которую пользователь выбирает при установке. В ней как минимум должен быть файл <code>manifest.json</code>. В зависимости от категории аддона также могут присутствовать:</p>
+<ul>
+<li><code>index.js</code> — код воркера, выполняемый в песочнице VM</li>
+<li>Статические веб-файлы (<code>index.html</code>, CSS, изображения) для UI оверлея, виджета или приложения</li>
+<li>Медиафайлы для простого воспроизведения оверлея</li>
+</ul>
+<p>Приложение сохраняет путь установки в <code>Config.data.addonsInstalled[].path</code>. Аддоны <strong>не</strong> встраиваются в основной исполняемый файл приложения.</p>
+<h2>Архитектура</h2>
+<table>
+<thead>
+<tr>
+<th>Слой</th>
+<th>Роль</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Папка аддона</strong></td>
+<td><code>manifest.json</code> + <code>index.js</code> и/или веб-ресурсы</td>
+</tr>
+<tr>
+<td><strong>Главный процесс</strong></td>
+<td>Запускает воркер, проверяет разрешения, мостит HTTP/config IPC, обслуживает статические маршруты</td>
+</tr>
+<tr>
+<td><strong>Песочница воркера</strong></td>
+<td><code>GenerateContext()</code> + <code>vm.runInContext</code> — глобальные объекты, доступные коду аддона</td>
+</tr>
+</tbody></table>
+<p>Код аддона должен использовать <strong>глобальные</strong> имена из контекста песочницы. <code>import</code> SDK StreamKit+ внутри VM не поддерживается.</p>
+<h2>Установка аддона</h2>
+<ol>
+<li>Соберите или подготовьте папку с <code>manifest.json</code> (и необходимыми файлами).</li>
+<li>Откройте <strong>Настройки</strong> → раздел, соответствующий <code>type</code> вашего аддона (Платформы, Оверлей, Виджеты, Приложения).</li>
+<li>Выберите <strong>Установить из папки</strong> и укажите каталог.</li>
+<li>Подтвердите запрошенные <strong>разрешения</strong> при установке.</li>
+<li>Включите аддон и настройте параметры, если воркер вызывает <code>GenerateConfig()</code>.</li>
+</ol>
+<p>Для аддонов-воркеров на TypeScript: скомпилируйте в <code>index.js</code> перед установкой или установите папку с выходными файлами webpack.</p>
+<h2>Минимальный пример воркера</h2>
+<pre><code class="language-js">await network.endpoints.create(&#39;hook&#39;, &#39;POST&#39;, &#39;onHook&#39;);
+
+events.On(&#39;onHook&#39;, ({ body }) =&gt; {
+  console.log(&#39;Webhook payload&#39;, body);
+  return { ok: true };
+});
+</code></pre>
+<p>URL эндпоинта:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon/{addonId}/hook
+</code></pre>
+<p>Замените <code>{addonId}</code> на <code>id</code> из <code>manifest.json</code>, а <code>{WEB_SERVER_PORT}</code> — на порт локального веб-сервера приложения.</p>
+<h2>Структура проекта (рекомендуемая)</h2>
+<pre><code>MyOrg-my-stream-addon/
+├── manifest.json       # id: &quot;MyOrg/my-stream-addon&quot;
+├── index.js            # или index.ts + tsconfig.json (сборка в index.js)
+├── logo.png            # иконка, указанная в manifest
+├── index.html          # если нужен веб-UI
+└── ...                 # дополнительные ресурсы из web_contents
+</code></pre>
+<h2>Связанные материалы</h2>
+<ul>
+<li><a href="./manifest.html">manifest.json</a> — обязательные поля, в том числе <code>id</code></li>
+<li><a href="./publishing.html">Публикация и релизы</a> — файлы GitHub-релиза (<code>main.zip</code>, <code>manifest.json</code>, иконка)</li>
+<li><a href="./typescript.html">Настройка TypeScript</a> — типы из <code>@rocketman-streamkit/types</code></li>
+<li><a href="./permissions.html">Разрешения</a> — объявляйте только то, что нужно</li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

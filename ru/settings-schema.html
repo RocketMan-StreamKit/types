@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Схема настроек (`GenerateConfig`) — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html" class="is-active">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Схема настроек (<code>GenerateConfig</code>)</h1>
+<p>Вызывайте <code>GenerateConfig([...])</code> при загрузке аддона, чтобы объявить поля настроек. Схемы хранятся в конфиге приложения; значения — в <code>addonsParams[id]</code>. Значения по умолчанию подмешиваются при регистрации и при открытии страницы настроек.</p>
+<h2>Структура поля</h2>
+<p>У каждого поля есть:</p>
+<table>
+<thead>
+<tr>
+<th>Свойство</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>key</code></td>
+<td>Ключ хранения в объекте params</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>text</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code></td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>Начальное значение</td>
+</tr>
+<tr>
+<td><code>editor</code></td>
+<td>Если задан — поле показывается в UI настроек с подписью, валидацией и т.д.</td>
+</tr>
+<tr>
+<td><code>options</code></td>
+<td>Для <code>select</code>: <code>{ value, label? }[]</code></td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td>Для <code>array</code>: <code>&#39;text&#39;</code> или <code>&#39;number&#39;</code></td>
+</tr>
+<tr>
+<td><code>fields</code></td>
+<td>Для <code>object</code>: вложенные поля</td>
+</tr>
+<tr>
+<td><code>event</code></td>
+<td>Для <code>button</code>: имя события при клике (обрабатывается через <code>events.On</code>)</td>
+</tr>
+</tbody></table>
+<p>Поля <strong>без</strong> <code>editor</code> сохраняются (внутренние счётчики, токены), но не показываются в UI.</p>
+<h2>Поля в одной строке</h2>
+<p>Оберните несколько полей во вложенный массив, чтобы отобразить их в одной строке настроек:</p>
+<pre><code class="language-js">GenerateConfig([
+  fieldA,
+  [fieldB, fieldC],
+  fieldD,
+]);
+</code></pre>
+<h2>Поддерживаемые типы</h2>
+<ul>
+<li><strong>text</strong> — строка</li>
+<li><strong>color</strong> — hex-строка (<code>#ff1744</code>)</li>
+<li><strong>number</strong> — число</li>
+<li><strong>boolean</strong> — логическое значение</li>
+<li><strong>array</strong> — массив текста или чисел (<code>items: &#39;text&#39; | &#39;number&#39;</code>)</li>
+<li><strong>object</strong> — вложенный объект с <code>fields</code></li>
+<li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> должен совпадать с опцией, иначе берётся первая</li>
+<li><strong>button</strong> — значение не хранится; при клике вызывает <code>events.On(event, …)</code> (только для объявленных имён событий)</li>
+</ul>
+<h2>Пример</h2>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;api_server&#39;,
+    type: &#39;text&#39;,
+    default: &#39;https://example.com:2083&#39;,
+    editor: {
+      label: { en: &#39;API server&#39;, ru: &#39;API сервер&#39;, uk: &#39;API сервер&#39; },
+    },
+  },
+  {
+    key: &#39;theme&#39;,
+    type: &#39;select&#39;,
+    default: &#39;dark&#39;,
+    options: [
+      { value: &#39;dark&#39;, label: { en: &#39;Dark&#39;, ru: &#39;Тёмная&#39;, uk: &#39;Темна&#39; } },
+      { value: &#39;light&#39;, label: { en: &#39;Light&#39;, ru: &#39;Светлая&#39;, uk: &#39;Світла&#39; } },
+    ],
+    editor: { label: { en: &#39;Theme&#39;, ru: &#39;Тема&#39;, uk: &#39;Тема&#39; } },
+  },
+  { key: &#39;last_sync&#39;, type: &#39;number&#39;, default: 0 },
+  {
+    key: &#39;reconnect&#39;,
+    type: &#39;button&#39;,
+    event: &#39;onReconnect&#39;,
+    editor: { label: { en: &#39;Reconnect&#39;, ru: &#39;Переподключиться&#39;, uk: &#39;Перепідключитися&#39; } },
+  },
+]);
+
+events.On(&#39;onReconnect&#39;, async () =&gt; {
+  // пользователь нажал «Переподключиться» в настройках
+});
+</code></pre>
+<h2>Чтение params</h2>
+<pre><code class="language-js">const params = await api.config.getParams();
+await api.config.updateParams({ last_sync: Date.now() });
+</code></pre>
+<p>Лимит размера: <strong>10 000</strong> байт JSON на аддон, если не выдано <code>INCREASE_CONFIG_SIZE</code> (<strong>1 000 000</strong> байт).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

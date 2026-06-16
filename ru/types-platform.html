@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аддоны платформ — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html" class="is-active">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Аддоны платформ</h1>
+<p>Интеграции платформ подключают внешние стриминговые или донат-сервисы к StreamKit+.</p>
+<h2>Манифест</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>platform.streaming</code> или <code>platform.donation</code></td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td>Обычно <code>NETWORK_REQUEST</code>, <code>WEB_END_POINTS</code>, разрешения dashboard и т.д.</td>
+</tr>
+</tbody></table>
+<p>Оба типа используют один поток установки/включения в <strong>Настройки → Аддоны</strong> (группировка по <code>type</code>).</p>
+<h2>Типичные задачи воркера</h2>
+<ul>
+<li>OAuth или авторизация по API-ключу (токены в <code>api.config.updateParams</code>)</li>
+<li>Исходящие вызовы API и WebSocket-соединения</li>
+<li><code>dashboard.registerPlatform</code>, <code>upsertUser</code>, <code>addRecord</code>, <code>addChatMessage</code></li>
+<li><code>status.Update</code> и <code>notify.Send</code> для обратной связи о соединении</li>
+<li><code>dashboard.registerTriggers</code>, когда нужны реакции оверлея</li>
+<li>Входящие вебхуки через <code>network.endpoints.create</code></li>
+</ul>
+<h2>Взаимодействие между аддонами</h2>
+<p>Используйте <code>addons.request</code> / <code>addons.onRequest</code> и опциональный <code>depends_on</code>, когда один аддон платформы отдаёт данные, нужные другим.</p>
+<h2>Настройки</h2>
+<p>Объявляйте пользовательские поля через <code>GenerateConfig</code>. Скрывайте секреты (токены), не указывая <code>editor</code> для соответствующих ключей.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

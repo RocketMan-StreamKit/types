@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дозволи — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html" class="is-active">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Дозволи</h1>
+<p>Дозволи оголошуються в <code>manifest.json</code> і фіксуються на весь час життя worker. Користувач має підтвердити їх під час встановлення.</p>
+<p>Перевіряйте під час виконання через <code>permissions.has(AddonsPermission.NAME)</code>. Відмовлений доступ записує попередження в лог і повертає <code>false</code>. <code>ROOT</code> обходить кожну окрему перевірку.</p>
+<h2>Список дозволів</h2>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ROOT</code></td>
+<td>Надає всі можливості (лише для розробки; уникайте в production)</td>
+</tr>
+<tr>
+<td><code>INCREASE_CONFIG_SIZE</code></td>
+<td>Підвищує ліміт розміру params на аддон з 10 KB до 1 MB JSON</td>
+</tr>
+<tr>
+<td><code>CONFIG_READ</code></td>
+<td><code>api.config.getConfig()</code> — читання повної конфігурації застосунку</td>
+</tr>
+<tr>
+<td><code>CONFIG_WRITE</code></td>
+<td><code>api.config.setConfig()</code> — запис конфігурації застосунку</td>
+</tr>
+<tr>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td><code>api.config.getAddonParams(otherAddonId)</code> — читання params іншого аддона (чутливо; виділяється в UI)</td>
+</tr>
+<tr>
+<td><code>NETWORK_REQUEST</code></td>
+<td>Вихідний HTTP: <code>network.request.get/post/put/delete/postForm</code></td>
+</tr>
+<tr>
+<td><code>NETWORK_WEBSOCKET</code></td>
+<td>Вихідний WebSocket: <code>network.websocket.connect</code></td>
+</tr>
+<tr>
+<td><code>WEB_END_POINTS</code></td>
+<td>Вхідні HTTP-маршрути: <code>network.endpoints.create</code></td>
+</tr>
+<tr>
+<td><code>SOCKET_END_POINTS</code></td>
+<td>Простори імен Socket.IO: <code>network.socketEndpoints</code></td>
+</tr>
+<tr>
+<td><code>WEB_CONTENT</code></td>
+<td>Обслуговування <code>manifest.web</code> і <code>web_contents</code> за <code>/addon_static/{id}/</code></td>
+</tr>
+<tr>
+<td><code>STATUS</code></td>
+<td>Рядок стану: <code>status.Update</code>, <code>status.OnClick</code></td>
+</tr>
+<tr>
+<td><code>NOTIFY</code></td>
+<td>Сповіщення в title bar: <code>notify.Send</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS</code></td>
+<td>Віджет останніх подій: <code>dashboard.addRecord</code>, <code>registerTriggers</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT</code></td>
+<td>Вивід і відправка в вікно чату: <code>addChatMessage</code>, <code>onChatSend</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT_INCOMING</code></td>
+<td>Підписка на рядки чату: <code>onChatMessage</code> / <code>offChatMessage</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS_INCOMING</code></td>
+<td>Підписка на записи подій: <code>onRecord</code> / <code>offRecord</code></td>
+</tr>
+</tbody></table>
+<h2>Приклад</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
+  console.warn(&#39;Network disabled&#39;);
+  return;
+}
+
+const body = await network.request.get(&#39;https://api.example.com/status&#39;);
+</code></pre>
+<h2>Принцип мінімальних привілеїв</h2>
+<p>Запитуйте лише ті дозволи, які використовує ваш аддон. Для сторінок віджета/застосунку, яким потрібне лише статичне хостування, може вистачити одного <code>WEB_CONTENT</code>. Додайте <code>WEB_END_POINTS</code>, коли worker має надавати HTTP API для вбудованої сторінки.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

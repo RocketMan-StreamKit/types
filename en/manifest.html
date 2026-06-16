@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>manifest.json — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html" class="is-active">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>manifest.json</h1>
+<p>The manifest describes the addon identity, category, permissions, and optional web UI.</p>
+<h2>Example</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: {
+    &quot;en&quot;: &quot;My Addon&quot;,
+    &quot;ru&quot;: &quot;Мой аддон&quot;,
+    &quot;uk&quot;: &quot;Мій аддон&quot;
+  },
+  &quot;description&quot;: {
+    &quot;en&quot;: &quot;Short description for the settings UI.&quot;,
+    &quot;ru&quot;: &quot;Краткое описание для настроек.&quot;,
+    &quot;uk&quot;: &quot;Короткий опис для налаштувань.&quot;
+  },
+  &quot;id&quot;: &quot;MyOrg/my-stream-addon&quot;,
+  &quot;type&quot;: &quot;platform.streaming&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;author&quot;: &quot;Your Name&quot;,
+  &quot;icon&quot;: &quot;logo.png&quot;,
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;, &quot;WEB_END_POINTS&quot;]
+}
+</code></pre>
+<h2>Required fields</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td><code>string</code></td>
+<td>Stable addon identifier tied to your GitHub repository (<code>ORG/REPO</code>). Used in URLs, <code>depends_on</code>, and install records</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>{ en, ru?, uk? }</code></td>
+<td>Display name in settings</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>{ en, ru?, uk? }</code></td>
+<td>Short description in settings</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>string</code></td>
+<td>Addon category (see <a href="#addon-categories">Addon categories</a>)</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>string</code></td>
+<td>Semantic version string</td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td><code>string[]</code></td>
+<td>Capability flags (see <a href="./permissions.html">Permissions</a>)</td>
+</tr>
+</tbody></table>
+<p>The <code>id</code> must be unique among installed addons. It is used in URLs (<code>/addon/{id}/…</code>, <code>/addon_static/{id}/…</code>) and does not have to match the folder name on disk.</p>
+<p>Set <code>id</code> to <strong><code>ORG/REPO</code></strong> — the GitHub owner (organization or user) and repository name. Example: repository <code>https://github.com/MyOrg/my-stream-addon</code> → <code>&quot;id&quot;: &quot;MyOrg/my-stream-addon&quot;</code>. See <a href="./publishing.html">Publishing and releases</a> for release layout and update checks.</p>
+<h2>Optional fields</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>author</code></td>
+<td><code>string</code></td>
+<td>Author name</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>string</code></td>
+<td>Icon filename in the addon folder</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td><code>string[]</code></td>
+<td>Addon ids that must be installed <strong>and enabled</strong> before this addon can be enabled. Install without activation is always allowed.</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>string | string[]</code></td>
+<td>Restrict install to OS: <code>win32</code>, <code>darwin</code>, <code>linux</code>. Omitted = all platforms.</td>
+</tr>
+<tr>
+<td><code>app_version</code></td>
+<td><code>string</code></td>
+<td>Minimum StreamKit+ version required (<code>major.minor.patch</code>, e.g. <code>1.0.0</code>). Omitted = any app version. Install and update are blocked when the running app is older.</td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td><code>string</code></td>
+<td>Local HTML filename or external <code>http(s)</code> URL</td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>&quot;overlay&quot; | &quot;widget&quot; | &quot;application&quot;</code></td>
+<td>Required when <code>web</code> is set; must match <code>type</code> rules below</td>
+</tr>
+<tr>
+<td><code>web_contents</code></td>
+<td><code>string[]</code></td>
+<td>Additional static files served with the page</td>
+</tr>
+<tr>
+<td><code>overlay</code></td>
+<td><code>object</code></td>
+<td>Simple media overlay: <code>audio</code> / <code>video</code> file paths (no worker required)</td>
+</tr>
+</tbody></table>
+<h2><code>web</code> and <code>web_type</code> rules</h2>
+<table>
+<thead>
+<tr>
+<th><code>type</code></th>
+<th>Required <code>web_type</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>overlay</code></td>
+<td><code>overlay</code></td>
+</tr>
+<tr>
+<td><code>widget</code></td>
+<td><code>widget</code></td>
+</tr>
+<tr>
+<td><code>application</code></td>
+<td><code>application</code></td>
+</tr>
+</tbody></table>
+<p>With <code>WEB_CONTENT</code> permission, static files are served at <code>/addon_static/{id}/</code>.</p>
+<h2>Addon categories</h2>
+<table>
+<thead>
+<tr>
+<th><code>type</code></th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>platform.streaming</code></td>
+<td>Streaming platform integration (chat, events, live status)</td>
+</tr>
+<tr>
+<td><code>platform.donation</code></td>
+<td>Donation platform integration</td>
+</tr>
+<tr>
+<td><code>overlay</code></td>
+<td>Triggered overlay effects</td>
+</tr>
+<tr>
+<td><code>overlay.info</code></td>
+<td>Info panel shown with overlay effects</td>
+</tr>
+<tr>
+<td><code>widget</code></td>
+<td>Persistent web widget (OBS browser source, overlay embed)</td>
+</tr>
+<tr>
+<td><code>application</code></td>
+<td>Standalone in-app window</td>
+</tr>
+<tr>
+<td><code>game</code></td>
+<td>Game integration (in-game effects from stream events)</td>
+</tr>
+</tbody></table>
+<p>See category docs: <a href="./types-platform.html">Platform</a>, <a href="./types-overlay.html">Overlay</a>, <a href="./types-widget.html">Widget</a>, <a href="./types-application.html">Application</a>, <a href="./types-game.html">Game</a>.</p>
+<h2>Permissions in the manifest</h2>
+<p>List every capability your addon needs. The user approves them at install time. <code>ROOT</code> grants all checks but should not be used in production addons.</p>
+<p>Permission display names in the app UI use keys <code>settings.addons.permission.{PERMISSION_NAME}</code> in the app&#39;s language files — that is an app concern, not something addon authors ship.</p>
+<h2>Worker vs workerless</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Needs <code>index.js</code></th>
+<th>Typical permissions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Full integration</td>
+<td>Yes</td>
+<td>As required by your logic</td>
+</tr>
+<tr>
+<td>Static web only</td>
+<td>No</td>
+<td><code>WEB_CONTENT</code></td>
+</tr>
+<tr>
+<td>Simple media overlay</td>
+<td>No</td>
+<td>None (media paths in <code>overlay</code> block)</td>
+</tr>
+</tbody></table>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

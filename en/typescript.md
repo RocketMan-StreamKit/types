@@ -1,6 +1,14 @@
 # TypeScript setup
 
-Worker addons can be authored in TypeScript. Typings come **only** from `data/addon.d.ts` — do not add `@types/node` or other `node_modules` type packages to the addon project.
+Worker addons can be authored in TypeScript. Typings come from the npm package **`@rocketman-streamkit/types`** — do not add `@types/node` or other `node_modules` type packages to the addon project.
+
+## Installation
+
+```bash
+npm install --save-dev @rocketman-streamkit/types
+```
+
+Install the package version that matches the StreamKit+ release your addon targets (same `major.minor.patch` as `app_version` in `manifest.json` when you depend on new sandbox APIs).
 
 ## tsconfig.json
 
@@ -15,17 +23,32 @@ Place `tsconfig.json` next to `index.ts` in your addon folder:
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "../../data/addon.d.ts"]
+  "include": ["./**/*.ts", "./node_modules/@rocketman-streamkit/types/addon.d.ts"]
 }
 ```
 
-Adjust the path to `addon.d.ts` relative to your addon folder (the example assumes the addon lives two levels below the repo root).
+Alternatively, reference the package types field directly:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@rocketman-streamkit/types"],
+    "lib": ["ES2020"],
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"]
+}
+```
+
+Do **not** add `@types/node` — addon workers are not Node.js processes.
 
 Static addons (HTML/JS only, no `index.ts`) do not need `tsconfig.json`.
 
 ## Globals
 
-`data/addon.d.ts` declares sandbox globals:
+`addon.d.ts` from `@rocketman-streamkit/types` declares sandbox globals:
 
 - `network`, `events`, `permissions`, `api`, `dashboard`, `addons`, `storage`, …
 - `AddonsPermission` enum
@@ -33,15 +56,15 @@ Static addons (HTML/JS only, no `index.ts`) do not need `tsconfig.json`.
 
 No imports are required in addon TypeScript — use globals directly.
 
-## Regenerating typings
+## Updating typings
 
-When the sandbox API changes in a new StreamKit+ version:
+When StreamKit+ ships a new sandbox API in a release you target, bump the dev dependency to the matching package version:
 
 ```bash
-npm run type:addons
+npm install --save-dev @rocketman-streamkit/types@1.0.0
 ```
 
-This updates `data/addon.d.ts` and `dist/data/addon.d.ts` from JSDoc in the integrations worker source.
+Replace `1.0.0` with the StreamKit+ version that provides the APIs you need.
 
 ## Build output
 

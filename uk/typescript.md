@@ -1,6 +1,14 @@
 # Налаштування TypeScript
 
-Worker-аддони можна писати на TypeScript. Типи беруться **лише** з `data/addon.d.ts` — не додавайте `@types/node` або інші пакети типів з `node_modules` до проєкту аддона.
+Worker-аддони можна писати на TypeScript. Типи беруться з npm-пакета **`@rocketman-streamkit/types`** — не додавайте `@types/node` або інші пакети типів з `node_modules` до проєкту аддона.
+
+## Встановлення
+
+```bash
+npm install --save-dev @rocketman-streamkit/types
+```
+
+Встановлюйте версію пакета, що збігається з цільовою версією StreamKit+ (той самий `major.minor.patch`, що й `app_version` у `manifest.json`, якщо ви залежите від нових API пісочниці).
 
 ## tsconfig.json
 
@@ -15,17 +23,32 @@ Worker-аддони можна писати на TypeScript. Типи берут
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "../../data/addon.d.ts"]
+  "include": ["./**/*.ts", "./node_modules/@rocketman-streamkit/types/addon.d.ts"]
 }
 ```
 
-Налаштуйте шлях до `addon.d.ts` відносно папки аддона (приклад припускає, що аддон знаходиться на два рівні нижче кореня репозиторію).
+Або підключіть поле `types` пакета напряму:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@rocketman-streamkit/types"],
+    "lib": ["ES2020"],
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"]
+}
+```
+
+Не додавайте `@types/node` — worker-аддони не є процесами Node.js.
 
 Статичні аддони (лише HTML/JS, без `index.ts`) не потребують `tsconfig.json`.
 
 ## Глобальні об'єкти
 
-`data/addon.d.ts` оголошує глобальні об'єкти пісочниці:
+`addon.d.ts` з `@rocketman-streamkit/types` оголошує глобальні об'єкти пісочниці:
 
 - `network`, `events`, `permissions`, `api`, `dashboard`, `addons`, `storage`, …
 - enum `AddonsPermission`
@@ -33,15 +56,15 @@ Worker-аддони можна писати на TypeScript. Типи берут
 
 Імпорти в TypeScript аддона не потрібні — використовуйте глобальні об'єкти напряму.
 
-## Регенерація типів
+## Оновлення типів
 
-Коли API пісочниці змінюється в новій версії StreamKit+:
+Коли в новій версії StreamKit+ з'являються потрібні вам API пісочниці, оновіть dev-залежність до відповідної версії пакета:
 
 ```bash
-npm run type:addons
+npm install --save-dev @rocketman-streamkit/types@1.0.0
 ```
 
-Це оновлює `data/addon.d.ts` і `dist/data/addon.d.ts` з JSDoc у вихідному коді integrations worker.
+Замініть `1.0.0` на версію StreamKit+, яка надає потрібні API.
 
 ## Вихід збірки
 

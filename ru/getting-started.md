@@ -64,5 +64,5 @@ MyOrg-my-stream-addon/
 
 - [manifest.json](./manifest.md) — обязательные поля, в том числе `id`
 - [Публикация и релизы](./publishing.md) — файлы GitHub-релиза (`main.zip`, `manifest.json`, иконка)
-- [Настройка TypeScript](./typescript.md) — типы из `data/addon.d.ts`
+- [Настройка TypeScript](./typescript.md) — типы из `@rocketman-streamkit/types`
 - [Разрешения](./permissions.md) — объявляйте только то, что нужно

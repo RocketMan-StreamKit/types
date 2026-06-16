@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Безопасность — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html" class="is-active">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Безопасность</h1>
+<h2>Исходящая сеть</h2>
+<p>URL исходящего HTTP (<code>network.request</code>) и WebSocket (<code>network.websocket</code>) проходят проверку:</p>
+<ul>
+<li>DNS-запрос с кэшем <strong>5 минут</strong></li>
+<li>Заблокированы: <code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>, частные диапазоны RFC1918 (<code>192.168.*</code>, <code>10.*</code>, <code>172.16–172.31.*</code>)</li>
+<li>HTTP: максимум <strong>5</strong> одновременных запросов, таймаут <strong>10 с</strong>, редиректы <strong>не</strong> выполняются</li>
+<li>WebSocket: максимум <strong>5</strong> одновременных соединений, только <code>ws://</code> / <code>wss://</code>, тот же чёрный список хостов</li>
+</ul>
+<p><strong>Нет</strong> отдельного API песочницы для привилегированного auth-сервера. Обмен OAuth-токенами — обычный <code>network.request.post</code> на публичный HTTPS URL, который вы настраиваете (см. <a href="./oauth-and-secrets.html">OAuth и секреты</a>).</p>
+<h2>Входящий HTTP</h2>
+<p>Аддоны не открывают порты. Входящие маршруты регистрируются на Express-сервере главного процесса:</p>
+<ul>
+<li>HTTP аддона: <code>/addon/{id}/{path}</code></li>
+<li>Статический веб: <code>/addon_static/{id}/</code></li>
+<li>Путь Socket.IO: <code>/addon/socket.io</code>, пространство имён <code>/addon/{id}/{path}</code></li>
+</ul>
+<h2>Params и конфиг</h2>
+<p>Записи в <code>api.config.updateParams</code> и <code>api.config.setConfig</code> проверяются в главном процессе (лимиты размера, проверка разрешений).</p>
+<h2>Выполнение в VM</h2>
+<p>Начальное выполнение <code>index.js</code> ограничено <strong>5 секундами</strong>. Ошибки в таймерах и обработчиках событий перехватываются и логируются; воркер не падает.</p>
+<p>Неперехваченные ошибки вне этих обёрток по-прежнему могут уронить процесс воркера. После <strong>3 последовательных падений</strong> без стабильной работы автоперезапуск прекращается, пока пользователь не перезапустит аддон в настройках — см. <a href="./lifecycle.html#%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0-%D0%BE%D1%82-%D1%86%D0%B8%D0%BA%D0%BB%D0%B0-%D0%BF%D0%B0%D0%B4%D0%B5%D0%BD%D0%B8%D0%B9">Жизненный цикл — Защита от цикла падений</a>.</p>
+<h2>Токен доступа фронтенда (<code>data.token</code>)</h2>
+<p>Каждый экземпляр аддона получает стабильный секрет на устройство, id аддона и путь установки в <code>data.token</code>. Он добавляется к URL виджета/статики как <code>?token=…</code>.</p>
+<p><strong>Проверяйте</strong> <code>query.token === data.token</code> (или эквивалентный заголовок) на HTTP-эндпоинтах, предназначенных только для встроенной веб-страницы, чтобы другие локальные страницы не могли их вызывать.</p>
+<p>Токен меняется, если пользователь переустанавливает аддон или переносит папку.</p>
+<h2>Разрешение <code>ROOT</code></h2>
+<p><code>require()</code> и неограниченный доступ к модулям доступны только с <code>ROOT</code>. Не запрашивайте <code>ROOT</code> в распространяемых аддонах.</p>
+<h2>Приватное хранилище</h2>
+<p><code>storage.Read()</code> / <code>Write()</code> сохраняют JSON в <code>{installPath}/storage_data.json</code>. Без шифрования; считайте локальным кэшем. Удаляется при деинсталляции.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

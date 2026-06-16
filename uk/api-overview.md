@@ -1,6 +1,6 @@
 # Огляд API
 
-Усі API — **глобальні** у VM integrations worker. Джерело істини для типів: `data/addon.d.ts` (генерується з JSDoc пісочниці).
+Усі API — **глобальні** у VM integrations worker. Типи постачаються в npm-пакеті `@rocketman-streamkit/types` (`addon.d.ts`).
 
 ## Глобальні об'єкти
 

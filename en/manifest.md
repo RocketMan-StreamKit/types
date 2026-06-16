@@ -48,6 +48,7 @@ Set `id` to **`ORG/REPO`** — the GitHub owner (organization or user) and repos
 | `icon` | `string` | Icon filename in the addon folder |
 | `depends_on` | `string[]` | Addon ids that must be installed **and enabled** before this addon can be enabled. Install without activation is always allowed. |
 | `platform` | `string \| string[]` | Restrict install to OS: `win32`, `darwin`, `linux`. Omitted = all platforms. |
+| `app_version` | `string` | Minimum StreamKit+ version required (`major.minor.patch`, e.g. `1.0.0`). Omitted = any app version. Install and update are blocked when the running app is older. |
 | `web` | `string` | Local HTML filename or external `http(s)` URL |
 | `web_type` | `"overlay" \| "widget" \| "application"` | Required when `web` is set; must match `type` rules below |
 | `web_contents` | `string[]` | Additional static files served with the page |

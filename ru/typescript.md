@@ -1,6 +1,14 @@
 # Настройка TypeScript
 
-Воркеры аддонов можно писать на TypeScript. Типы берутся **только** из `data/addon.d.ts` — не добавляйте `@types/node` и другие пакеты типов из `node_modules` в проект аддона.
+Воркеры аддонов можно писать на TypeScript. Типы берутся из npm-пакета **`@rocketman-streamkit/types`** — не добавляйте `@types/node` и другие пакеты типов из `node_modules` в проект аддона.
+
+## Установка
+
+```bash
+npm install --save-dev @rocketman-streamkit/types
+```
+
+Устанавливайте версию пакета, совпадающую с целевой версией StreamKit+ (тот же `major.minor.patch`, что и `app_version` в `manifest.json`, если вы зависите от новых API песочницы).
 
 ## tsconfig.json
 
@@ -15,17 +23,32 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "../../data/addon.d.ts"]
+  "include": ["./**/*.ts", "./node_modules/@rocketman-streamkit/types/addon.d.ts"]
 }
 ```
 
-Подстройте путь к `addon.d.ts` относительно папки аддона (в примере аддон лежит на два уровня ниже корня репозитория).
+Либо подключите поле `types` пакета напрямую:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@rocketman-streamkit/types"],
+    "lib": ["ES2020"],
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"]
+}
+```
+
+Не добавляйте `@types/node` — воркеры аддонов не являются процессами Node.js.
 
 Статические аддоны (только HTML/JS, без `index.ts`) не требуют `tsconfig.json`.
 
 ## Глобальные объекты
 
-`data/addon.d.ts` объявляет глобальные объекты песочницы:
+`addon.d.ts` из `@rocketman-streamkit/types` объявляет глобальные объекты песочницы:
 
 - `network`, `events`, `permissions`, `api`, `dashboard`, `addons`, `storage`, …
 - перечисление `AddonsPermission`
@@ -33,15 +56,15 @@
 
 Импорты в TypeScript аддона не нужны — используйте глобальные объекты напрямую.
 
-## Регенерация типов
+## Обновление типов
 
-Когда API песочницы меняется в новой версии StreamKit+:
+Когда в новой версии StreamKit+ появляются нужные вам API песочницы, обновите dev-зависимость до соответствующей версии пакета:
 
 ```bash
-npm run type:addons
+npm install --save-dev @rocketman-streamkit/types@1.0.0
 ```
 
-Это обновляет `data/addon.d.ts` и `dist/data/addon.d.ts` из JSDoc в исходниках воркера интеграций.
+Замените `1.0.0` на версию StreamKit+, которая предоставляет нужные API.
 
 ## Результат сборки
 

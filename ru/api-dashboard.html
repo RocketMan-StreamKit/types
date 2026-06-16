@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dashboard — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html" class="is-active">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>dashboard</h1>
+<p>Питает виджет <strong>последних событий</strong> и окно <strong>чата</strong>. Требует <code>DASHBOARD_EVENTS</code> и/или <code>DASHBOARD_CHAT</code> (см. каждый метод).</p>
+<h2>Регистрация платформы</h2>
+<p>Вызывайте при загрузке, чтобы UI мог разрешать id платформ:</p>
+<pre><code class="language-js">await dashboard.registerPlatform({
+  id: &#39;myplatform&#39;,
+  name: { en: &#39;My Platform&#39;, ru: &#39;Моя платформа&#39;, uk: &#39;Моя платформа&#39; },
+});
+</code></pre>
+<p>Используйте тот же <code>id</code> в поле <code>platform</code> для <code>addRecord</code> / <code>addChatMessage</code>.</p>
+<h2>Пользователи</h2>
+<pre><code class="language-js">await dashboard.upsertUser({
+  id: &#39;user-1&#39;,
+  name: &#39;Viewer&#39;,
+  avatar: &#39;https://example.com/avatar.png&#39;,
+  platform: &#39;myplatform&#39;,
+  color: &#39;#7fff00&#39;,
+  icons: [&#39;badge-vip&#39;], // id из registerChatBadges
+});
+</code></pre>
+<h2>Виджет событий — <code>addRecord</code></h2>
+<p><strong>Требуется:</strong> <code>DASHBOARD_EVENTS</code></p>
+<pre><code class="language-js">await dashboard.addRecord(
+  {
+    id: random.id(),
+    type: &#39;donation&#39;, // donation | subscribe | follow | custom | timer
+    platform: &#39;myplatform&#39;,
+    amount: [10, &#39;USD&#39;],
+    message: { en: &#39;Thanks!&#39;, ru: &#39;Спасибо!&#39; },
+    from: &#39;user-1&#39;,
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+  { trigger: { type: &#39;donation&#39;, key: &#39;USD&#39;, value: 10 } }, // опциональный триггер оверлея
+);
+</code></pre>
+<p><code>message</code> принимает простую <code>string</code>, <code>{ en, ru?, uk? }</code> или кортеж <code>LangData</code> приложения.</p>
+<p>Несколько триггеров: <code>{ triggers: [...] }</code>.</p>
+<h2>Чат — <code>addChatMessage</code></h2>
+<p><strong>Требуется:</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.addChatMessage(
+  {
+    content: &#39;Hello chat!&#39;,
+    platform: &#39;myplatform&#39;,
+    from: &#39;user-1&#39;,
+    emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
+    style: {
+      color: &#39;#7c4dff&#39;,
+      header: { en: &#39;Highlighted&#39;, ru: &#39;Выделено&#39; },
+      icon: &#39;megaphone&#39;,
+    },
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+);
+</code></pre>
+<p><code>content</code> принимает простую <code>string</code> или <code>{ en, ru?, uk? }</code> — не кортежи <code>LangData</code> приложения (аддоны используют свои объекты локализации).</p>
+<p>Опциональный <code>style</code> добавляет цветную рамку и опциональную шапку:</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>color</code></td>
+<td>Цвет рамки и фона шапки (CSS-цвет, например <code>#ff9800</code>)</td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>Текст шапки (<code>string</code> или <code>{ en, ru?, uk? }</code>); без поля — только рамка</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>exclamation</code>, <code>question</code>, <code>megaphone</code> или <code>list</code></td>
+</tr>
+</tbody></table>
+<h2>Системный чат — <code>addSystemChatMessage</code></h2>
+<p><strong>Требуется:</strong> <code>DASHBOARD_CHAT</code></p>
+<p>Системные строки не от пользователей платформы. В UI показывается иконка этого аддона. Опциональный <code>sender</code> выводится перед текстом.</p>
+<pre><code class="language-js">await dashboard.addSystemChatMessage({
+  content: { en: &#39;Connected to chat&#39;, ru: &#39;Подключено к чату&#39; },
+  sender: { en: &#39;My addon&#39; },
+  style: {
+    color: &#39;#4caf50&#39;,
+    header: { en: &#39;Notice&#39; },
+    icon: &#39;exclamation&#39;,
+  },
+});
+</code></pre>
+<p><code>content</code>, <code>sender</code> и <code>style.header</code> принимают только <code>string</code> или <code>{ en, ru?, uk? }</code>.</p>
+<h2>Значки и эмоуты чата</h2>
+<pre><code class="language-js">await dashboard.registerChatBadges([
+  { id: &#39;badge-vip&#39;, url: &#39;https://example.com/vip.png&#39;, title: &#39;VIP&#39; },
+]);
+
+await dashboard.registerChatEmotes({
+  platforms: [&#39;myplatform&#39;],
+  emotes: [{ word: &#39;hello&#39;, url: &#39;https://example.com/hello.png&#39; }],
+});
+</code></pre>
+<p>API чтения (требуют <code>DASHBOARD_CHAT</code> или <code>DASHBOARD_CHAT_INCOMING</code>):</p>
+<ul>
+<li><code>listChatBadges()</code></li>
+<li><code>listChatEmotes()</code></li>
+<li><code>listPlatforms()</code></li>
+</ul>
+<h2>Отправка / входящий чат</h2>
+<p><strong>Отправка (поле ввода):</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
+  // отправка текста в API вашей платформы
+});
+dashboard.offChatSend();
+</code></pre>
+<p><strong>Входящие строки:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
+<pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
+  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+});
+dashboard.offChatMessage();
+</code></pre>
+<h2>Входящие события — <code>onRecord</code></h2>
+<p><strong>Требуется:</strong> <code>DASHBOARD_EVENTS_INCOMING</code></p>
+<p>Подписка на новые записи в виджете последних событий. Payload содержит сохранённый <code>record</code> (с системным <code>attach</code> для сработавших оверлеев, звуков, хоткеев и таймера), пользователя, <code>triggers</code>, использованные для матчинга, и <code>sourceAddonId</code>.</p>
+<p>В отличие от чата, аддон-источник тоже получает свои записи — удобно проверять результат матчинга после <code>dashboard.addRecord</code>.</p>
+<pre><code class="language-js">dashboard.onRecord(payload =&gt; {
+  console.log(payload.record.type, payload.record.attach, payload.triggers);
+});
+dashboard.offRecord();
+</code></pre>
+<h2>Триггеры оверлея — <code>registerTriggers</code></h2>
+<p><strong>Требуется:</strong> <code>DASHBOARD_EVENTS</code></p>
+<p>Регистрирует типы событий, которые пользователь может привязать к оверлеям в настройках. Передавайте соответствующий <code>trigger</code> в опциях <code>addRecord</code>.</p>
+<pre><code class="language-js">await dashboard.registerTriggers([
+  {
+    type: &#39;follow&#39;,
+    label: { en: &#39;New follower&#39;, ru: &#39;Новый фолловер&#39; },
+  },
+  {
+    type: &#39;custom&#39;,
+    key: &#39;bits&#39;,
+    label: { en: &#39;Cheer (bits)&#39; },
+    valueType: &#39;number&#39;,
+    valueMatch: &#39;minimum&#39;,
+    valueHint: { en: &#39;Minimum bits&#39; },
+  },
+]);
+</code></pre>
+<h3>Поля опции триггера</h3>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>donation</code>, <code>subscribe</code>, <code>subgift</code>, <code>follow</code>, <code>custom</code></td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>Фиксированный дискриминатор (<code>bits</code>, <code>redeems</code>, …)</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>Локализованное имя в настройках оверлея</td>
+</tr>
+<tr>
+<td><code>valueType</code></td>
+<td><code>text</code>, <code>number</code>, <code>select</code>, <code>dynamic</code></td>
+</tr>
+<tr>
+<td><code>valueOptions</code></td>
+<td>Для <code>select</code></td>
+</tr>
+<tr>
+<td><code>valueProvider</code></td>
+<td>Для <code>dynamic</code> — обработка событий <code>overlayTriggerValue:{provider}:list|create|release</code></td>
+</tr>
+<tr>
+<td><code>valueMatch</code></td>
+<td><code>exact</code> (по умолчанию) или <code>minimum</code></td>
+</tr>
+<tr>
+<td><code>keyOptions</code> / <code>keyLabel</code></td>
+<td>Выбираемые пользователем ключи (например, валюта)</td>
+</tr>
+</tbody></table>
+<h3>События dynamic provider</h3>
+<pre><code class="language-js">events.On(&#39;overlayTriggerValue:rewards:list&#39;, async () =&gt; ({
+  success: true,
+  items: [{ id: &#39;abc&#39;, label: &#39;My reward&#39;, meta: &#39;100&#39; }],
+}));
+
+events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context }) =&gt; ({
+  success: true,
+  valueId: &#39;abc&#39;,
+  label: title,
+  notify: {
+    variant: &#39;success&#39;,
+    title: { ru: &#39;Награда создана&#39; },
+    message: { ru: `Стоимость: ${context?.cost}` },
+  },
+}));
+</code></pre>
+<p>В ответах можно передать <code>notify</code> — модальное окно в настройках (<code>variant</code>: <code>success</code> | <code>error</code> | <code>info</code>; <code>title?</code>, <code>message</code>).</p>
+<h3>Привязки триггеров после сохранения настроек</h3>
+<p>Когда сохранённые правила для вашего аддона меняются, main process вызывает:</p>
+<pre><code class="language-js">events.On(&#39;triggers:applied-changed&#39;, ({ previous, current }) =&gt; {
+  // previous / current группируют правила по системам:
+  // overlay, timer, game, gameInput, sounds, hotkeys
+});
+</code></pre>
+<p>Используйте это, чтобы освобождать внутренние ресурсы при удалении привязок.</p>
+<p>Полный контракт — в JSDoc <code>registerTriggers</code> в сгенерированных типах.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

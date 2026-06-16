@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeScript setup — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html" class="is-active">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>TypeScript setup</h1>
+<p>Worker addons can be authored in TypeScript. Typings come from the npm package <strong><code>@rocketman-streamkit/types</code></strong> — do not add <code>@types/node</code> or other <code>node_modules</code> type packages to the addon project.</p>
+<h2>Installation</h2>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types
+</code></pre>
+<p>Install the package version that matches the StreamKit+ release your addon targets (same <code>major.minor.patch</code> as <code>app_version</code> in <code>manifest.json</code> when you depend on new sandbox APIs).</p>
+<h2>tsconfig.json</h2>
+<p>Place <code>tsconfig.json</code> next to <code>index.ts</code> in your addon folder:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [],
+    &quot;lib&quot;: [&quot;ES2020&quot;],
+    &quot;noEmit&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;skipLibCheck&quot;: true
+  },
+  &quot;include&quot;: [&quot;./**/*.ts&quot;, &quot;./node_modules/@rocketman-streamkit/types/addon.d.ts&quot;]
+}
+</code></pre>
+<p>Alternatively, reference the package types field directly:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [&quot;@rocketman-streamkit/types&quot;],
+    &quot;lib&quot;: [&quot;ES2020&quot;],
+    &quot;noEmit&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;skipLibCheck&quot;: true
+  },
+  &quot;include&quot;: [&quot;./**/*.ts&quot;]
+}
+</code></pre>
+<p>Do <strong>not</strong> add <code>@types/node</code> — addon workers are not Node.js processes.</p>
+<p>Static addons (HTML/JS only, no <code>index.ts</code>) do not need <code>tsconfig.json</code>.</p>
+<h2>Globals</h2>
+<p><code>addon.d.ts</code> from <code>@rocketman-streamkit/types</code> declares sandbox globals:</p>
+<ul>
+<li><code>network</code>, <code>events</code>, <code>permissions</code>, <code>api</code>, <code>dashboard</code>, <code>addons</code>, <code>storage</code>, …</li>
+<li><code>AddonsPermission</code> enum</li>
+<li><code>GenerateConfig</code>, <code>data</code>, <code>isDeveloperMode</code></li>
+</ul>
+<p>No imports are required in addon TypeScript — use globals directly.</p>
+<h2>Updating typings</h2>
+<p>When StreamKit+ ships a new sandbox API in a release you target, bump the dev dependency to the matching package version:</p>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types@1.0.0
+</code></pre>
+<p>Replace <code>1.0.0</code> with the StreamKit+ version that provides the APIs you need.</p>
+<h2>Build output</h2>
+<p>Compile or bundle <code>index.ts</code> to <code>index.js</code> in the install folder. The worker executes <code>index.js</code> only. Keep <code>manifest.json</code> and assets alongside the built file.</p>
+<p>Static addons without a worker can be installed directly from source (<code>manifest.json</code>, icon, HTML, <code>web_contents</code>).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dashboard — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html" class="is-active">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>dashboard</h1>
+<p>Живить віджет <strong>останніх подій</strong> і вікно <strong>чату</strong>. Потрібні <code>DASHBOARD_EVENTS</code> та/або <code>DASHBOARD_CHAT</code> (див. кожен метод).</p>
+<h2>Реєстрація платформи</h2>
+<p>Викликайте під час завантаження, щоб UI міг розв&#39;язувати id платформ:</p>
+<pre><code class="language-js">await dashboard.registerPlatform({
+  id: &#39;myplatform&#39;,
+  name: { en: &#39;My Platform&#39;, ru: &#39;Моя платформа&#39;, uk: &#39;Моя платформа&#39; },
+});
+</code></pre>
+<p>Використовуйте той самий <code>id</code> у полі <code>platform</code> для <code>addRecord</code> / <code>addChatMessage</code>.</p>
+<h2>Користувачі</h2>
+<pre><code class="language-js">await dashboard.upsertUser({
+  id: &#39;user-1&#39;,
+  name: &#39;Viewer&#39;,
+  avatar: &#39;https://example.com/avatar.png&#39;,
+  platform: &#39;myplatform&#39;,
+  color: &#39;#7fff00&#39;,
+  icons: [&#39;badge-vip&#39;], // ids from registerChatBadges
+});
+</code></pre>
+<h2>Віджет подій — <code>addRecord</code></h2>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_EVENTS</code></p>
+<pre><code class="language-js">await dashboard.addRecord(
+  {
+    id: random.id(),
+    type: &#39;donation&#39;, // donation | subscribe | follow | custom | timer
+    platform: &#39;myplatform&#39;,
+    amount: [10, &#39;USD&#39;],
+    message: { en: &#39;Thanks!&#39;, ru: &#39;Спасибо!&#39; },
+    from: &#39;user-1&#39;,
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+  { trigger: { type: &#39;donation&#39;, key: &#39;USD&#39;, value: 10 } }, // optional overlay trigger
+);
+</code></pre>
+<p><code>message</code> приймає звичайний <code>string</code>, <code>{ en, ru?, uk? }</code> або кортеж app <code>LangData</code>.</p>
+<p>Кілька тригерів: <code>{ triggers: [...] }</code>.</p>
+<h2>Чат — <code>addChatMessage</code></h2>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.addChatMessage(
+  {
+    content: &#39;Hello chat!&#39;,
+    platform: &#39;myplatform&#39;,
+    from: &#39;user-1&#39;,
+    emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
+    style: {
+      color: &#39;#7c4dff&#39;,
+      header: { en: &#39;Highlighted&#39;, uk: &#39;Виділено&#39; },
+      icon: &#39;megaphone&#39;,
+    },
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+);
+</code></pre>
+<p><code>content</code> приймає звичайний <code>string</code> або <code>{ en, ru?, uk? }</code> — не кортежі <code>LangData</code> застосунку (аддони використовують власні об&#39;єкти локалізації).</p>
+<p>Опційний <code>style</code> додає кольорову рамку та опційну шапку:</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>color</code></td>
+<td>Колір рамки та фону шапки (CSS-колір, напр. <code>#ff9800</code>)</td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>Текст шапки (<code>string</code> або <code>{ en, ru?, uk? }</code>); без поля — лише рамка</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>exclamation</code>, <code>question</code>, <code>megaphone</code> або <code>list</code></td>
+</tr>
+</tbody></table>
+<h2>Системний чат — <code>addSystemChatMessage</code></h2>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_CHAT</code></p>
+<p>Системні рядки не від користувачів платформи. В UI показується іконка цього аддона. Опційний <code>sender</code> виводиться перед текстом.</p>
+<pre><code class="language-js">await dashboard.addSystemChatMessage({
+  content: { en: &#39;Connected to chat&#39;, uk: &#39;Підключено до чату&#39; },
+  sender: { en: &#39;My addon&#39; },
+  style: {
+    color: &#39;#4caf50&#39;,
+    header: { en: &#39;Notice&#39; },
+    icon: &#39;exclamation&#39;,
+  },
+});
+</code></pre>
+<p><code>content</code>, <code>sender</code> і <code>style.header</code> приймають лише <code>string</code> або <code>{ en, ru?, uk? }</code>.</p>
+<h2>Значки і емotes чату</h2>
+<pre><code class="language-js">await dashboard.registerChatBadges([
+  { id: &#39;badge-vip&#39;, url: &#39;https://example.com/vip.png&#39;, title: &#39;VIP&#39; },
+]);
+
+await dashboard.registerChatEmotes({
+  platforms: [&#39;myplatform&#39;],
+  emotes: [{ word: &#39;hello&#39;, url: &#39;https://example.com/hello.png&#39; }],
+});
+</code></pre>
+<p>API читання (потрібні <code>DASHBOARD_CHAT</code> або <code>DASHBOARD_CHAT_INCOMING</code>):</p>
+<ul>
+<li><code>listChatBadges()</code></li>
+<li><code>listChatEmotes()</code></li>
+<li><code>listPlatforms()</code></li>
+</ul>
+<h2>Відправка / вхідний чат</h2>
+<p><strong>Відправка (composer):</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
+  // send text to your platform API
+});
+dashboard.offChatSend();
+</code></pre>
+<p><strong>Вхідні рядки:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
+<pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
+  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+});
+dashboard.offChatMessage();
+</code></pre>
+<h2>Вхідні події — <code>onRecord</code></h2>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_EVENTS_INCOMING</code></p>
+<p>Підписка на нові записи у віджеті останніх подій. Payload містить збережений <code>record</code> (з системним <code>attach</code> для спрацьованих оверлеїв, звуків, хоткеїв і таймера), користувача, <code>triggers</code>, використані для матчингу, та <code>sourceAddonId</code>.</p>
+<p>На відміну від чату, аддон-джерело також отримує свої записи — зручно перевіряти результат матчингу після <code>dashboard.addRecord</code>.</p>
+<pre><code class="language-js">dashboard.onRecord(payload =&gt; {
+  console.log(payload.record.type, payload.record.attach, payload.triggers);
+});
+dashboard.offRecord();
+</code></pre>
+<h2>Тригери оверлею — <code>registerTriggers</code></h2>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_EVENTS</code></p>
+<p>Реєструє типи подій, які користувач може прив&#39;язати до оверлеїв у налаштуваннях. Передавайте відповідний <code>trigger</code> в опціях <code>addRecord</code>.</p>
+<pre><code class="language-js">await dashboard.registerTriggers([
+  {
+    type: &#39;follow&#39;,
+    label: { en: &#39;New follower&#39;, ru: &#39;Новый фолловер&#39; },
+  },
+  {
+    type: &#39;custom&#39;,
+    key: &#39;bits&#39;,
+    label: { en: &#39;Cheer (bits)&#39; },
+    valueType: &#39;number&#39;,
+    valueMatch: &#39;minimum&#39;,
+    valueHint: { en: &#39;Minimum bits&#39; },
+  },
+]);
+</code></pre>
+<h3>Поля опцій тригера</h3>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>donation</code>, <code>subscribe</code>, <code>subgift</code>, <code>follow</code>, <code>custom</code></td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>Фіксований дискримінатор (<code>bits</code>, <code>redeems</code>, …)</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>Локалізована назва в налаштуваннях оверлею</td>
+</tr>
+<tr>
+<td><code>valueType</code></td>
+<td><code>text</code>, <code>number</code>, <code>select</code>, <code>dynamic</code></td>
+</tr>
+<tr>
+<td><code>valueOptions</code></td>
+<td>Для <code>select</code></td>
+</tr>
+<tr>
+<td><code>valueProvider</code></td>
+<td>Для <code>dynamic</code> — обробляйте події <code>overlayTriggerValue:{provider}:list|create|release</code></td>
+</tr>
+<tr>
+<td><code>valueMatch</code></td>
+<td><code>exact</code> (за замовчуванням) або <code>minimum</code></td>
+</tr>
+<tr>
+<td><code>keyOptions</code> / <code>keyLabel</code></td>
+<td>Ключі, що обирає користувач (наприклад, валюта)</td>
+</tr>
+</tbody></table>
+<h3>Події dynamic provider</h3>
+<pre><code class="language-js">events.On(&#39;overlayTriggerValue:rewards:list&#39;, async () =&gt; ({
+  success: true,
+  items: [{ id: &#39;abc&#39;, label: &#39;My reward&#39;, meta: &#39;100&#39; }],
+}));
+
+events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context }) =&gt; ({
+  success: true,
+  valueId: &#39;abc&#39;,
+  label: title,
+  notify: {
+    variant: &#39;success&#39;,
+    title: { uk: &#39;Нагороду створено&#39; },
+    message: { uk: `Вартість: ${context?.cost}` },
+  },
+}));
+</code></pre>
+<p>У відповідях можна передати <code>notify</code> — модальне вікно в налаштуваннях (<code>variant</code>: <code>success</code> | <code>error</code> | <code>info</code>; <code>title?</code>, <code>message</code>).</p>
+<h3>Прив&#39;язки тригерів після збереження налаштувань</h3>
+<p>Коли збережені правила для вашого аддона змінюються, main process викликає:</p>
+<pre><code class="language-js">events.On(&#39;triggers:applied-changed&#39;, ({ previous, current }) =&gt; {
+  // previous / current групують правила за системами:
+  // overlay, timer, game, gameInput, sounds, hotkeys
+});
+</code></pre>
+<p>Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив&#39;язок.</p>
+<p>Повний контракт — у JSDoc <code>registerTriggers</code> у згенерованих типах.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

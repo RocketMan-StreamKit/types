@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API overview — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html" class="is-active">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>API overview</h1>
+<p>All APIs are <strong>global</strong> in the integration worker VM. Typings ship in the npm package <code>@rocketman-streamkit/types</code> (<code>addon.d.ts</code>).</p>
+<h2>Globals</h2>
+<table>
+<thead>
+<tr>
+<th>Global</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>isDeveloperMode</code></td>
+<td><code>true</code> in dev builds or when user enables Developer mode</td>
+</tr>
+<tr>
+<td><code>LANG</code></td>
+<td><code>current</code> (<code>en</code> / <code>ru</code> / <code>uk</code>), <code>onChangeLanguage(cb)</code> — app UI locale bridge</td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td><code>list</code>, <code>has(permission)</code></td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>Instance metadata: <code>id</code>, <code>name</code>, <code>permissions</code>, <code>path</code>, <code>token</code>, …</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td><code>On(name, handler)</code> — bind HTTP/Socket.IO callbacks</td>
+</tr>
+<tr>
+<td><code>network</code></td>
+<td>HTTP client, inbound routes, WebSocket, Socket.IO</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td><code>openUrl</code>, <code>restart</code>, <code>config.*</code></td>
+</tr>
+<tr>
+<td><code>addons</code></td>
+<td><code>request</code>, <code>onRequest</code>, <code>offRequest</code> — addon-to-addon RPC</td>
+</tr>
+<tr>
+<td><code>dashboard</code></td>
+<td>Events widget, chat, platforms, overlay triggers</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>Main window status bar</td>
+</tr>
+<tr>
+<td><code>notify</code></td>
+<td>Title-bar notification center</td>
+</tr>
+<tr>
+<td><code>storage</code></td>
+<td>Private JSON file in install folder</td>
+</tr>
+<tr>
+<td><code>ui.auth</code></td>
+<td>OAuth success/fail redirect URLs</td>
+</tr>
+<tr>
+<td><code>crypto</code></td>
+<td><code>createPkce</code>, <code>verifyRsaSha256</code></td>
+</tr>
+<tr>
+<td><code>console</code></td>
+<td>Prefixed logging</td>
+</tr>
+<tr>
+<td><code>setTimeout</code> / <code>setInterval</code> / <code>clearTimeout</code> / <code>clearInterval</code></td>
+<td>Clamped timers with error isolation</td>
+</tr>
+<tr>
+<td><code>sleep(ms)</code></td>
+<td>Promise delay (max 60 s)</td>
+</tr>
+<tr>
+<td><code>random</code></td>
+<td><code>number(min, max)</code>, <code>id()</code></td>
+</tr>
+<tr>
+<td><code>URL</code>, <code>URLSearchParams</code></td>
+<td>Sandbox-safe URL helpers</td>
+</tr>
+<tr>
+<td><code>GenerateConfig(schema)</code></td>
+<td>Register settings schema</td>
+</tr>
+<tr>
+<td><code>require(name)</code></td>
+<td>Node require — <strong>ROOT only</strong></td>
+</tr>
+</tbody></table>
+<h2>Documentation map</h2>
+<ul>
+<li><a href="./api-events.html">events</a></li>
+<li><a href="./api-network.html">network</a></li>
+<li><a href="./api-config-storage.html">api.config &amp; storage</a></li>
+<li><a href="./api-addons-rpc.html">addons RPC</a></li>
+<li><a href="./api-dashboard.html">dashboard</a></li>
+<li><a href="./api-status-notify-ui.html">status, notify, ui</a></li>
+<li><a href="./api-utilities.html">Utilities</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

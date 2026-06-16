@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аддоны приложений — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html" class="is-active">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Аддоны приложений</h1>
+<p>Приложения — веб-UI, открываемые из <strong>главного окна</strong> в отдельном изолированном <code>BrowserWindow</code> (без Node integration, без preload).</p>
+<h2>Манифест</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>application</code></td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>HTML-файл входа</td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>application</code> (обязателен)</td>
+</tr>
+<tr>
+<td><code>web_contents</code></td>
+<td>Дополнительные ресурсы</td>
+</tr>
+</tbody></table>
+<h2>URL запуска</h2>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
+</code></pre>
+<p>Тот же статический маршрут, что у виджетов. Id окна: <code>addon-app:{addonId}</code>.</p>
+<h2>Статическое приложение (без воркера)</h2>
+<p>Только <code>WEB_CONTENT</code> — HTML/JS/CSS в папке установки.</p>
+<h2>Полное приложение (с воркером)</h2>
+<p>Воркер предоставляет API-эндпоинты для страницы. Проверяйте <code>query.token === data.token</code> на приватных маршрутах (как у виджетов).</p>
+<p>Типичные эндпоинты:</p>
+<ul>
+<li><code>GET params</code> — настройки для страницы</li>
+<li><code>GET state</code> — текущее состояние</li>
+<li><code>POST …</code> — действия пользователя</li>
+</ul>
+<h2>UI главного окна</h2>
+<p>Когда есть хотя бы один <strong>включённый</strong> аддон приложения с валидным <code>web</code>, в главном окне показывается раздел <strong>Приложения</strong>. Пользователь выбирает пункт; главный процесс открывает или фокусирует изолированное окно через IPC.</p>
+<p>Список обновляется при установке/включении/отключении/удалении.</p>
+<h2>UI настроек</h2>
+<p><strong>Настройки → Приложения</strong>: <code>AddonsCategoryBlock</code> с <code>type=&quot;application&quot;</code> — тот же поток установки/включения/настроек, что и у других категорий.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ігрові інтеграції — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html" class="is-active">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Ігрові інтеграції</h1>
+<p><code>manifest.type</code> має бути <code>game</code>. Такі аддони запускають worker і пов’язують події стріму з ефектами в грі.</p>
+<h2>Приклад manifest</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: { &quot;en&quot;: &quot;GTA V integration&quot;, &quot;uk&quot;: &quot;Інтеграція GTA V&quot; },
+  &quot;description&quot;: { &quot;en&quot;: &quot;In-game effects from viewers.&quot;, &quot;uk&quot;: &quot;Внутрішньоігрові ефекти від глядачів.&quot; },
+  &quot;type&quot;: &quot;game&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;author&quot;: &quot;Your Name&quot;,
+  &quot;icon&quot;: &quot;logo.png&quot;,
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;]
+}
+</code></pre>
+<h2>Реєстрація внутрішньоігрових дій</h2>
+<p>Викличте один раз під час завантаження аддона:</p>
+<pre><code class="language-js">await game.registerInputTriggers([
+  { id: &#39;spawn_car&#39;, label: { en: &#39;Spawn car&#39;, uk: &#39;Заспавнити авто&#39; } },
+  { id: &#39;explosion&#39;, label: { en: &#39;Explosion&#39;, uk: &#39;Вибух&#39; } },
+]);
+
+events.On(&#39;gameInputTrigger&#39;, ({ actionId, trigger, record, user }) =&gt; {
+  if (actionId === &#39;spawn_car&#39;) {
+    // ефект у грі
+  }
+});
+</code></pre>
+<p>Користувач прив’язує події дашборду до дій у <strong>Налаштування → Ігрові інтеграції</strong>.</p>
+<h2>Опційні тригери для оверлеїв</h2>
+<p>З правом <code>DASHBOARD_EVENTS</code> можна викликати <code>dashboard.registerTriggers()</code> і надсилати події через <code>dashboard.addRecord(..., { trigger })</code>.</p>
+<h2>Поля шляху (<code>folder</code> / <code>file</code>)</h2>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;game_exe&#39;,
+    type: &#39;file&#39;,
+    default: &#39;&#39;,
+    pathPicker: {
+      title: { en: &#39;GTA V executable&#39;, uk: &#39;Виконуваний файл GTA V&#39; },
+      filename: &#39;GTAV.exe&#39;,
+      filters: [{ name: &#39;Executable&#39;, extensions: [&#39;exe&#39;] }],
+    },
+    editor: { label: { en: &#39;Game executable&#39;, uk: &#39;Файл гри&#39; }, required: true },
+  },
+]);
+</code></pre>
+<p>Див. також: <a href="./api-dashboard.html">API dashboard</a>, <a href="./config.html">Схема конфігурації</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

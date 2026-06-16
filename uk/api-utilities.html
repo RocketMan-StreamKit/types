@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Утиліти — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html" class="is-active">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Утиліти</h1>
+<h2><code>isDeveloperMode</code></h2>
+<p><code>true</code>, коли застосунок запущено без упаковки (dev-збірка) або користувач увімкнув <strong>Developer mode</strong> в налаштуваннях. Використовуйте для додаткового логування або debug-ендпоінтів; зберігайте звичайну поведінку, коли <code>false</code>. Зміна налаштування потребує перезапуску застосунку/worker.</p>
+<pre><code class="language-js">if (isDeveloperMode) {
+  console.log(&#39;Debug info&#39;, params);
+}
+</code></pre>
+<h2><code>console</code></h2>
+<p><code>log</code>, <code>error</code>, <code>warn</code>, <code>info</code> — з префіксом <code>[Addon {id}]</code>.</p>
+<h2>Таймери</h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Примітки</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>setTimeout(fn, delay, ...args)</code></td>
+<td>Затримка обмежена макс. 60 000 мс; помилки перехоплюються</td>
+</tr>
+<tr>
+<td><code>setInterval(fn, interval, ...args)</code></td>
+<td>Інтервал обмежений 50–60 000 мс</td>
+</tr>
+<tr>
+<td><code>clearTimeout</code> / <code>clearInterval</code></td>
+<td>Стандартні</td>
+</tr>
+<tr>
+<td><code>sleep(ms)</code></td>
+<td>Promise; макс. 60 000 мс</td>
+</tr>
+</tbody></table>
+<h2><code>random</code></h2>
+<pre><code class="language-js">const n = random.number(1, 6);
+const id = random.id();
+</code></pre>
+<h2><code>crypto</code></h2>
+<pre><code class="language-js">const { verifier, challenge } = crypto.createPkce();
+
+const ok = crypto.verifyRsaSha256(publicKeyPem, message, signatureBase64);
+</code></pre>
+<h2><code>URL</code> і <code>URLSearchParams</code></h2>
+<p>Безпечні для пісочниці реалізації для розбору та побудови URL у коді аддона.</p>
+<h2><code>require(name)</code></h2>
+<p>Доступно лише з дозволом <code>ROOT</code>. Інакше кидає виняток.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Публікація та релізи — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html" class="is-active">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Публікація та релізи</h1>
+<h2>Репозиторій і ID аддона</h2>
+<p>Розміщуйте аддон у <strong>публічному GitHub-репозиторії</strong>. Поле <code>id</code> у маніфесті має збігатися з шляхом репозиторію на GitHub:</p>
+<table>
+<thead>
+<tr>
+<th>GitHub-репозиторій</th>
+<th><code>id</code> у manifest</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>https://github.com/MyOrg/my-stream-addon</code></td>
+<td><code>&quot;MyOrg/my-stream-addon&quot;</code></td>
+</tr>
+<tr>
+<td><code>https://github.com/jane/widget-panel</code></td>
+<td><code>&quot;jane/widget-panel&quot;</code></td>
+</tr>
+</tbody></table>
+<p>Формат: <strong><code>ORG/REPO</code></strong> — організація або користувач GitHub, слеш, назва репозиторію.</p>
+<p><code>id</code> не змінюється між релізами. Він використовується в:</p>
+<ul>
+<li>HTTP-маршрутах (<code>/addon/{id}/…</code>, <code>/addon_static/{id}/…</code>)</li>
+<li>посиланнях <code>depends_on</code> між аддонами</li>
+<li>перевірці оновлень (catalog API і GitHub releases)</li>
+</ul>
+<p>Не змінюйте <code>id</code> після першого публічного релізу, якщо лише не публікуєте новий аддон.</p>
+<h2>Структура GitHub-релізу</h2>
+<p>Кожну версію публікуйте як <strong>GitHub Release</strong>. До релізу мають бути додані файли:</p>
+<table>
+<thead>
+<tr>
+<th>Файл релізу</th>
+<th>Обов&#39;язковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>main.zip</code></td>
+<td>Так</td>
+<td>Архів зі <strong>всіма</strong> файлами аддона</td>
+</tr>
+<tr>
+<td><code>manifest.json</code></td>
+<td>Так</td>
+<td>Окрема копія маніфесту (також всередині <code>main.zip</code>)</td>
+</tr>
+<tr>
+<td><code>logo.png</code> або <code>logo.svg</code></td>
+<td>Так</td>
+<td>Іконка з поля <code>icon</code> маніфесту (також всередині <code>main.zip</code>)</td>
+</tr>
+</tbody></table>
+<p>Рекомендований вміст <code>main.zip</code>:</p>
+<pre><code>main.zip
+├── manifest.json
+├── index.js              # якщо є worker
+├── logo.png              # або logo.svg
+├── index.html            # якщо використовується web UI
+└── ...                   # інші ресурси
+</code></pre>
+<p>Бекенд каталогу StreamKit+ і перевірка оновлень у застосунку читають <strong><code>manifest.json</code> з assets релізу</strong>, щоб визначити опубліковану версію. Поле <code>version</code> має збігатися з тегом релізу (наприклад тег <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>).</p>
+<h2>Чеклист перед публікацією</h2>
+<ol>
+<li><code>id</code> у <code>manifest.json</code> дорівнює <code>ORG/REPO</code> вашого GitHub-репозиторію.</li>
+<li><code>version</code> збігається з тегом GitHub-релізу.</li>
+<li>У релізі є <code>main.zip</code>, <code>manifest.json</code> і <code>logo.png</code> / <code>logo.svg</code>.</li>
+<li>У <code>main.zip</code> є всі файли, необхідні для роботи аддона (включно з <code>manifest.json</code> і іконкою).</li>
+<li>Дозволи в маніфесті відповідають реальній поведінці аддона.</li>
+</ol>
+<h2>Пов&#39;язані матеріали</h2>
+<ul>
+<li><a href="./manifest.html">manifest.json</a> — опис полів</li>
+<li><a href="./getting-started.html">Початок роботи</a> — структура проєкту під час розробки</li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Локализация — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html" class="is-active">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Локализация</h1>
+<p>Интеграционные аддоны работают в изолированном воркере и <strong>не должны</strong> использовать языковую систему приложения StreamKit+ (<code>src/shared/lang/</code>). Не используйте ключи переводов, не импортируйте языковые файлы приложения и не копируйте из них строки.</p>
+<h2>Локаль UI приложения (<code>LANG</code>)</h2>
+<p>Песочница предоставляет доступ только для чтения к <strong>локали UI</strong> пользователя в настройках:</p>
+<table>
+<thead>
+<tr>
+<th>Член</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LANG.current</code></td>
+<td><code>&#39;en&#39;</code>, <code>&#39;ru&#39;</code> или <code>&#39;uk&#39;</code> — соответствует языку приложения</td>
+</tr>
+<tr>
+<td><code>LANG.onChangeLanguage(cb)</code></td>
+<td>Вызывается при смене языка; возвращает <code>{ Destroy }</code> для отписки</td>
+</tr>
+</tbody></table>
+<p>Разрешение не требуется. Используйте <code>LANG.current</code>, чтобы выбрать нужную строку из собственных объектов по локалям (см. ниже). Это <strong>не</strong> даёт доступа к ключам переводов или JSON-файлам приложения.</p>
+<pre><code class="language-js">const labels = {
+  en: &#39;Connected&#39;,
+  ru: &#39;Подключено&#39;,
+  uk: &#39;Підключено&#39;,
+};
+
+status.Update({ current: &#39;online&#39;, message: { [LANG.current]: labels[LANG.current] } });
+
+const sub = LANG.onChangeLanguage((lang) =&gt; {
+  console.log(&#39;UI locale:&#39;, lang);
+});
+// позже: sub.Destroy();
+</code></pre>
+<h2>Объекты по локалям</h2>
+<p>Пользовательский текст передавайте объектами с ключами локали:</p>
+<pre><code class="language-js">{
+  en: &#39;Connected&#39;,
+  ru: &#39;Подключено&#39;,
+  uk: &#39;Підключено&#39;,
+}
+</code></pre>
+<p><code>en</code> обязателен там, где API ожидает <code>DashboardLocalizedText</code>. UI подставляет <code>en</code>, если локаль пользователя отсутствует.</p>
+<h2>Где это применяется</h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Локализуемые поля</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manifest.name</code> / <code>description</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>GenerateConfig</code> — <code>label</code>, <code>description</code>, <code>placeholder</code> в <code>editor</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>status.Update({ message })</code></td>
+<td><code>en</code>, <code>ru</code>, <code>uk</code></td>
+</tr>
+<tr>
+<td><code>notify.Send({ title, message })</code></td>
+<td>по локалям или обычная строка</td>
+</tr>
+<tr>
+<td><code>dashboard.registerPlatform({ name })</code></td>
+<td>по локалям</td>
+</tr>
+<tr>
+<td><code>dashboard.addRecord({ message })</code></td>
+<td>строка, объект по локалям или кортеж <code>LangData</code> приложения*</td>
+</tr>
+<tr>
+<td><code>dashboard.addChatMessage({ content })</code></td>
+<td>как у <code>message</code></td>
+</tr>
+<tr>
+<td>подписи <code>dashboard.registerTriggers</code></td>
+<td>по локалям</td>
+</tr>
+</tbody></table>
+<p>* Кортежи <code>LangData</code> в сообщениях дашборда разрешаются <strong>UI приложения</strong>, а не файлами переводов аддона. В сторонних аддонах предпочтительны явные объекты <code>{ en, ru?, uk? }</code> для самодостаточной локализации.</p>
+<h2>Обычные строки</h2>
+<p>Многие API также принимают простую <code>string</code>, если несколько локалей не нужны.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

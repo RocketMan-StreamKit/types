@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Віджет-аддони — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html" class="is-active">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Віджет-аддони</h1>
+<p>Віджети — <strong>постійні</strong> web-сторінки (алерти, цілі, чат-оверлеї). Вони не прив&#39;язані до черги тригерів оверлею.</p>
+<h2>Manifest</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>widget</code></td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>HTML entry file</td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>widget</code> (обов&#39;язково)</td>
+</tr>
+<tr>
+<td><code>web_contents</code></td>
+<td>Додаткові ресурси</td>
+</tr>
+</tbody></table>
+<h2>Прямий URL</h2>
+<p>Завжди доступний, коли увімкнено:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
+</code></pre>
+<p>Показується в налаштуваннях як <strong>Widget URL</strong> для OBS Browser Source. Query-параметр <code>token</code> — frontend access token аддона.</p>
+<h2>Статичний віджет (без worker)</h2>
+<p>Лише <code>manifest.json</code>, іконка, HTML і <code>web_contents</code>. Дозвіл: <code>WEB_CONTENT</code>.</p>
+<h2>Повний віджет (worker)</h2>
+<p>Worker надає HTTP або Socket.IO для live-даних; web-сторінка отримує дані з <code>/addon/{id}/…</code> або простору імен Socket.IO.</p>
+<p>Захищайте приватні ендпоінти:</p>
+<pre><code class="language-js">if (query.token !== data.token) {
+  return { error: &#39;Unauthorized&#39; };
+}
+</code></pre>
+<h2>Відображення в оболонці оверлею</h2>
+<p><code>widgets[]</code> в конфігурації застосунку для кожного встановленого віджета:</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>display.app</code></td>
+<td>Вбудовування у прозоре вікно оверлей-застосунку</td>
+</tr>
+<tr>
+<td><code>display.web</code></td>
+<td>Вбудовування в OBS overlay browser source shell</td>
+</tr>
+</tbody></table>
+<p>Прямий URL працює незалежно від прапорців display.</p>
+<p>Live sync: простір імен Socket.IO <code>/overlay</code>, подія <code>widget:sync</code> з <code>{ widgets: [{ widgetId, url }] }</code>.</p>
+<p>Snapshot: <code>GET /widget/snapshot?display=app|web&amp;token=</code></p>
+<h2>UI налаштувань</h2>
+<p><strong>Settings → Widgets</strong>: встановлення, увімкнення, поля <code>GenerateConfig</code>, прапорці display, копіювання widget URL.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
