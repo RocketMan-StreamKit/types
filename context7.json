@@ -1,0 +1,19 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "StreamKit+ Integration Addons",
+  "description": "Sandbox API, manifest format, permissions, and addon categories for StreamKit+ integration addons. Worker code runs in an isolated VM with global APIs (network, events, dashboard, api, …) — no SDK imports.",
+  "folders": ["en"],
+  "excludeFiles": [],
+  "rules": [
+    "Addon worker code uses global sandbox APIs only — never import StreamKit+ SDK or main-app modules inside the VM.",
+    "Never use app translation keys or LangData tuples in addon code; use plain strings or { en, ru?, uk? } objects.",
+    "Never embed client_secret or server-only credentials in addon code; exchange OAuth codes via network.request.post to an HTTPS proxy.",
+    "Request minimal manifest permissions; avoid ROOT if possible.",
+    "Validate query.token === data.token on HTTP endpoints meant only for embedded web pages (widget/application/overlay).",
+    "Build TypeScript to index.js before install; the worker executes index.js only.",
+    "Set manifest id to ORG/REPO matching the GitHub repository path.",
+    "Keep initial index.js load synchronous work under 5 seconds; defer heavy work to setTimeout, setInterval, or async handlers.",
+    "Integration addons live in separate repositories — do not add addon-specific logic under the main app src/ tree.",
+    "Use @rocketman-streamkit/types for TypeScript; do not add @types/node to addon projects."
+  ]
+}
