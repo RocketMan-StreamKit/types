@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>events — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html" class="is-active">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>events</h1>
+<p>Внутрішня шина подій аддона з&#39;єднує вхідні HTTP- і Socket.IO-обробники з вашим кодом.</p>
+<h2><code>events.On(name, handler)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Аргумент</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Має збігатися з <code>callbackName</code> з <code>network.endpoints.create</code> або <code>network.socketEndpoints.create</code></td>
+</tr>
+<tr>
+<td><code>handler</code></td>
+<td>Async або sync функція; значення повернення стає тілом HTTP-відповіді (для HTTP-маршрутів)</td>
+</tr>
+</tbody></table>
+<p>HTTP-обробники отримують:</p>
+<pre><code class="language-js">{ query, params, body, headers?, rawBody? }
+</code></pre>
+<p><code>headers</code> і <code>rawBody</code> доступні на POST-маршрутах (корисно для перевірки підпису webhook).</p>
+<p>Повертає підписку <code>{ id, Destroy() }</code>.</p>
+<h2>Приклад: HTTP webhook</h2>
+<pre><code class="language-js">await network.endpoints.create(&#39;webhook&#39;, &#39;POST&#39;, &#39;onWebhook&#39;);
+
+events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
+  console.log(body);
+  return { received: true };
+});
+</code></pre>
+<p>URL клієнта:</p>
+<pre><code>POST http://localhost:{port}/addon/my_addon/webhook
+</code></pre>
+<h2>Приклад: повернення redirect (OAuth)</h2>
+<p>Обробники можуть повертати об&#39;єкти, які розуміє main process:</p>
+<pre><code class="language-js">return { redirect: ui.auth.generateSuccess() };
+</code></pre>
+<h2>Обробники Socket.IO</h2>
+<p>При використанні <code>network.socketEndpoints.create</code> обробник отримує:</p>
+<pre><code class="language-js">{
+  type: &#39;connect&#39; | &#39;disconnect&#39; | &#39;event&#39;,
+  socketId,
+  event?,      // for type === &#39;event&#39;
+  data?,       // client payload
+}
+</code></pre>
+<p>Для <code>type === &#39;event&#39;</code> значення повернення, відмінне від <code>undefined</code>, надсилається клієнту як <code>reply</code>.</p>
+<h2>Життєвий цикл</h2>
+<p>Скасуйте реєстрацію через <code>subscription.Destroy()</code> або при перезапуску worker.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

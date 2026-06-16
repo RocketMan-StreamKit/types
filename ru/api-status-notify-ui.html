@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>status, notify, ui — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html" class="is-active">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>status, notify, ui</h1>
+<h2>status</h2>
+<p><strong>Требуется:</strong> <code>STATUS</code></p>
+<pre><code class="language-js">status.Update({
+  current: &#39;online&#39;, // offline | connecting | online | error
+  message: { en: &#39;Connected&#39;, ru: &#39;Подключено&#39;, uk: &#39;Підключено&#39; },
+});
+
+status.OnClick(() =&gt; {
+  api.openUrl(&#39;https://example.com/dashboard&#39;);
+});
+</code></pre>
+<p>Кликабельность отражается в строке состояния главного окна, когда зарегистрирован <code>OnClick</code>.</p>
+<h2>notify</h2>
+<p><strong>Требуется:</strong> <code>NOTIFY</code></p>
+<pre><code class="language-js">notify.Send({
+  id: `${data.id}_status`,
+  type: &#39;success&#39;, // success | info | warning | error
+  title: { en: &#39;My Addon&#39; },
+  message: { en: &#39;Connection restored&#39; },
+  temp: true, // сбрасывается при следующем запуске приложения
+});
+</code></pre>
+<p>Если задан <code>id</code>, предыдущее уведомление с тем же id заменяется. Используйте стабильные id для обновлений состояния соединения.</p>
+<pre><code class="language-js">notify.Remove(`${data.id}_status`);
+</code></pre>
+<p>Удаляет уведомление только если его создал этот аддон. Уведомления других аддонов и основного процесса игнорируются.</p>
+<h2>ui.auth</h2>
+<p>Страницы результата OAuth на локальном веб-сервере:</p>
+<pre><code class="language-js">ui.auth.generateSuccess(&#39;Account linked&#39;);
+ui.auth.generateFail(&#39;Access denied&#39;);
+</code></pre>
+<p>Возврат из HTTP-обработчика:</p>
+<pre><code class="language-js">return { redirect: ui.auth.generateSuccess() };
+</code></pre>
+<p>Опциональный query-параметр <code>message</code> показывается на странице.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

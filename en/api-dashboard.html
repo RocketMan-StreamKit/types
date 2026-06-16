@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dashboard — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html" class="is-active">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>dashboard</h1>
+<p>Feeds the <strong>latest-events</strong> widget and <strong>chat</strong> window. Requires <code>DASHBOARD_EVENTS</code> and/or <code>DASHBOARD_CHAT</code> (see each method).</p>
+<h2>Platform registration</h2>
+<p>Call at load time so the UI can resolve platform ids:</p>
+<pre><code class="language-js">await dashboard.registerPlatform({
+  id: &#39;myplatform&#39;,
+  name: { en: &#39;My Platform&#39;, ru: &#39;Моя платформа&#39;, uk: &#39;Моя платформа&#39; },
+});
+</code></pre>
+<p>Use the same <code>id</code> in <code>addRecord</code> / <code>addChatMessage</code> <code>platform</code> field.</p>
+<h2>Users</h2>
+<pre><code class="language-js">await dashboard.upsertUser({
+  id: &#39;user-1&#39;,
+  name: &#39;Viewer&#39;,
+  avatar: &#39;https://example.com/avatar.png&#39;,
+  platform: &#39;myplatform&#39;,
+  color: &#39;#7fff00&#39;,
+  icons: [&#39;badge-vip&#39;], // ids from registerChatBadges
+});
+</code></pre>
+<h2>Events widget — <code>addRecord</code></h2>
+<p><strong>Requires:</strong> <code>DASHBOARD_EVENTS</code></p>
+<pre><code class="language-js">await dashboard.addRecord(
+  {
+    id: random.id(),
+    type: &#39;donation&#39;, // donation | subscribe | follow | custom | timer
+    platform: &#39;myplatform&#39;,
+    amount: [10, &#39;USD&#39;],
+    message: { en: &#39;Thanks!&#39;, ru: &#39;Спасибо!&#39; },
+    from: &#39;user-1&#39;,
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+  { trigger: { type: &#39;donation&#39;, key: &#39;USD&#39;, value: 10 } }, // optional overlay trigger
+);
+</code></pre>
+<p><code>message</code> accepts plain <code>string</code>, <code>{ en, ru?, uk? }</code>, or app <code>LangData</code> tuple.</p>
+<p>Multiple triggers: <code>{ triggers: [...] }</code>.</p>
+<h2>Chat — <code>addChatMessage</code></h2>
+<p><strong>Requires:</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.addChatMessage(
+  {
+    content: &#39;Hello chat!&#39;,
+    platform: &#39;myplatform&#39;,
+    from: &#39;user-1&#39;,
+    emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
+    style: {
+      color: &#39;#7c4dff&#39;,
+      header: { en: &#39;Highlighted&#39;, ru: &#39;Выделено&#39; },
+      icon: &#39;megaphone&#39;,
+    },
+  },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+);
+</code></pre>
+<p><code>content</code> accepts plain <code>string</code> or <code>{ en, ru?, uk? }</code> — not app <code>LangData</code> tuples (addons use their own localized objects).</p>
+<p>Optional <code>style</code> adds a colored border and optional header bar:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>color</code></td>
+<td>Border and header background (CSS color, e.g. <code>#ff9800</code>)</td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>Header text (<code>string</code> or <code>{ en, ru?, uk? }</code>); omit for border only</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>exclamation</code>, <code>question</code>, <code>megaphone</code>, or <code>list</code></td>
+</tr>
+</tbody></table>
+<h2>System chat — <code>addSystemChatMessage</code></h2>
+<p><strong>Requires:</strong> <code>DASHBOARD_CHAT</code></p>
+<p>System lines are not from platform users. The UI shows this addon&#39;s icon. Optional <code>sender</code> is shown before the message text.</p>
+<pre><code class="language-js">await dashboard.addSystemChatMessage({
+  content: { en: &#39;Connected to chat&#39;, ru: &#39;Подключено к чату&#39; },
+  sender: { en: &#39;My addon&#39; },
+  style: {
+    color: &#39;#4caf50&#39;,
+    header: { en: &#39;Notice&#39; },
+    icon: &#39;exclamation&#39;,
+  },
+});
+</code></pre>
+<p><code>content</code>, <code>sender</code>, and <code>style.header</code> accept <code>string</code> or <code>{ en, ru?, uk? }</code> only.</p>
+<h2>Chat badges and emotes</h2>
+<pre><code class="language-js">await dashboard.registerChatBadges([
+  { id: &#39;badge-vip&#39;, url: &#39;https://example.com/vip.png&#39;, title: &#39;VIP&#39; },
+]);
+
+await dashboard.registerChatEmotes({
+  platforms: [&#39;myplatform&#39;],
+  emotes: [{ word: &#39;hello&#39;, url: &#39;https://example.com/hello.png&#39; }],
+});
+</code></pre>
+<p>Read APIs (require <code>DASHBOARD_CHAT</code> or <code>DASHBOARD_CHAT_INCOMING</code>):</p>
+<ul>
+<li><code>listChatBadges()</code></li>
+<li><code>listChatEmotes()</code></li>
+<li><code>listPlatforms()</code></li>
+</ul>
+<h2>Chat send / incoming</h2>
+<p><strong>Send (composer):</strong> <code>DASHBOARD_CHAT</code></p>
+<pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
+  // send text to your platform API
+});
+dashboard.offChatSend();
+</code></pre>
+<p><strong>Incoming lines:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
+<pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
+  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+});
+dashboard.offChatMessage();
+</code></pre>
+<h2>Events incoming — <code>onRecord</code></h2>
+<p><strong>Requires:</strong> <code>DASHBOARD_EVENTS_INCOMING</code></p>
+<p>Subscribe to new records in the latest-events dashboard widget. The payload includes the stored <code>record</code> (with system <code>attach</code> entries for matched overlays, sounds, hotkeys, and timers), resolved user, <code>triggers</code> used for matching, and <code>sourceAddonId</code>.</p>
+<p>Unlike chat incoming, the source addon also receives its own records — useful to inspect match results after <code>dashboard.addRecord</code>.</p>
+<pre><code class="language-js">dashboard.onRecord(payload =&gt; {
+  console.log(payload.record.type, payload.record.attach, payload.triggers);
+});
+dashboard.offRecord();
+</code></pre>
+<h2>Overlay triggers — <code>registerTriggers</code></h2>
+<p><strong>Requires:</strong> <code>DASHBOARD_EVENTS</code></p>
+<p>Registers event types users can bind to overlays in settings. Pass matching <code>trigger</code> in <code>addRecord</code> options.</p>
+<pre><code class="language-js">await dashboard.registerTriggers([
+  {
+    type: &#39;follow&#39;,
+    label: { en: &#39;New follower&#39;, ru: &#39;Новый фолловер&#39; },
+  },
+  {
+    type: &#39;custom&#39;,
+    key: &#39;bits&#39;,
+    label: { en: &#39;Cheer (bits)&#39; },
+    valueType: &#39;number&#39;,
+    valueMatch: &#39;minimum&#39;,
+    valueHint: { en: &#39;Minimum bits&#39; },
+  },
+]);
+</code></pre>
+<h3>Trigger option fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>donation</code>, <code>subscribe</code>, <code>subgift</code>, <code>follow</code>, <code>custom</code></td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>Fixed discriminator (<code>bits</code>, <code>redeems</code>, …)</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>Localized name in overlay settings</td>
+</tr>
+<tr>
+<td><code>valueType</code></td>
+<td><code>text</code>, <code>number</code>, <code>select</code>, <code>dynamic</code></td>
+</tr>
+<tr>
+<td><code>valueOptions</code></td>
+<td>For <code>select</code></td>
+</tr>
+<tr>
+<td><code>valueProvider</code></td>
+<td>For <code>dynamic</code> — handle <code>overlayTriggerValue:{provider}:list|create|release</code> events</td>
+</tr>
+<tr>
+<td><code>valueMatch</code></td>
+<td><code>exact</code> (default) or <code>minimum</code></td>
+</tr>
+<tr>
+<td><code>keyOptions</code> / <code>keyLabel</code></td>
+<td>User-selectable keys (e.g. currency)</td>
+</tr>
+</tbody></table>
+<h3>Dynamic provider events</h3>
+<pre><code class="language-js">events.On(&#39;overlayTriggerValue:rewards:list&#39;, async () =&gt; ({
+  success: true,
+  items: [{ id: &#39;abc&#39;, label: &#39;My reward&#39;, meta: &#39;100&#39; }],
+}));
+
+events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context }) =&gt; ({
+  success: true,
+  valueId: &#39;abc&#39;,
+  label: title,
+  notify: {
+    variant: &#39;success&#39;,
+    title: { en: &#39;Reward created&#39; },
+    message: { en: `Cost: ${context?.cost}` },
+  },
+}));
+</code></pre>
+<p>Responses may include optional <code>notify</code> — a modal in settings (<code>variant</code>: <code>success</code> | <code>error</code> | <code>info</code>; <code>title?</code>, <code>message</code>).</p>
+<h3>Trigger bindings after settings save</h3>
+<p>When saved trigger rules for your addon change, the main process fires:</p>
+<pre><code class="language-js">events.On(&#39;triggers:applied-changed&#39;, ({ previous, current }) =&gt; {
+  // previous / current group rules by system:
+  // overlay, timer, game, gameInput, sounds, hotkeys
+});
+</code></pre>
+<p>Use this to release internal resources when bindings are removed.</p>
+<p>See JSDoc on <code>registerTriggers</code> in generated typings for full contract.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

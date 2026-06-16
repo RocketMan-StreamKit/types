@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permissions — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html" class="is-active">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Permissions</h1>
+<p>Permissions are declared in <code>manifest.json</code> and fixed for the lifetime of the worker. The user must approve them at install time.</p>
+<p>Check at runtime with <code>permissions.has(AddonsPermission.NAME)</code>. Denied access logs a warning and returns <code>false</code>. <code>ROOT</code> bypasses every individual check.</p>
+<h2>Permission list</h2>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ROOT</code></td>
+<td>Grants all capabilities (development only; avoid in production)</td>
+</tr>
+<tr>
+<td><code>INCREASE_CONFIG_SIZE</code></td>
+<td>Raises per-addon params size limit from 10 KB to 1 MB JSON</td>
+</tr>
+<tr>
+<td><code>CONFIG_READ</code></td>
+<td><code>api.config.getConfig()</code> — read full application config</td>
+</tr>
+<tr>
+<td><code>CONFIG_WRITE</code></td>
+<td><code>api.config.setConfig()</code> — write application config</td>
+</tr>
+<tr>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td><code>api.config.getAddonParams(otherAddonId)</code> — read another addon&#39;s params (sensitive; highlighted in UI)</td>
+</tr>
+<tr>
+<td><code>NETWORK_REQUEST</code></td>
+<td>Outbound HTTP: <code>network.request.get/post/put/delete/postForm</code></td>
+</tr>
+<tr>
+<td><code>NETWORK_WEBSOCKET</code></td>
+<td>Outbound WebSocket: <code>network.websocket.connect</code></td>
+</tr>
+<tr>
+<td><code>WEB_END_POINTS</code></td>
+<td>Inbound HTTP routes: <code>network.endpoints.create</code></td>
+</tr>
+<tr>
+<td><code>SOCKET_END_POINTS</code></td>
+<td>Socket.IO namespaces: <code>network.socketEndpoints</code></td>
+</tr>
+<tr>
+<td><code>WEB_CONTENT</code></td>
+<td>Serve <code>manifest.web</code> and <code>web_contents</code> at <code>/addon_static/{id}/</code></td>
+</tr>
+<tr>
+<td><code>STATUS</code></td>
+<td>Status bar: <code>status.Update</code>, <code>status.OnClick</code></td>
+</tr>
+<tr>
+<td><code>NOTIFY</code></td>
+<td>Title-bar notifications: <code>notify.Send</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS</code></td>
+<td>Latest-events widget: <code>dashboard.addRecord</code>, <code>registerTriggers</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT</code></td>
+<td>Chat window output and send: <code>addChatMessage</code>, <code>onChatSend</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT_INCOMING</code></td>
+<td>Subscribe to chat lines: <code>onChatMessage</code> / <code>offChatMessage</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS_INCOMING</code></td>
+<td>Subscribe to event records: <code>onRecord</code> / <code>offRecord</code></td>
+</tr>
+</tbody></table>
+<h2>Example</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
+  console.warn(&#39;Network disabled&#39;);
+  return;
+}
+
+const body = await network.request.get(&#39;https://api.example.com/status&#39;);
+</code></pre>
+<h2>Principle of least privilege</h2>
+<p>Request only permissions your addon uses. For widget/application pages that only need static hosting, <code>WEB_CONTENT</code> alone may be enough. Add <code>WEB_END_POINTS</code> when the worker must expose HTTP APIs to the embedded page.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

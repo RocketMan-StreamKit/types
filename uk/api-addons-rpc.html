@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>addons (RPC) — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html" class="is-active">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>addons (RPC)</h1>
+<p>Комунікація між аддонами, окремо від <code>events</code> (HTTP). Main process маршрутизує запити між <strong>увімкненими</strong> worker.</p>
+<h2><code>addons.request(targetAddonId, method, params?)</code></h2>
+<p>Викликає обробник, зареєстрований в іншому аддоні.</p>
+<pre><code class="language-js">const res = await addons.request(&#39;other_addon&#39;, &#39;getChannelId&#39;, { platform: &#39;example&#39; });
+if (res.success) {
+  console.log(res.result);
+}
+</code></pre>
+<p>Повертає <code>{ success: true, result? }</code> або <code>{ success: false, message? }</code>.</p>
+<h2><code>addons.onRequest(method, handler)</code></h2>
+<p>Надає метод іншим аддонам.</p>
+<pre><code class="language-js">addons.onRequest(&#39;getChannelId&#39;, async ({ fromAddonId, params }) =&gt; {
+  console.log(&#39;Request from&#39;, fromAddonId);
+  return { channelId: &#39;12345&#39; };
+});
+</code></pre>
+<p>Обробник отримує <code>{ fromAddonId, params }</code> і повертає payload відповіді.</p>
+<h2><code>addons.offRequest(method)</code></h2>
+<p>Видаляє раніше зареєстрований обробник.</p>
+<h2>Залежності в маніфесті</h2>
+<p>Використовуйте <code>depends_on: [&quot;other_addon&quot;]</code> в <code>manifest.json</code>, коли ваш аддон потребує, щоб інший аддон був встановлений і увімкнений перед активацією.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

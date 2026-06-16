@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>api.config и storage — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html" class="is-active">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>api.config и storage</h1>
+<h2><code>api.config</code></h2>
+<p>Все методы асинхронные (IPC в главный процесс).</p>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Разрешение</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getParams()</code></td>
+<td>—</td>
+<td>Блок настроек этого аддона</td>
+</tr>
+<tr>
+<td><code>updateParams(data)</code></td>
+<td>—</td>
+<td>Замена params (с лимитом размера)</td>
+</tr>
+<tr>
+<td><code>getConfig()</code></td>
+<td><code>CONFIG_READ</code></td>
+<td>Полный конфиг приложения</td>
+</tr>
+<tr>
+<td><code>setConfig(data)</code></td>
+<td><code>CONFIG_WRITE</code></td>
+<td>Патч конфига приложения</td>
+</tr>
+<tr>
+<td><code>getAddonParams(addonId)</code></td>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td>Params другого аддона</td>
+</tr>
+</tbody></table>
+<h3>Примеры</h3>
+<pre><code class="language-js">const params = await api.config.getParams();
+await api.config.updateParams({ counter: (params.counter || 0) + 1 });
+
+const other = await api.config.getAddonParams(&#39;other_addon&#39;);
+if (other.success) {
+  console.log(other.params);
+}
+</code></pre>
+<p><code>updateParams</code> возвращает <code>{ success: true, params }</code> или <code>{ success: false, message }</code>.</p>
+<h2><code>api.openUrl(url)</code></h2>
+<p>Открывает URL в системном браузере по умолчанию. Специальное разрешение не нужно.</p>
+<h2><code>api.restart()</code></h2>
+<p>Перезапускает процесс воркера этого аддона.</p>
+<p>Не сработает, если аддон <strong>остановлен после повторных падений</strong> — пользователь должен перезапустить его в настройках аддона (↻). См. <a href="./lifecycle.html#%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0-%D0%BE%D1%82-%D1%86%D0%B8%D0%BA%D0%BB%D0%B0-%D0%BF%D0%B0%D0%B4%D0%B5%D0%BD%D0%B8%D0%B9">Жизненный цикл — Защита от цикла падений</a>.</p>
+<h2><code>storage</code></h2>
+<p>Приватный JSON-файл по пути <code>{data.path}/storage_data.json</code>. <strong>Разрешение не требуется.</strong> Не показывается в UI настроек.</p>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Read()</code></td>
+<td>Разбор файла или <code>undefined</code>, если файла нет</td>
+</tr>
+<tr>
+<td><code>Write(data)</code></td>
+<td>Полная замена файла (слияние делайте вручную при необходимости)</td>
+</tr>
+<tr>
+<td><code>Clear()</code></td>
+<td>Удаление файла</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const state = storage.Read() ?? { seen: [] };
+state.seen.push(eventId);
+storage.Write(state);
+</code></pre>
+<p>Значения должны быть JSON-сериализуемыми. Файл удаляется при деинсталляции.</p>
+<p><strong>Отличие от <code>api.config</code>:</strong> <code>storage</code> — для внутреннего состояния рантайма; <code>api.config</code> — пользовательские настройки (и могут появиться в UI настроек, если у полей есть <code>editor</code>).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

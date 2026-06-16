@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>network — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html" class="is-active">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>network</h1>
+<h2>Вхідний HTTP — <code>network.endpoints</code></h2>
+<p><strong>Потрібно:</strong> <code>WEB_END_POINTS</code></p>
+<pre><code class="language-js">await network.endpoints.create(path, method, callbackName);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Аргумент</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>path</code></td>
+<td>Суфікс після <code>/addon/{addonId}/</code></td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td><code>&#39;GET&#39;</code> або <code>&#39;POST&#39;</code></td>
+</tr>
+<tr>
+<td><code>callbackName</code></td>
+<td>Ім&#39;я для <code>events.On</code></td>
+</tr>
+</tbody></table>
+<p>Повертає <code>{ success: true }</code> або <code>{ success: false, message }</code>.</p>
+<h3>Ендпоінт, захищений токеном, для web UI</h3>
+<pre><code class="language-js">events.On(&#39;onParams&#39;, ({ query }) =&gt; {
+  if (query.token !== data.token) {
+    return { success: false, message: &#39;Unauthorized&#39; };
+  }
+  return api.config.getParams();
+});
+</code></pre>
+<h2>Socket.IO — <code>network.socketEndpoints</code></h2>
+<p><strong>Потрібно:</strong> <code>SOCKET_END_POINTS</code></p>
+<pre><code class="language-js">await network.socketEndpoints.create(path, callbackName);
+events.On(callbackName, payload =&gt; { /* see api-events.md */ });
+
+await network.socketEndpoints.emit(path, event, data, socketId?);
+</code></pre>
+<p>Підключення клієнта:</p>
+<pre><code class="language-js">// path: /addon/socket.io
+// namespace: /addon/{addonId}/{path}
+const socket = io(&#39;http://localhost:3000/addon/my_addon/live&#39;, {
+  path: &#39;/addon/socket.io&#39;,
+});
+</code></pre>
+<p>Пропустіть <code>socketId</code> в <code>emit</code> для broadcast.</p>
+<h2>Вихідний HTTP — <code>network.request</code></h2>
+<p><strong>Потрібно:</strong> <code>NETWORK_REQUEST</code></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>get(url, headers?)</code></td>
+<td>GET, відповідь як текст</td>
+</tr>
+<tr>
+<td><code>post(url, body, headers?)</code></td>
+<td>POST JSON (<code>Content-Type: application/json</code>)</td>
+</tr>
+<tr>
+<td><code>put(url, body, headers?)</code></td>
+<td>PUT JSON</td>
+</tr>
+<tr>
+<td><code>delete(url, headers?)</code></td>
+<td>DELETE</td>
+</tr>
+<tr>
+<td><code>postForm(url, fields, headers?)</code></td>
+<td>POST <code>application/x-www-form-urlencoded</code></td>
+</tr>
+</tbody></table>
+<p>Обмеження: 5 одночасних, таймаут 10 с, без приватних хостів, перенаправлення не слідуються.</p>
+<pre><code class="language-js">const text = await network.request.get(&#39;https://api.example.com/v1/me&#39;);
+const created = await network.request.post(&#39;https://api.example.com/v1/items&#39;, { title: &#39;Hello&#39; });
+</code></pre>
+<h2>Вихідний WebSocket — <code>network.websocket</code></h2>
+<p><strong>Потрібно:</strong> <code>NETWORK_WEBSOCKET</code></p>
+<pre><code class="language-js">const ws = await network.websocket.connect(&#39;wss://example.com/socket&#39;, {
+  headers: { Authorization: &#39;Bearer token&#39; },
+  protocols: &#39;json&#39;,
+});
+
+ws.On(&#39;open&#39;, () =&gt; ws.Send({ type: &#39;hello&#39; }));
+ws.On(&#39;message&#39;, data =&gt; console.log(data));
+ws.On(&#39;close&#39;, ({ code, reason }) =&gt; console.log(code, reason));
+ws.On(&#39;error&#39;, err =&gt; console.error(err));
+
+ws.Close();
+ws.Destroy();
+</code></pre>
+<p><code>Send</code> приймає рядок або JSON-серіалізований об&#39;єкт. Максимум 5 одночасних з&#39;єднань.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilities — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html" class="is-active">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Utilities</h1>
+<h2><code>isDeveloperMode</code></h2>
+<p><code>true</code> when the app runs unpackaged (dev build) or the user enabled <strong>Developer mode</strong> in settings. Use for extra logging or debug endpoints; keep normal behaviour when <code>false</code>. Changing the setting requires app/worker restart.</p>
+<pre><code class="language-js">if (isDeveloperMode) {
+  console.log(&#39;Debug info&#39;, params);
+}
+</code></pre>
+<h2><code>console</code></h2>
+<p><code>log</code>, <code>error</code>, <code>warn</code>, <code>info</code> — prefixed with <code>[Addon {id}]</code>.</p>
+<h2>Timers</h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>setTimeout(fn, delay, ...args)</code></td>
+<td>Delay clamped to max 60 000 ms; errors caught</td>
+</tr>
+<tr>
+<td><code>setInterval(fn, interval, ...args)</code></td>
+<td>Interval clamped 50–60 000 ms</td>
+</tr>
+<tr>
+<td><code>clearTimeout</code> / <code>clearInterval</code></td>
+<td>Standard</td>
+</tr>
+<tr>
+<td><code>sleep(ms)</code></td>
+<td>Promise; max 60 000 ms</td>
+</tr>
+</tbody></table>
+<h2><code>random</code></h2>
+<pre><code class="language-js">const n = random.number(1, 6);
+const id = random.id();
+</code></pre>
+<h2><code>crypto</code></h2>
+<pre><code class="language-js">const { verifier, challenge } = crypto.createPkce();
+
+const ok = crypto.verifyRsaSha256(publicKeyPem, message, signatureBase64);
+</code></pre>
+<h2><code>URL</code> and <code>URLSearchParams</code></h2>
+<p>Sandbox-safe implementations for parsing and building URLs inside addon code.</p>
+<h2><code>require(name)</code></h2>
+<p>Available only with <code>ROOT</code> permission. Throws otherwise.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

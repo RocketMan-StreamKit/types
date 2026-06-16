@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>api.config & storage — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html" class="is-active">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>api.config &amp; storage</h1>
+<h2><code>api.config</code></h2>
+<p>Усі методи async (IPC до main process).</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Permission</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getParams()</code></td>
+<td>—</td>
+<td>Блок налаштувань цього аддона</td>
+</tr>
+<tr>
+<td><code>updateParams(data)</code></td>
+<td>—</td>
+<td>Заміна params (з лімітом розміру)</td>
+</tr>
+<tr>
+<td><code>getConfig()</code></td>
+<td><code>CONFIG_READ</code></td>
+<td>Повна конфігурація застосунку</td>
+</tr>
+<tr>
+<td><code>setConfig(data)</code></td>
+<td><code>CONFIG_WRITE</code></td>
+<td>Патч конфігурації застосунку</td>
+</tr>
+<tr>
+<td><code>getAddonParams(addonId)</code></td>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td>Params іншого аддона</td>
+</tr>
+</tbody></table>
+<h3>Приклади</h3>
+<pre><code class="language-js">const params = await api.config.getParams();
+await api.config.updateParams({ counter: (params.counter || 0) + 1 });
+
+const other = await api.config.getAddonParams(&#39;other_addon&#39;);
+if (other.success) {
+  console.log(other.params);
+}
+</code></pre>
+<p><code>updateParams</code> повертає <code>{ success: true, params }</code> або <code>{ success: false, message }</code>.</p>
+<h2><code>api.openUrl(url)</code></h2>
+<p>Відкриває URL у системному браузері за замовчуванням. Спеціальний дозвіл не потрібен.</p>
+<h2><code>api.restart()</code></h2>
+<p>Перезапускає worker-процес цього аддона.</p>
+<p>Не спрацює, якщо аддон <strong>зупинено після повторних падінь</strong> — користувач має перезапустити його в налаштуваннях аддона (↻). Див. <a href="./lifecycle.html#%D0%B7%D0%B0%D1%85%D0%B8%D1%81%D1%82-%D0%B2%D1%96%D0%B4-%D1%86%D0%B8%D0%BA%D0%BB%D1%83-%D0%BF%D0%B0%D0%B4%D1%96%D0%BD%D1%8C">Життєвий цикл — Захист від циклу падінь</a>.</p>
+<h2><code>storage</code></h2>
+<p>Приватний JSON-файл за <code>{data.path}/storage_data.json</code>. <strong>Дозвіл не потрібен.</strong> Не показується в UI налаштувань.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Read()</code></td>
+<td>Розбір файлу або <code>undefined</code>, якщо відсутній</td>
+</tr>
+<tr>
+<td><code>Write(data)</code></td>
+<td>Повна заміна файлу (merge вручну за потреби)</td>
+</tr>
+<tr>
+<td><code>Clear()</code></td>
+<td>Видалення файлу</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const state = storage.Read() ?? { seen: [] };
+state.seen.push(eventId);
+storage.Write(state);
+</code></pre>
+<p>Значення мають бути JSON-серіалізованими. Файл видаляється при деінсталяції.</p>
+<p><strong>Відмінність від <code>api.config</code>:</strong> <code>storage</code> — для внутрішнього runtime-стану; <code>api.config</code> — для налаштувань користувача (і може з&#39;являтися в UI налаштувань, коли поля мають <code>editor</code>).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

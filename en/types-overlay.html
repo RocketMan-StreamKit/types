@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overlay addons — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html" class="is-active">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Overlay addons</h1>
+<p>Overlays are short-lived effects triggered by rules, timers, or dashboard events.</p>
+<h2>Manifest</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>overlay</code> or <code>overlay.info</code></td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>overlay</code> (when <code>web</code> is set)</td>
+</tr>
+</tbody></table>
+<p><code>overlay.info</code> panels render after or during the main effect when <code>showInfo</code> is enabled on the parent overlay.</p>
+<h2>Variants</h2>
+<h3>Simple media overlay (no worker)</h3>
+<p><code>manifest.overlay</code> with <code>audio</code> / <code>video</code> paths. No <code>index.js</code>, no permissions. Playback uses the built-in simple player iframe.</p>
+<p>Settings: volume, loop, hide-at-end, duration (may be constrained in manifest).</p>
+<h3>Static web overlay (no worker)</h3>
+<p><code>web</code> + <code>web_type: &quot;overlay&quot;</code>, no <code>index.js</code>. Requires <code>WEB_CONTENT</code> and files listed in <code>web_contents</code>.</p>
+<p>Static URL: <code>/addon_static/{id}/</code></p>
+<p>Runtime settings (volume, duration) may be read from:</p>
+<pre><code>GET /overlay/settings/{overlayId}?token=
+</code></pre>
+<h3>Full overlay addon (worker)</h3>
+<p><code>type: &quot;overlay&quot;</code>, worker <code>index.js</code>, <code>WEB_CONTENT</code> for custom HTML effect.</p>
+<p>Platform addons with <code>DASHBOARD_EVENTS</code> can register overlay triggers via <code>dashboard.registerTriggers()</code> and pass <code>trigger</code> in <code>addRecord()</code>.</p>
+<h2>Permissions</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Permissions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Static HTML only</td>
+<td><code>WEB_CONTENT</code></td>
+</tr>
+<tr>
+<td>Worker + HTTP for page</td>
+<td><code>WEB_CONTENT</code>, <code>WEB_END_POINTS</code>, often <code>SOCKET_END_POINTS</code></td>
+</tr>
+</tbody></table>
+<p>Validate <code>data.token</code> on endpoints used only by the overlay web page.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

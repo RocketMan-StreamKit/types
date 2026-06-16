@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Widget addons — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html" class="is-active">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Widget addons</h1>
+<p>Widgets are <strong>persistent</strong> web pages (alerts, goals, chat overlays). They are not tied to the overlay trigger queue.</p>
+<h2>Manifest</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>widget</code></td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>HTML entry file</td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>widget</code> (required)</td>
+</tr>
+<tr>
+<td><code>web_contents</code></td>
+<td>Additional assets</td>
+</tr>
+</tbody></table>
+<h2>Direct URL</h2>
+<p>Always available when enabled:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
+</code></pre>
+<p>Shown in settings as <strong>Widget URL</strong> for OBS Browser Source. The <code>token</code> query parameter is the addon frontend access token.</p>
+<h2>Static widget (no worker)</h2>
+<p>Only <code>manifest.json</code>, icon, HTML, and <code>web_contents</code>. Permission: <code>WEB_CONTENT</code>.</p>
+<h2>Full widget (worker)</h2>
+<p>Worker exposes HTTP or Socket.IO for live data; web page fetches from <code>/addon/{id}/…</code> or Socket.IO namespace.</p>
+<p>Protect private endpoints:</p>
+<pre><code class="language-js">if (query.token !== data.token) {
+  return { error: &#39;Unauthorized&#39; };
+}
+</code></pre>
+<h2>Display in overlay shell</h2>
+<p>App config <code>widgets[]</code> per installed widget:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>display.app</code></td>
+<td>Embed in transparent overlay app window</td>
+</tr>
+<tr>
+<td><code>display.web</code></td>
+<td>Embed in OBS overlay browser source shell</td>
+</tr>
+</tbody></table>
+<p>Direct URL works regardless of display flags.</p>
+<p>Live sync: Socket.IO namespace <code>/overlay</code>, event <code>widget:sync</code> with <code>{ widgets: [{ widgetId, url }] }</code>.</p>
+<p>Snapshot: <code>GET /widget/snapshot?display=app|web&amp;token=</code></p>
+<h2>Settings UI</h2>
+<p><strong>Settings → Widgets</strong>: install, enable, <code>GenerateConfig</code> fields, display checkboxes, copy widget URL.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

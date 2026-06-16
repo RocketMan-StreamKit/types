@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>addons (RPC) — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html" class="is-active">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>addons (RPC)</h1>
+<p>Addon-to-addon communication separate from <code>events</code> (HTTP). Main process routes requests between <strong>enabled</strong> workers.</p>
+<h2><code>addons.request(targetAddonId, method, params?)</code></h2>
+<p>Call a handler registered in another addon.</p>
+<pre><code class="language-js">const res = await addons.request(&#39;other_addon&#39;, &#39;getChannelId&#39;, { platform: &#39;example&#39; });
+if (res.success) {
+  console.log(res.result);
+}
+</code></pre>
+<p>Returns <code>{ success: true, result? }</code> or <code>{ success: false, message? }</code>.</p>
+<h2><code>addons.onRequest(method, handler)</code></h2>
+<p>Expose a method to other addons.</p>
+<pre><code class="language-js">addons.onRequest(&#39;getChannelId&#39;, async ({ fromAddonId, params }) =&gt; {
+  console.log(&#39;Request from&#39;, fromAddonId);
+  return { channelId: &#39;12345&#39; };
+});
+</code></pre>
+<p>Handler receives <code>{ fromAddonId, params }</code> and returns the response payload.</p>
+<h2><code>addons.offRequest(method)</code></h2>
+<p>Remove a previously registered handler.</p>
+<h2>Manifest dependencies</h2>
+<p>Use <code>depends_on: [&quot;other_addon&quot;]</code> in <code>manifest.json</code> when your addon requires another addon to be installed and enabled before activation.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

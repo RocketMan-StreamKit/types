@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Жизненный цикл — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html" class="is-active">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Жизненный цикл</h1>
+<h2>Последовательность запуска</h2>
+<ol>
+<li>Главный процесс запускает воркер интеграций (<code>WorkerMain(&#39;integrations&#39;)</code>) и ждёт <code>loadComplete</code>.</li>
+<li>Главный процесс отправляет <code>executeCode</code> с <code>{ integration: { id, name, permissions, … }, codePath }</code>.</li>
+<li>Воркер создаёт <code>GenerateContext()</code>, затем выполняет <code>index.js</code> аддона внутри <code>vm.runInContext</code> (таймаут начального выполнения: <strong>5 секунд</strong>).</li>
+<li>Код аддона регистрирует эндпоинты, схему настроек и обработчики событий на этапе загрузки.</li>
+</ol>
+<p>Долгие операции должны продолжаться <strong>после</strong> загрузки через <code>setTimeout</code>, <code>setInterval</code>, <code>sleep</code> или асинхронные обработчики — не блокируйте синхронным кодом начальный запуск VM.</p>
+<h2>Когда воркер перезапускается</h2>
+<p>Воркер перезапускается, когда:</p>
+<ul>
+<li>Пользователь отключает и снова включает аддон</li>
+<li>Аддон переустанавливают или меняют его файлы (в зависимости от поведения приложения)</li>
+<li>Из кода аддона вызывается <code>api.restart()</code></li>
+<li>Переключается режим разработчика (нужен полный перезапуск приложения/воркера, чтобы применить <code>isDeveloperMode</code>)</li>
+</ul>
+<p><code>storage.Read()</code> / <code>storage.Write()</code> сохраняются между перезапусками воркера в рамках одной установки. Параметры <code>api.config</code> хранятся в конфиге приложения.</p>
+<h2>Защита от цикла падений</h2>
+<p>Если процесс воркера <strong>падает</strong> (неперехваченное исключение, фатальная ошибка, аварийное завершение), StreamKit+ перезапускает его автоматически — как при обычном рестарте.</p>
+<p>Чтобы избежать бесконечного цикла перезапусков, приложение отслеживает <strong>последовательные падения</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Правило</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Максимум падений подряд</td>
+<td><strong>3</strong></td>
+</tr>
+<tr>
+<td>Стабильная работа для сброса счётчика</td>
+<td><strong>30 секунд</strong> после <code>loadComplete</code></td>
+</tr>
+</tbody></table>
+<p><strong>Что считается падением</strong></p>
+<ul>
+<li>Завершение или отключение процесса воркера</li>
+<li>Сбой, обнаруженный health check главного процесса</li>
+</ul>
+<p><strong>Что не считается падением</strong></p>
+<ul>
+<li>Ошибки в колбэках <code>setTimeout</code> / <code>setInterval</code> и обработчиках <code>events.On</code> — они перехватываются и логируются; воркер продолжает работу (см. <a href="./security.html#%D0%B2%D1%8B%D0%BF%D0%BE%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2-vm">Безопасность</a>)</li>
+<li>Плановый перезапуск через <code>api.restart()</code>, отключение/включение аддона или ручной рестарт из настроек</li>
+</ul>
+<p><strong>Когда лимит достигнут</strong></p>
+<ol>
+<li>Автоперезапуск прекращается; воркер аддона больше не запускается.</li>
+<li>Пользователь видит уведомление об ошибке и статус аддона в состоянии error.</li>
+<li>В настройках аддон остаётся <strong>включённым</strong>, но отображается бейдж <strong>Остановлен из-за ошибок</strong>.</li>
+<li>После перезапуска приложения аддон по-прежнему не стартует, пока пользователь не предпримет действие.</li>
+</ol>
+<p><strong>Как восстановить работу</strong></p>
+<p>Пользователь должен <strong>перезапустить аддон вручную</strong> в настройках (кнопка ↻) или отключить и снова включить его. Это сбрасывает флаг остановки и запускает новый воркер с обнулённым счётчиком падений.</p>
+<p><strong>Что важно разработчику аддона</strong></p>
+<ul>
+<li>Не используйте падение воркера как способ восстановления — после трёх падений аддон останется выключенным до действия пользователя.</li>
+<li>Держите начальную фазу загрузки <code>index.js</code> короткой; тяжёлую или рискованную работу переносите в async-колбэки после загрузки.</li>
+<li>Оборачивайте долгоживущий код в <code>try/catch</code>; необработанные reject/throw вне обёрнутых песочницей обработчиков по-прежнему могут уронить воркер.</li>
+<li><code>api.restart()</code> работает только пока аддон запущен; им нельзя перезапустить аддон, остановленный из-за цикла падений.</li>
+</ul>
+<h2>Статические веб-маршруты</h2>
+<p>Когда задан <code>manifest.web</code> и выдано разрешение <code>WEB_CONTENT</code> (или <code>ROOT</code>), главный процесс регистрирует статические маршруты:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/
+</code></pre>
+<p>Корень отдаёт файл <code>web</code>; пути из <code>web_contents</code> обслуживаются под тем же префиксом. Маршруты удаляются при отключении, перезапуске или удалении аддона.</p>
+<h2>Отсутствующие файлы</h2>
+<p>Если <code>manifest.json</code> или <code>index.js</code> отсутствуют по сохранённому пути установки, приложение считает аддон повреждённым: в настройках показывается баннер ошибки, настройки нельзя открыть, доступно только удаление. Триггеры оверлея/таймера, ссылающиеся на этот аддон, очищаются при запуске.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

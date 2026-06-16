@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Разрешения — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html" class="is-active">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Разрешения</h1>
+<p>Разрешения объявляются в <code>manifest.json</code> и фиксируются на время жизни воркера. Пользователь должен подтвердить их при установке.</p>
+<p>Проверяйте в рантайме через <code>permissions.has(AddonsPermission.NAME)</code>. При отказе в доступе пишется предупреждение в лог и возвращается <code>false</code>. <code>ROOT</code> обходит каждую отдельную проверку.</p>
+<h2>Список разрешений</h2>
+<table>
+<thead>
+<tr>
+<th>Разрешение</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ROOT</code></td>
+<td>Все возможности (только для разработки; избегайте в продакшене)</td>
+</tr>
+<tr>
+<td><code>INCREASE_CONFIG_SIZE</code></td>
+<td>Повышает лимит размера params аддона с 10 КБ до 1 МБ JSON</td>
+</tr>
+<tr>
+<td><code>CONFIG_READ</code></td>
+<td><code>api.config.getConfig()</code> — чтение полного конфига приложения</td>
+</tr>
+<tr>
+<td><code>CONFIG_WRITE</code></td>
+<td><code>api.config.setConfig()</code> — запись конфига приложения</td>
+</tr>
+<tr>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td><code>api.config.getAddonParams(otherAddonId)</code> — чтение params другого аддона (чувствительно; выделяется в UI)</td>
+</tr>
+<tr>
+<td><code>NETWORK_REQUEST</code></td>
+<td>Исходящий HTTP: <code>network.request.get/post/put/delete/postForm</code></td>
+</tr>
+<tr>
+<td><code>NETWORK_WEBSOCKET</code></td>
+<td>Исходящий WebSocket: <code>network.websocket.connect</code></td>
+</tr>
+<tr>
+<td><code>WEB_END_POINTS</code></td>
+<td>Входящие HTTP-маршруты: <code>network.endpoints.create</code></td>
+</tr>
+<tr>
+<td><code>SOCKET_END_POINTS</code></td>
+<td>Пространства имён Socket.IO: <code>network.socketEndpoints</code></td>
+</tr>
+<tr>
+<td><code>WEB_CONTENT</code></td>
+<td>Раздача <code>manifest.web</code> и <code>web_contents</code> по <code>/addon_static/{id}/</code></td>
+</tr>
+<tr>
+<td><code>STATUS</code></td>
+<td>Строка состояния: <code>status.Update</code>, <code>status.OnClick</code></td>
+</tr>
+<tr>
+<td><code>NOTIFY</code></td>
+<td>Уведомления в заголовке окна: <code>notify.Send</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS</code></td>
+<td>Виджет последних событий: <code>dashboard.addRecord</code>, <code>registerTriggers</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT</code></td>
+<td>Вывод и отправка в окне чата: <code>addChatMessage</code>, <code>onChatSend</code>, …</td>
+</tr>
+<tr>
+<td><code>DASHBOARD_CHAT_INCOMING</code></td>
+<td>Подписка на строки чата: <code>onChatMessage</code> / <code>offChatMessage</code></td>
+</tr>
+<tr>
+<td><code>DASHBOARD_EVENTS_INCOMING</code></td>
+<td>Подписка на записи событий: <code>onRecord</code> / <code>offRecord</code></td>
+</tr>
+</tbody></table>
+<h2>Пример</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
+  console.warn(&#39;Network disabled&#39;);
+  return;
+}
+
+const body = await network.request.get(&#39;https://api.example.com/status&#39;);
+</code></pre>
+<h2>Принцип минимальных привилегий</h2>
+<p>Запрашивайте только те разрешения, которые реально использует аддон. Для страниц виджета/приложения, которым нужен только статический хостинг, может хватить одного <code>WEB_CONTENT</code>. Добавляйте <code>WEB_END_POINTS</code>, когда воркер должен отдавать HTTP API встроенной странице.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

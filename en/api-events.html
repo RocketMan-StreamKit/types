@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>events — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html" class="is-active">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>events</h1>
+<p>The in-addon event bus connects inbound HTTP and Socket.IO handlers to your code.</p>
+<h2><code>events.On(name, handler)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Must match <code>callbackName</code> from <code>network.endpoints.create</code> or <code>network.socketEndpoints.create</code></td>
+</tr>
+<tr>
+<td><code>handler</code></td>
+<td>Async or sync function; return value becomes HTTP response body (for HTTP routes)</td>
+</tr>
+</tbody></table>
+<p>HTTP handlers receive:</p>
+<pre><code class="language-js">{ query, params, body, headers?, rawBody? }
+</code></pre>
+<p><code>headers</code> and <code>rawBody</code> are available on POST routes (useful for webhook signature verification).</p>
+<p>Returns a subscription <code>{ id, Destroy() }</code>.</p>
+<h2>Example: HTTP webhook</h2>
+<pre><code class="language-js">await network.endpoints.create(&#39;webhook&#39;, &#39;POST&#39;, &#39;onWebhook&#39;);
+
+events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
+  console.log(body);
+  return { received: true };
+});
+</code></pre>
+<p>Client URL:</p>
+<pre><code>POST http://localhost:{port}/addon/my_addon/webhook
+</code></pre>
+<h2>Example: return redirect (OAuth)</h2>
+<p>Handlers may return objects understood by the main process:</p>
+<pre><code class="language-js">return { redirect: ui.auth.generateSuccess() };
+</code></pre>
+<h2>Socket.IO handlers</h2>
+<p>When using <code>network.socketEndpoints.create</code>, the handler receives:</p>
+<pre><code class="language-js">{
+  type: &#39;connect&#39; | &#39;disconnect&#39; | &#39;event&#39;,
+  socketId,
+  event?,      // for type === &#39;event&#39;
+  data?,       // client payload
+}
+</code></pre>
+<p>For <code>type === &#39;event&#39;</code>, a non-<code>undefined</code> return value is emitted to the client as <code>reply</code>.</p>
+<h2>Lifecycle</h2>
+<p>Unregister with <code>subscription.Destroy()</code> or when the worker restarts.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

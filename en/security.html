@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html" class="is-active">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Security</h1>
+<h2>Network egress</h2>
+<p>Outbound HTTP (<code>network.request</code>) and WebSocket (<code>network.websocket</code>) URLs are validated:</p>
+<ul>
+<li>DNS lookup with <strong>5 minute</strong> cache</li>
+<li>Blocked: <code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>, RFC1918 private ranges (<code>192.168.*</code>, <code>10.*</code>, <code>172.16–172.31.*</code>)</li>
+<li>HTTP: max <strong>5</strong> concurrent requests, <strong>10 s</strong> timeout, redirects <strong>not</strong> followed</li>
+<li>WebSocket: max <strong>5</strong> concurrent connections, <code>ws://</code> / <code>wss://</code> only, same host blocklist</li>
+</ul>
+<p>There is <strong>no</strong> dedicated sandbox API for a privileged auth server. OAuth token exchange uses normal <code>network.request.post</code> to a public HTTPS URL you configure (see <a href="./oauth-and-secrets.html">OAuth and secrets</a>).</p>
+<h2>Inbound HTTP</h2>
+<p>Addons never bind ports. Inbound routes are registered on the main-process Express server:</p>
+<ul>
+<li>Addon HTTP: <code>/addon/{id}/{path}</code></li>
+<li>Static web: <code>/addon_static/{id}/</code></li>
+<li>Socket.IO path: <code>/addon/socket.io</code>, namespace <code>/addon/{id}/{path}</code></li>
+</ul>
+<h2>Params and config</h2>
+<p>Writes to <code>api.config.updateParams</code> and <code>api.config.setConfig</code> are validated in the main process (size limits, permission gates).</p>
+<h2>VM execution</h2>
+<p>Initial <code>index.js</code> execution has a <strong>5 second</strong> timeout. Errors in timers and event handlers are caught and logged; they do not crash the worker.</p>
+<p>Uncaught errors outside those wrappers can still crash the worker process. After <strong>3 consecutive crashes</strong> without a stable run, auto-restart stops until the user restarts the addon from settings — see <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
+<h2>Frontend access token (<code>data.token</code>)</h2>
+<p>Each addon instance receives a stable per-device, per-addon-id, per-install-path secret in <code>data.token</code>. It is appended to widget/static URLs as <code>?token=…</code>.</p>
+<p><strong>Validate</strong> <code>query.token === data.token</code> (or equivalent header) on HTTP endpoints meant only for your embedded web page so other local pages cannot call them.</p>
+<p>The token changes if the user reinstalls or moves the addon folder.</p>
+<h2><code>ROOT</code> permission</h2>
+<p><code>require()</code> and unrestricted module access are available only with <code>ROOT</code>. Do not request <code>ROOT</code> in distributed addons.</p>
+<h2>Private storage</h2>
+<p><code>storage.Read()</code> / <code>Write()</code> persist JSON in <code>{installPath}/storage_data.json</code>. Not encrypted; treat as local-only cache. Removed on uninstall.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

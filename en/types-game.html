@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game integration addons — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html" class="is-active">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Game integration addons</h1>
+<p><code>manifest.type</code> must be <code>game</code>. These addons run a worker and connect stream events to in-game effects.</p>
+<h2>Manifest example</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: { &quot;en&quot;: &quot;GTA V integration&quot; },
+  &quot;description&quot;: { &quot;en&quot;: &quot;Viewer-triggered in-game effects.&quot; },
+  &quot;type&quot;: &quot;game&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;author&quot;: &quot;Your Name&quot;,
+  &quot;icon&quot;: &quot;logo.png&quot;,
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;]
+}
+</code></pre>
+<h2>Register in-game actions</h2>
+<p>Call once at addon load:</p>
+<pre><code class="language-js">await game.registerInputTriggers([
+  { id: &#39;spawn_car&#39;, label: { en: &#39;Spawn car&#39;, ru: &#39;Заспавнить машину&#39; } },
+  { id: &#39;explosion&#39;, label: { en: &#39;Explosion&#39;, ru: &#39;Взрыв&#39; } },
+]);
+
+events.On(&#39;gameInputTrigger&#39;, ({ actionId, trigger, record, user }) =&gt; {
+  if (actionId === &#39;spawn_car&#39;) {
+    // run in-game effect
+  }
+});
+</code></pre>
+<p>Users bind dashboard events to each action in <strong>Settings → Game integrations</strong>.</p>
+<h2>Optional overlay triggers</h2>
+<p>With <code>DASHBOARD_EVENTS</code>, you can also call <code>dashboard.registerTriggers()</code> and push events via <code>dashboard.addRecord(..., { trigger })</code> so overlays and other modules react to game events.</p>
+<h2>Path settings (<code>folder</code> / <code>file</code>)</h2>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;game_exe&#39;,
+    type: &#39;file&#39;,
+    default: &#39;&#39;,
+    pathPicker: {
+      title: { en: &#39;GTA V executable&#39; },
+      filename: &#39;GTAV.exe&#39;,
+      filters: [{ name: &#39;Executable&#39;, extensions: [&#39;exe&#39;] }],
+    },
+    editor: { label: { en: &#39;Game executable&#39; }, required: true },
+  },
+]);
+</code></pre>
+<p>See also: <a href="./api-dashboard.html">API dashboard</a>, <a href="./config.html">Config schema</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

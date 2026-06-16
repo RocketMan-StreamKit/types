@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Налаштування TypeScript — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html" class="is-active">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Налаштування TypeScript</h1>
+<p>Worker-аддони можна писати на TypeScript. Типи беруться з npm-пакета <strong><code>@rocketman-streamkit/types</code></strong> — не додавайте <code>@types/node</code> або інші пакети типів з <code>node_modules</code> до проєкту аддона.</p>
+<h2>Встановлення</h2>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types
+</code></pre>
+<p>Встановлюйте версію пакета, що збігається з цільовою версією StreamKit+ (той самий <code>major.minor.patch</code>, що й <code>app_version</code> у <code>manifest.json</code>, якщо ви залежите від нових API пісочниці).</p>
+<h2>tsconfig.json</h2>
+<p>Розмістіть <code>tsconfig.json</code> поруч із <code>index.ts</code> у папці аддона:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [],
+    &quot;lib&quot;: [&quot;ES2020&quot;],
+    &quot;noEmit&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;skipLibCheck&quot;: true
+  },
+  &quot;include&quot;: [&quot;./**/*.ts&quot;, &quot;./node_modules/@rocketman-streamkit/types/addon.d.ts&quot;]
+}
+</code></pre>
+<p>Або підключіть поле <code>types</code> пакета напряму:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [&quot;@rocketman-streamkit/types&quot;],
+    &quot;lib&quot;: [&quot;ES2020&quot;],
+    &quot;noEmit&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;skipLibCheck&quot;: true
+  },
+  &quot;include&quot;: [&quot;./**/*.ts&quot;]
+}
+</code></pre>
+<p>Не додавайте <code>@types/node</code> — worker-аддони не є процесами Node.js.</p>
+<p>Статичні аддони (лише HTML/JS, без <code>index.ts</code>) не потребують <code>tsconfig.json</code>.</p>
+<h2>Глобальні об&#39;єкти</h2>
+<p><code>addon.d.ts</code> з <code>@rocketman-streamkit/types</code> оголошує глобальні об&#39;єкти пісочниці:</p>
+<ul>
+<li><code>network</code>, <code>events</code>, <code>permissions</code>, <code>api</code>, <code>dashboard</code>, <code>addons</code>, <code>storage</code>, …</li>
+<li>enum <code>AddonsPermission</code></li>
+<li><code>GenerateConfig</code>, <code>data</code>, <code>isDeveloperMode</code></li>
+</ul>
+<p>Імпорти в TypeScript аддона не потрібні — використовуйте глобальні об&#39;єкти напряму.</p>
+<h2>Оновлення типів</h2>
+<p>Коли в новій версії StreamKit+ з&#39;являються потрібні вам API пісочниці, оновіть dev-залежність до відповідної версії пакета:</p>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types@1.0.0
+</code></pre>
+<p>Замініть <code>1.0.0</code> на версію StreamKit+, яка надає потрібні API.</p>
+<h2>Вихід збірки</h2>
+<p>Скомпілюйте або зберіть <code>index.ts</code> у <code>index.js</code> у папці встановлення. Worker виконує лише <code>index.js</code>. Тримайте <code>manifest.json</code> і ресурси поруч із зібраним файлом.</p>
+<p>Статичні аддони без worker можна встановлювати напряму з вихідників (<code>manifest.json</code>, іконка, HTML, <code>web_contents</code>).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

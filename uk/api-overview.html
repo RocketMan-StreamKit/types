@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Огляд API — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html" class="is-active">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Огляд API</h1>
+<p>Усі API — <strong>глобальні</strong> у VM integrations worker. Типи постачаються в npm-пакеті <code>@rocketman-streamkit/types</code> (<code>addon.d.ts</code>).</p>
+<h2>Глобальні об&#39;єкти</h2>
+<table>
+<thead>
+<tr>
+<th>Global</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>isDeveloperMode</code></td>
+<td><code>true</code> у dev-збірках або коли користувач увімкнув Developer mode</td>
+</tr>
+<tr>
+<td><code>LANG</code></td>
+<td><code>current</code> (<code>en</code> / <code>ru</code> / <code>uk</code>), <code>onChangeLanguage(cb)</code> — міст до локалі UI застосунку</td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td><code>list</code>, <code>has(permission)</code></td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>Метадані екземпляра: <code>id</code>, <code>name</code>, <code>permissions</code>, <code>path</code>, <code>token</code>, …</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td><code>On(name, handler)</code> — прив&#39;язка HTTP/Socket.IO callback</td>
+</tr>
+<tr>
+<td><code>network</code></td>
+<td>HTTP-клієнт, вхідні маршрути, WebSocket, Socket.IO</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td><code>openUrl</code>, <code>restart</code>, <code>config.*</code></td>
+</tr>
+<tr>
+<td><code>addons</code></td>
+<td><code>request</code>, <code>onRequest</code>, <code>offRequest</code> — RPC між аддонами</td>
+</tr>
+<tr>
+<td><code>dashboard</code></td>
+<td>Віджет подій, чат, платформи, тригери оверлею</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>Рядок стану головного вікна</td>
+</tr>
+<tr>
+<td><code>notify</code></td>
+<td>Центр сповіщень у title bar</td>
+</tr>
+<tr>
+<td><code>storage</code></td>
+<td>Приватний JSON-файл у папці встановлення</td>
+</tr>
+<tr>
+<td><code>ui.auth</code></td>
+<td>URL перенаправлення успіху/помилки OAuth</td>
+</tr>
+<tr>
+<td><code>crypto</code></td>
+<td><code>createPkce</code>, <code>verifyRsaSha256</code></td>
+</tr>
+<tr>
+<td><code>console</code></td>
+<td>Логування з префіксом</td>
+</tr>
+<tr>
+<td><code>setTimeout</code> / <code>setInterval</code> / <code>clearTimeout</code> / <code>clearInterval</code></td>
+<td>Обмежені таймери з ізоляцією помилок</td>
+</tr>
+<tr>
+<td><code>sleep(ms)</code></td>
+<td>Promise-затримка (макс. 60 с)</td>
+</tr>
+<tr>
+<td><code>random</code></td>
+<td><code>number(min, max)</code>, <code>id()</code></td>
+</tr>
+<tr>
+<td><code>URL</code>, <code>URLSearchParams</code></td>
+<td>Безпечні для пісочниці URL helper</td>
+</tr>
+<tr>
+<td><code>GenerateConfig(schema)</code></td>
+<td>Реєстрація схеми налаштувань</td>
+</tr>
+<tr>
+<td><code>require(name)</code></td>
+<td>Node require — <strong>лише ROOT</strong></td>
+</tr>
+</tbody></table>
+<h2>Карта документації</h2>
+<ul>
+<li><a href="./api-events.html">events</a></li>
+<li><a href="./api-network.html">network</a></li>
+<li><a href="./api-config-storage.html">api.config &amp; storage</a></li>
+<li><a href="./api-addons-rpc.html">addons RPC</a></li>
+<li><a href="./api-dashboard.html">dashboard</a></li>
+<li><a href="./api-status-notify-ui.html">status, notify, ui</a></li>
+<li><a href="./api-utilities.html">Utilities</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

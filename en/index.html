@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StreamKit+ Addon Developer Documentation — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>StreamKit+ Addon Developer Documentation</h1>
+<p>Integration addons extend StreamKit+ from an isolated worker process. Addon code runs inside a VM sandbox and uses <strong>global</strong> APIs (<code>network</code>, <code>events</code>, <code>api</code>, …) — no SDK imports inside the worker.</p>
+<h2>Categories</h2>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./getting-started.html">Getting started</a></td>
+<td>Architecture, installation, project layout</td>
+</tr>
+<tr>
+<td><a href="./lifecycle.html">Lifecycle</a></td>
+<td>How addons are loaded, restarted, and crash-loop protection</td>
+</tr>
+<tr>
+<td><a href="./manifest.html">manifest.json</a></td>
+<td>Manifest fields, types, and validation rules</td>
+</tr>
+<tr>
+<td><a href="./publishing.html">Publishing and releases</a></td>
+<td>GitHub release layout and addon ID tied to repository</td>
+</tr>
+<tr>
+<td><a href="./typescript.html">TypeScript setup</a></td>
+<td><code>tsconfig.json</code>, typings, build output</td>
+</tr>
+<tr>
+<td><a href="./permissions.html">Permissions</a></td>
+<td>Capability flags and user approval</td>
+</tr>
+<tr>
+<td><a href="./settings-schema.html">Settings schema</a></td>
+<td><code>GenerateConfig()</code> and settings UI</td>
+</tr>
+<tr>
+<td><a href="./localization.html">Localization</a></td>
+<td>Per-locale strings in addon code</td>
+</tr>
+<tr>
+<td><a href="./security.html">Security</a></td>
+<td>Network restrictions, tokens, sandbox limits</td>
+</tr>
+<tr>
+<td><a href="./oauth-and-secrets.html">OAuth and secrets</a></td>
+<td>Token exchange via outbound HTTP (no built-in auth server API)</td>
+</tr>
+</tbody></table>
+<h3>Sandbox API</h3>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./api-overview.html">API overview</a></td>
+<td>All globals at a glance</td>
+</tr>
+<tr>
+<td><a href="./api-events.html">events</a></td>
+<td>Event bus and HTTP handler binding</td>
+</tr>
+<tr>
+<td><a href="./api-network.html">network</a></td>
+<td>HTTP client, endpoints, WebSocket, Socket.IO</td>
+</tr>
+<tr>
+<td><a href="./api-config-storage.html">api.config &amp; storage</a></td>
+<td>Params, app config, private file storage</td>
+</tr>
+<tr>
+<td><a href="./api-addons-rpc.html">addons (RPC)</a></td>
+<td>Addon-to-addon requests</td>
+</tr>
+<tr>
+<td><a href="./api-dashboard.html">dashboard</a></td>
+<td>Events widget, chat, overlay triggers</td>
+</tr>
+<tr>
+<td><a href="./api-status-notify-ui.html">status, notify, ui</a></td>
+<td>Status bar, notifications, OAuth result pages</td>
+</tr>
+<tr>
+<td><a href="./api-utilities.html">Utilities</a></td>
+<td>Timers, crypto, console, developer mode</td>
+</tr>
+</tbody></table>
+<h3>Addon categories</h3>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./types-platform.html">Platform addons</a></td>
+<td><code>platform.streaming</code>, <code>platform.donation</code></td>
+</tr>
+<tr>
+<td><a href="./types-overlay.html">Overlay addons</a></td>
+<td>Effects, static web, simple media</td>
+</tr>
+<tr>
+<td><a href="./types-widget.html">Widget addons</a></td>
+<td>Persistent web pages and OBS sources</td>
+</tr>
+<tr>
+<td><a href="./types-application.html">Application addons</a></td>
+<td>In-app sandboxed windows</td>
+</tr>
+<tr>
+<td><a href="./types-game.html">Game addons</a></td>
+<td>In-game effects and input triggers</td>
+</tr>
+</tbody></table>
+<h2>Typings</h2>
+<p>Install sandbox declarations from npm — version must match the StreamKit+ release you target:</p>
+<pre><code class="language-bash">npm install --save-dev @rocketman-streamkit/types
+</code></pre>
+<p>See <a href="./typescript.html">TypeScript setup</a> for <code>tsconfig.json</code> and globals (<code>declare global</code> — no imports in addon code).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

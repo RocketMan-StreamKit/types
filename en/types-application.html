@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application addons — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html" class="is-active">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Application addons</h1>
+<p>Applications are web UIs opened from the <strong>main window</strong> in a dedicated sandboxed <code>BrowserWindow</code> (no Node integration, no preload).</p>
+<h2>Manifest</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>application</code></td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>HTML entry file</td>
+</tr>
+<tr>
+<td><code>web_type</code></td>
+<td><code>application</code> (required)</td>
+</tr>
+<tr>
+<td><code>web_contents</code></td>
+<td>Additional assets</td>
+</tr>
+</tbody></table>
+<h2>Launch URL</h2>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
+</code></pre>
+<p>Same static route as widgets. Window id: <code>addon-app:{addonId}</code>.</p>
+<h2>Static application (no worker)</h2>
+<p><code>WEB_CONTENT</code> only — HTML/JS/CSS in the install folder.</p>
+<h2>Full application (worker)</h2>
+<p>Worker provides API endpoints for the page. Validate <code>query.token === data.token</code> on private routes (same pattern as widgets).</p>
+<p>Typical endpoints:</p>
+<ul>
+<li><code>GET params</code> — settings for the page</li>
+<li><code>GET state</code> — current state</li>
+<li><code>POST …</code> — user actions</li>
+</ul>
+<h2>Main window UI</h2>
+<p>When at least one <strong>enabled</strong> application addon with valid <code>web</code> exists, the main window shows <strong>Applications</strong>. User picks an item; main process opens or focuses the sandbox window via IPC.</p>
+<p>List updates on install/enable/disable/uninstall.</p>
+<h2>Settings UI</h2>
+<p><strong>Settings → Applications</strong>: <code>AddonsCategoryBlock</code> with <code>type=&quot;application&quot;</code> — same install/enable/settings flow as other categories.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

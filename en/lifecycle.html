@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lifecycle — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html" class="is-active">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Lifecycle</h1>
+<h2>Startup sequence</h2>
+<ol>
+<li>Main process starts the integrations worker (<code>WorkerMain(&#39;integrations&#39;)</code>) and waits for <code>loadComplete</code>.</li>
+<li>Main sends <code>executeCode</code> with <code>{ integration: { id, name, permissions, … }, codePath }</code>.</li>
+<li>Worker builds <code>GenerateContext()</code>, then runs addon <code>index.js</code> inside <code>vm.runInContext</code> (initial execution timeout: <strong>5 seconds</strong>).</li>
+<li>Addon code registers endpoints, config schema, and event handlers during this load phase.</li>
+</ol>
+<p>Long-running work must continue <strong>after</strong> load using <code>setTimeout</code>, <code>setInterval</code>, <code>sleep</code>, or async handlers — not blocking synchronous code during the initial VM run.</p>
+<h2>When the worker restarts</h2>
+<p>The worker restarts when:</p>
+<ul>
+<li>The user disables and re-enables the addon</li>
+<li>The addon is reinstalled or its files change (depending on app behaviour)</li>
+<li><code>api.restart()</code> is called from addon code</li>
+<li>Developer mode toggle (requires full app/worker restart to propagate <code>isDeveloperMode</code>)</li>
+</ul>
+<p><code>storage.Read()</code> / <code>storage.Write()</code> persist across worker restarts within the same install. <code>api.config</code> params persist in app config.</p>
+<h2>Crash loop protection</h2>
+<p>If the worker process <strong>crashes</strong> (uncaught exception, fatal error, abrupt exit), StreamKit+ restarts it automatically — similar to a normal restart.</p>
+<p>To avoid an infinite restart loop, the app tracks <strong>consecutive crashes</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Max consecutive crashes</td>
+<td><strong>3</strong></td>
+</tr>
+<tr>
+<td>Stable run to reset the counter</td>
+<td><strong>30 seconds</strong> after <code>loadComplete</code></td>
+</tr>
+</tbody></table>
+<p><strong>What counts as a crash</strong></p>
+<ul>
+<li>Worker process exit or disconnect</li>
+<li>Failure detected by the main-process health check</li>
+</ul>
+<p><strong>What does not count</strong></p>
+<ul>
+<li>Errors inside <code>setTimeout</code> / <code>setInterval</code> callbacks and <code>events.On</code> handlers — they are caught and logged; the worker keeps running (see <a href="./security.html#vm-execution">Security</a>)</li>
+<li>Intentional restart via <code>api.restart()</code>, disable/enable, or manual restart from settings</li>
+</ul>
+<p><strong>When the limit is reached</strong></p>
+<ol>
+<li>Auto-restart stops; the addon worker is not started again.</li>
+<li>The user sees an error notification and an error status for the addon.</li>
+<li>In addon settings the addon stays <strong>enabled</strong> but shows a <strong>Stopped after errors</strong> badge.</li>
+<li>After an app restart the addon is still not started until the user acts.</li>
+</ol>
+<p><strong>How to recover</strong></p>
+<p>The user must <strong>restart the addon manually</strong> from settings (↻ button) or disable and re-enable it. That clears the crash-stop flag and starts a fresh worker with a reset crash counter.</p>
+<p><strong>Implications for addon authors</strong></p>
+<ul>
+<li>Do not rely on crashing the worker as a recovery mechanism — after three crashes the addon will stay offline until user action.</li>
+<li>Keep the initial <code>index.js</code> load phase short; defer heavy or risky work to async callbacks after load.</li>
+<li>Use <code>try/catch</code> in long-running code paths; unhandled rejections or throws outside sandbox-wrapped handlers can still take down the worker.</li>
+<li><code>api.restart()</code> only works while the addon is running; it cannot restart an addon that was stopped by crash-loop protection.</li>
+</ul>
+<h2>Static web routes</h2>
+<p>When <code>manifest.web</code> is set and <code>WEB_CONTENT</code> (or <code>ROOT</code>) is granted, the main process registers static routes:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/
+</code></pre>
+<p>The root serves the <code>web</code> file; paths in <code>web_contents</code> are served under the same prefix. Routes are removed on disable, restart, or uninstall.</p>
+<h2>Missing files</h2>
+<p>If <code>manifest.json</code> or <code>index.js</code> is missing at the recorded install path, the app treats the addon as broken: settings show an error banner, settings cannot be opened, and only uninstall is available. Overlay/timer triggers referencing that addon are cleaned up on startup.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

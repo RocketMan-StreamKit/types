@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>api.config & storage — StreamKit+ Addon Docs</title>
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html" class="is-active">api.config & storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>api.config &amp; storage</h1>
+<h2><code>api.config</code></h2>
+<p>All methods are async (IPC to main process).</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Permission</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getParams()</code></td>
+<td>—</td>
+<td>This addon&#39;s settings blob</td>
+</tr>
+<tr>
+<td><code>updateParams(data)</code></td>
+<td>—</td>
+<td>Replace params (size-limited)</td>
+</tr>
+<tr>
+<td><code>getConfig()</code></td>
+<td><code>CONFIG_READ</code></td>
+<td>Full application config</td>
+</tr>
+<tr>
+<td><code>setConfig(data)</code></td>
+<td><code>CONFIG_WRITE</code></td>
+<td>Patch application config</td>
+</tr>
+<tr>
+<td><code>getAddonParams(addonId)</code></td>
+<td><code>ADDON_CONFIG_READ</code></td>
+<td>Another addon&#39;s params</td>
+</tr>
+</tbody></table>
+<h3>Examples</h3>
+<pre><code class="language-js">const params = await api.config.getParams();
+await api.config.updateParams({ counter: (params.counter || 0) + 1 });
+
+const other = await api.config.getAddonParams(&#39;other_addon&#39;);
+if (other.success) {
+  console.log(other.params);
+}
+</code></pre>
+<p><code>updateParams</code> returns <code>{ success: true, params }</code> or <code>{ success: false, message }</code>.</p>
+<h2><code>api.openUrl(url)</code></h2>
+<p>Opens URL in the system default browser. No special permission.</p>
+<h2><code>api.restart()</code></h2>
+<p>Restarts this addon&#39;s worker process.</p>
+<p>Does not apply when the addon was <strong>stopped after repeated crashes</strong> — the user must restart it from addon settings (↻). See <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
+<h2><code>storage</code></h2>
+<p>Private JSON file at <code>{data.path}/storage_data.json</code>. <strong>No permission required.</strong> Not shown in settings UI.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Read()</code></td>
+<td>Parse file or <code>undefined</code> if missing</td>
+</tr>
+<tr>
+<td><code>Write(data)</code></td>
+<td>Replace entire file (merge manually if needed)</td>
+</tr>
+<tr>
+<td><code>Clear()</code></td>
+<td>Delete file</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const state = storage.Read() ?? { seen: [] };
+state.seen.push(eventId);
+storage.Write(state);
+</code></pre>
+<p>Values must be JSON-serializable. File removed on uninstall.</p>
+<p><strong>Difference from <code>api.config</code>:</strong> <code>storage</code> is for internal runtime state; <code>api.config</code> is user-facing settings (and may appear in the settings UI when fields have <code>editor</code>).</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
