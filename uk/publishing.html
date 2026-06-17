@@ -4,11 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Публікація та релізи — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
     <nav class="lang-switch" aria-label="Language">
         <a href="../en/index.html">English</a>
         <a href="../ru/index.html">Русский</a>
@@ -106,7 +111,7 @@
 ├── index.html            # якщо використовується web UI
 └── ...                   # інші ресурси
 </code></pre>
-<p>Бекенд каталогу StreamKit+ і перевірка оновлень у застосунку читають <strong><code>manifest.json</code> з assets релізу</strong>, щоб визначити опубліковану версію. Поле <code>version</code> має збігатися з тегом релізу (наприклад тег <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>).</p>
+<p>Бекенд каталогу StreamKit+ і перевірка оновлень у застосунку читають <strong><code>manifest.json</code> з assets релізу</strong>, щоб визначити опубліковану версію. Поле <code>version</code> має збігатися з тегом релізу (наприклад тег <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>). Файл у assets має бути <strong>ідентичним</strong> <code>manifest.json</code> всередині <code>main.zip</code> (обов&#39;язково для <a href="./publishing.html#%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D1%96%D1%80%D0%BA%D0%B8-%D0%BF%D1%96%D0%B4-%D1%87%D0%B0%D1%81-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%97-%D0%B7-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%BE%D0%BC">синхронізації з каталогом</a>).</p>
 <h2>Чеклист перед публікацією</h2>
 <ol>
 <li><code>id</code> у <code>manifest.json</code> дорівнює <code>ORG/REPO</code> вашого GitHub-репозиторію.</li>
@@ -114,7 +119,158 @@
 <li>У релізі є <code>main.zip</code>, <code>manifest.json</code> і <code>logo.png</code> / <code>logo.svg</code>.</li>
 <li>У <code>main.zip</code> є всі файли, необхідні для роботи аддона (включно з <code>manifest.json</code> і іконкою).</li>
 <li>Дозволи в маніфесті відповідають реальній поведінці аддона.</li>
+<li>Після публікації релізу запустіть <strong>синхронізацію з каталогом</strong> (на сайті або через <a href="#%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D1%87%D0%BD%D0%B0-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D1%96%D1%97-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B7%D1%96">API синхронізації</a>), щоб користувачі отримали нові файли.</li>
 </ol>
+<h2>Кешування файлів у каталозі</h2>
+<p>Коли аддон додають до каталогу, сайт завантажує файли релізу (<code>manifest.json</code>, <code>logo.png</code> / <code>logo.svg</code>, <code>main.zip</code>) і <strong>кешує їх постійно</strong>.</p>
+<ul>
+<li>Кешовані файли <strong>роздаються всім користувачам</strong> і <strong>не</strong> підтягуються знову автоматично.</li>
+<li>Вони оновлюються <strong>лише</strong> під час синхронізації версії — вручну на сайті (<em>Оновити версію</em>) або через <a href="#%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D1%87%D0%BD%D0%B0-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D1%96%D1%97-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B7%D1%96">API синхронізації</a>.</li>
+</ul>
+<p>Після модерації та схвалення аддона користувачі завантажують саме ті файли, що були перевірені. Зміна файлів у GitHub-релізі <strong>без</strong> синхронізації не змінює те, що отримують користувачі. Це зроблено навмисно й захищає від тихої підміни файлів після модерації.</p>
+<p>Щоб випустити нову версію, опублікуйте новий GitHub-реліз <strong>і</strong> запустіть синхронізацію.</p>
+<h2>Перевірки під час синхронізації з каталогом</h2>
+<p>Під час додавання або синхронізації аддона каталог перевіряє:</p>
+<ol>
+<li>У релізі є <code>manifest.json</code>, <code>logo.png</code> (або <code>logo.svg</code>) і <code>main.zip</code>.</li>
+<li>Поле <code>id</code> у <code>manifest.json</code> відповідає репозиторію за тими ж правилами, що в <a href="./manifest.html">manifest.json</a>: <strong><code>ORG/REPO</code></strong> для сторонніх репозиторіїв або <strong><code>REPO</code></strong> (лише назва репозиторію) для аддонів організації <code>RocketMan-StreamKit</code>.</li>
+<li>Файл <code>manifest.json</code> у assets релізу <strong>ідентичний</strong> <code>manifest.json</code> всередині <code>main.zip</code>.</li>
+</ol>
+<p>Якщо перевірка не пройдена, додавання або синхронізацію відхиляють із поясненням.</p>
+<h2>Автоматична синхронізація версії в каталозі</h2>
+<p>Використовуйте API синхронізації для розробників, щоб оновлювати каталог після кожного GitHub-релізу без ручного натискання <em>Оновити версію</em> на сайті.</p>
+<blockquote>
+<p><strong>Базовий URL у прикладах:</strong> <code>https://rocketman-streams.com</code>. Використовуйте домен сайту, на якому опубліковано ваш аддон.</p>
+</blockquote>
+<h3>Токен розробника</h3>
+<ol>
+<li>Відкрийте сторінку <strong>Аддони</strong> на сайті.</li>
+<li>Натисніть кнопку <strong>API key</strong> зверху.</li>
+<li>Скопіюйте токен розробника з модального вікна.</li>
+</ol>
+<p>Токен можна перегенерувати в тому ж вікні (з підтвердженням). Перегенерація <strong>одразу анулює</strong> старий токен — оновіть його всюди, де він використовується.</p>
+<p><strong>Тримайте токен у секреті.</strong> Будь-хто, хто має його, може запускати оновлення версій ваших аддонів. Зберігайте його як секрет CI/CD (наприклад GitHub Actions secret <code>ROCKETMAN_ADDON_TOKEN</code>) і не комітьте в репозиторій.</p>
+<h3>API синхронізації</h3>
+<pre><code>POST https://rocketman-streams.com/api/extensions/dev/sync
+Content-Type: application/json
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обов&#39;язковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>repo</code></td>
+<td>так</td>
+<td>Репозиторій аддона у форматі <code>OWNER/NAME</code> (як <code>github.repository</code> у GitHub Actions). Має збігатися з аддоном <strong>вашої</strong> власності в каталозі.</td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td>так</td>
+<td>Токен розробника з модального вікна <strong>API key</strong>.</td>
+</tr>
+</tbody></table>
+<p>Параметри можна передати також як <code>application/x-www-form-urlencoded</code> або query-параметри URL; рекомендується JSON.</p>
+<p>У разі успіху ендпоінт знову читає останній GitHub-реліз, перезавантажує й оновлює кешовані файли та зберігає нову версію й метадані, якщо реліз змінився.</p>
+<p><strong>Приклад:</strong></p>
+<pre><code class="language-bash">curl -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;repo&quot;:&quot;OWNER/REPO&quot;,&quot;token&quot;:&quot;YOUR_TOKEN&quot;}&#39;
+</code></pre>
+<p><strong>Успішна відповідь:</strong></p>
+<pre><code class="language-json">{
+  &quot;status&quot;: true,
+  &quot;repo&quot;: &quot;OWNER/REPO&quot;,
+  &quot;updated&quot;: true,
+  &quot;version&quot;: &quot;1.2.3&quot;
+}
+</code></pre>
+<ul>
+<li><code>updated</code> — <code>true</code>, якщо версія або метадані змінилися відносно збережених; <code>false</code>, якщо реліз перечитано, але нічого не змінилося.</li>
+<li><code>version</code> — версія після синхронізації.</li>
+</ul>
+<p><strong>Помилки</strong> (HTTP-статус і поле <code>error</code>):</p>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th><code>error</code></th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>400</td>
+<td><code>token_required</code></td>
+<td>Параметр <code>token</code> не передано.</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>invalid_repo</code></td>
+<td>Параметр <code>repo</code> не передано або некоректний.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>invalid_token</code></td>
+<td>Токен не належить жодному розробнику аддонів.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>not_owner</code></td>
+<td>Аддон є в каталозі, але не належить власнику токена.</td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>addon_not_found</code></td>
+<td>У каталозі немає аддона з таким <code>repo</code>.</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_token</code></td>
+<td>Забагато запитів для цього токена. Див. <code>retryAfter</code> (секунди).</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_repo</code></td>
+<td>Забагато запитів для цього репозиторію. Див. <code>retryAfter</code> (секунди).</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>sync_failed</code></td>
+<td>Не вдалося отримати або розібрати GitHub-реліз (див. <code>message</code>).</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>internal_error</code></td>
+<td>Непередбачена помилка сервера.</td>
+</tr>
+</tbody></table>
+<h3>Ліміти запитів</h3>
+<ul>
+<li><strong>1 запит за 30 секунд</strong> на токен розробника.</li>
+<li><strong>1 запит за 60 секунд</strong> на репозиторій.</li>
+</ul>
+<p>При перевищенні ліміту у відповіді є поле <code>retryAfter</code> (у секундах).</p>
+<h3>Приклад GitHub Actions</h3>
+<p>Workflow запускається при кожній публікації релізу й сповіщає каталог. Збережіть як <code>.github/workflows/rocketman-sync.yml</code> у репозиторії аддона й додайте secret <code>ROCKETMAN_ADDON_TOKEN</code> із токеном розробника.</p>
+<pre><code class="language-yaml">name: Sync addon to RocketMan catalog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify catalog about the new release
+        run: |
+          curl -sS -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+            -H &quot;Content-Type: application/json&quot; \
+            -d &quot;{\&quot;repo\&quot;:\&quot;${{ github.repository }}\&quot;,\&quot;token\&quot;:\&quot;${{ secrets.ROCKETMAN_ADDON_TOKEN }}\&quot;}&quot;
+</code></pre>
 <h2>Пов&#39;язані матеріали</h2>
 <ul>
 <li><a href="./manifest.html">manifest.json</a> — опис полів</li>

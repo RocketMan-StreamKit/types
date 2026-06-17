@@ -4,11 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Publishing and releases — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="site-brand" href="../index.html">StreamKit+ Addon Docs</a>
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
     <nav class="lang-switch" aria-label="Language">
         <a href="index.html" class="is-active">English</a>
         <a href="../ru/index.html">Русский</a>
@@ -106,7 +111,7 @@
 ├── index.html            # when web UI is used
 └── ...                   # other assets (web_contents, media, etc.)
 </code></pre>
-<p>The StreamKit+ catalog backend and the app&#39;s update checker read the <strong><code>manifest.json</code> release asset</strong> to determine the published version. Keep <code>version</code> in that file in sync with the release tag (for example tag <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>).</p>
+<p>The StreamKit+ catalog backend and the app&#39;s update checker read the <strong><code>manifest.json</code> release asset</strong> to determine the published version. Keep <code>version</code> in that file in sync with the release tag (for example tag <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>). The release asset must be <strong>byte-identical</strong> to <code>manifest.json</code> inside <code>main.zip</code> (required for <a href="./publishing.html#catalog-sync-validation">catalog sync</a>).</p>
 <h2>Checklist before publishing</h2>
 <ol>
 <li><code>manifest.json</code> <code>id</code> equals <code>ORG/REPO</code> for your GitHub repository.</li>
@@ -114,7 +119,158 @@
 <li>Release contains <code>main.zip</code>, <code>manifest.json</code>, and <code>logo.png</code> / <code>logo.svg</code>.</li>
 <li><code>main.zip</code> includes every file required to run the addon (including <code>manifest.json</code> and the icon).</li>
 <li>Permissions in the manifest match what the addon actually uses.</li>
+<li>After publishing the release, trigger a <strong>catalog sync</strong> (on the site or via the <a href="#automatic-catalog-version-sync">sync API</a>) so users receive the new files.</li>
 </ol>
+<h2>Catalog file caching</h2>
+<p>When your addon is added to the catalog, the site downloads the release assets (<code>manifest.json</code>, <code>logo.png</code> / <code>logo.svg</code>, <code>main.zip</code>) and <strong>caches them permanently</strong>.</p>
+<ul>
+<li>Cached files are <strong>served to all users</strong> and are <strong>not</strong> re-fetched automatically.</li>
+<li>They are refreshed <strong>only</strong> when a version sync runs — manually on the site (<em>Update version</em>) or through the <a href="#automatic-catalog-version-sync">sync API</a>.</li>
+</ul>
+<p>Once your addon has been moderated and approved, the files users download stay exactly as reviewed. Changing files in a GitHub release <strong>without</strong> running a sync does not change what users get. This is intentional and protects users from silent post-moderation file swaps.</p>
+<p>To ship a new version, publish a new GitHub release <strong>and</strong> trigger a sync.</p>
+<h2>Catalog sync validation</h2>
+<p>When adding or syncing an addon, the catalog checks that:</p>
+<ol>
+<li>The release contains <code>manifest.json</code>, <code>logo.png</code> (or <code>logo.svg</code>), and <code>main.zip</code>.</li>
+<li>The <code>id</code> in <code>manifest.json</code> matches your repository using the same rules as <a href="./manifest.html">manifest.json</a>: <strong><code>ORG/REPO</code></strong> for third-party repositories, or <strong><code>REPO</code></strong> (repository name only) for addons in the <code>RocketMan-StreamKit</code> organization.</li>
+<li>The <code>manifest.json</code> release asset is <strong>identical</strong> to the <code>manifest.json</code> inside <code>main.zip</code>.</li>
+</ol>
+<p>If any check fails, the add or sync is rejected with an explanatory error.</p>
+<h2>Automatic catalog version sync</h2>
+<p>Use the developer sync API to refresh the catalog after each GitHub release, without opening the site and clicking <em>Update version</em> manually.</p>
+<blockquote>
+<p><strong>Base URL in examples:</strong> <code>https://rocketman-streams.com</code>. Use the domain of the site where your addon is published.</p>
+</blockquote>
+<h3>Developer token</h3>
+<ol>
+<li>Open the <strong>Addons</strong> page on the site.</li>
+<li>Click the <strong>API key</strong> button at the top.</li>
+<li>Copy your developer token from the modal.</li>
+</ol>
+<p>You can regenerate the token from the same modal (with confirmation). Regenerating <strong>immediately invalidates</strong> the old token — update it everywhere it is used.</p>
+<p><strong>Keep the token secret.</strong> Anyone with it can trigger version updates for your addons. Store it as a CI/CD secret (for example a GitHub Actions secret named <code>ROCKETMAN_ADDON_TOKEN</code>) and never commit it to your repository.</p>
+<h3>Sync API</h3>
+<pre><code>POST https://rocketman-streams.com/api/extensions/dev/sync
+Content-Type: application/json
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>repo</code></td>
+<td>yes</td>
+<td>Addon repository in <code>OWNER/NAME</code> format (same as <code>github.repository</code> in GitHub Actions). Must match an addon <strong>you own</strong> in the catalog.</td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td>yes</td>
+<td>Your developer token from the <strong>API key</strong> modal.</td>
+</tr>
+</tbody></table>
+<p>Parameters may also be sent as <code>application/x-www-form-urlencoded</code> or URL query parameters; JSON is recommended.</p>
+<p>On success the endpoint re-reads the latest GitHub release, re-downloads and refreshes the cached files, and updates the stored version and metadata when the release changed.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">curl -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;repo&quot;:&quot;OWNER/REPO&quot;,&quot;token&quot;:&quot;YOUR_TOKEN&quot;}&#39;
+</code></pre>
+<p><strong>Success response:</strong></p>
+<pre><code class="language-json">{
+  &quot;status&quot;: true,
+  &quot;repo&quot;: &quot;OWNER/REPO&quot;,
+  &quot;updated&quot;: true,
+  &quot;version&quot;: &quot;1.2.3&quot;
+}
+</code></pre>
+<ul>
+<li><code>updated</code> — <code>true</code> if version or metadata changed compared to what was stored; <code>false</code> if the release was re-read but nothing changed.</li>
+<li><code>version</code> — the version after the sync.</li>
+</ul>
+<p><strong>Error responses</strong> (HTTP status plus <code>error</code> field):</p>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th><code>error</code></th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>400</td>
+<td><code>token_required</code></td>
+<td>The <code>token</code> parameter is missing.</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>invalid_repo</code></td>
+<td>The <code>repo</code> parameter is missing or malformed.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>invalid_token</code></td>
+<td>No addon developer owns this token.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>not_owner</code></td>
+<td>The addon exists but is not owned by the token&#39;s owner.</td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>addon_not_found</code></td>
+<td>No catalog addon matches <code>repo</code>.</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_token</code></td>
+<td>Too many requests for this token. See <code>retryAfter</code> (seconds).</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_repo</code></td>
+<td>Too many requests for this repository. See <code>retryAfter</code> (seconds).</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>sync_failed</code></td>
+<td>The GitHub release could not be fetched or parsed (see <code>message</code>).</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>internal_error</code></td>
+<td>Unexpected server error.</td>
+</tr>
+</tbody></table>
+<h3>Rate limits</h3>
+<ul>
+<li><strong>1 request per 30 seconds</strong> per developer token.</li>
+<li><strong>1 request per 60 seconds</strong> per repository.</li>
+</ul>
+<p>When rate-limited, the response includes <code>retryAfter</code> (in seconds).</p>
+<h3>GitHub Actions example</h3>
+<p>This workflow runs on every published release and notifies the catalog. Save it as <code>.github/workflows/rocketman-sync.yml</code> in your addon repository and add a repository secret named <code>ROCKETMAN_ADDON_TOKEN</code> with your developer token.</p>
+<pre><code class="language-yaml">name: Sync addon to RocketMan catalog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify catalog about the new release
+        run: |
+          curl -sS -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+            -H &quot;Content-Type: application/json&quot; \
+            -d &quot;{\&quot;repo\&quot;:\&quot;${{ github.repository }}\&quot;,\&quot;token\&quot;:\&quot;${{ secrets.ROCKETMAN_ADDON_TOKEN }}\&quot;}&quot;
+</code></pre>
 <h2>Related reading</h2>
 <ul>
 <li><a href="./manifest.html">manifest.json</a> — field reference</li>
