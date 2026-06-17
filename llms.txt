@@ -1,0 +1,44 @@
+# StreamKit+ Addon Developer Documentation
+
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.11.
+
+## Web documentation
+
+- [Documentation home](https://rocketman-streamkit.github.io/types/): language picker and current version
+- [English documentation](https://rocketman-streamkit.github.io/types/en/index.html): table of contents (English)
+
+## English guides
+
+- [Getting started](https://rocketman-streamkit.github.io/types/en/getting-started.html): Architecture, installation, project layout
+- [Lifecycle](https://rocketman-streamkit.github.io/types/en/lifecycle.html): How addons are loaded, restarted, and crash-loop protection
+- [manifest.json](https://rocketman-streamkit.github.io/types/en/manifest.html): Manifest fields, types, and validation rules
+- [Publishing and releases](https://rocketman-streamkit.github.io/types/en/publishing.html): GitHub release layout, catalog caching, and automatic version sync
+- [TypeScript setup](https://rocketman-streamkit.github.io/types/en/typescript.html): `tsconfig.json`, typings, build output
+- [Permissions](https://rocketman-streamkit.github.io/types/en/permissions.html): Capability flags and user approval
+- [Settings schema](https://rocketman-streamkit.github.io/types/en/settings-schema.html): `GenerateConfig()` and settings UI
+- [Localization](https://rocketman-streamkit.github.io/types/en/localization.html): Per-locale strings in addon code
+- [Security](https://rocketman-streamkit.github.io/types/en/security.html): Network restrictions, tokens, sandbox limits
+- [OAuth and secrets](https://rocketman-streamkit.github.io/types/en/oauth-and-secrets.html): Token exchange via outbound HTTP (no built-in auth server API)
+- [API overview](https://rocketman-streamkit.github.io/types/en/api-overview.html): All globals at a glance
+- [events](https://rocketman-streamkit.github.io/types/en/api-events.html): Event bus and HTTP handler binding
+- [network](https://rocketman-streamkit.github.io/types/en/api-network.html): HTTP client, endpoints, WebSocket, Socket.IO
+- [api.config & storage](https://rocketman-streamkit.github.io/types/en/api-config-storage.html): Params, app config, private file storage
+- [addons (RPC)](https://rocketman-streamkit.github.io/types/en/api-addons-rpc.html): Addon-to-addon requests
+- [dashboard](https://rocketman-streamkit.github.io/types/en/api-dashboard.html): Events widget, chat, overlay triggers
+- [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, notifications, OAuth result pages
+- [Utilities](https://rocketman-streamkit.github.io/types/en/api-utilities.html): Timers, crypto, console, developer mode
+- [Platform addons](https://rocketman-streamkit.github.io/types/en/types-platform.html): `platform.streaming`, `platform.donation`
+- [Overlay addons](https://rocketman-streamkit.github.io/types/en/types-overlay.html): Effects, static web, simple media
+- [Widget addons](https://rocketman-streamkit.github.io/types/en/types-widget.html): Persistent web pages and OBS sources
+- [Application addons](https://rocketman-streamkit.github.io/types/en/types-application.html): In-app sandboxed windows
+- [Game addons](https://rocketman-streamkit.github.io/types/en/types-game.html): In-game effects and input triggers
+
+## AI assistants (Context7)
+
+- Library ID: `/rocketman-streamkit/types`
+- Registry: https://context7.com/rocketman-streamkit/types
+- Use with Context7 MCP (`resolve-library-id` / `query-docs`) or the chat widget on the docs site
+
+## Other StreamKit+ versions
+
+- [Version branches](https://github.com/RocketMan-StreamKit/types/branches): one Git branch per app release — open the branch matching your `app_version`

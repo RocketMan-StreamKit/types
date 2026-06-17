@@ -111,7 +111,7 @@
 ├── index.html            # если используется web UI
 └── ...                   # остальные ресурсы
 </code></pre>
-<p>Бэкенд каталога StreamKit+ и проверка обновлений в приложении читают <strong><code>manifest.json</code> из assets релиза</strong>, чтобы определить опубликованную версию. Поле <code>version</code> должно совпадать с тегом релиза (например тег <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>).</p>
+<p>Бэкенд каталога StreamKit+ и проверка обновлений в приложении читают <strong><code>manifest.json</code> из assets релиза</strong>, чтобы определить опубликованную версию. Поле <code>version</code> должно совпадать с тегом релиза (например тег <code>v1.2.0</code> → <code>&quot;version&quot;: &quot;1.2.0&quot;</code>). Файл в assets должен быть <strong>идентичен</strong> <code>manifest.json</code> внутри <code>main.zip</code> (обязательно для <a href="./publishing.html#%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B8-%D0%BF%D1%80%D0%B8-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8-%D1%81-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%BE%D0%BC">синхронизации с каталогом</a>).</p>
 <h2>Чеклист перед публикацией</h2>
 <ol>
 <li><code>id</code> в <code>manifest.json</code> равен <code>ORG/REPO</code> вашего GitHub-репозитория.</li>
@@ -119,7 +119,158 @@
 <li>В релизе есть <code>main.zip</code>, <code>manifest.json</code> и <code>logo.png</code> / <code>logo.svg</code>.</li>
 <li>В <code>main.zip</code> есть все файлы, необходимые для работы аддона (включая <code>manifest.json</code> и иконку).</li>
 <li>Разрешения в манифесте соответствуют реальному поведению аддона.</li>
+<li>После публикации релиза запустите <strong>синхронизацию с каталогом</strong> (на сайте или через <a href="#%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B5">API синхронизации</a>), чтобы пользователи получили новые файлы.</li>
 </ol>
+<h2>Кэширование файлов в каталоге</h2>
+<p>Когда аддон добавляют в каталог, сайт скачивает файлы релиза (<code>manifest.json</code>, <code>logo.png</code> / <code>logo.svg</code>, <code>main.zip</code>) и <strong>кэширует их постоянно</strong>.</p>
+<ul>
+<li>Кэшированные файлы <strong>раздаются всем пользователям</strong> и <strong>не</strong> подтягиваются заново автоматически.</li>
+<li>Они обновляются <strong>только</strong> при синхронизации версии — вручную на сайте (<em>Обновить версию</em>) или через <a href="#%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B5">API синхронизации</a>.</li>
+</ul>
+<p>После модерации и одобрения аддона пользователи скачивают ровно те файлы, что были проверены. Изменение файлов в GitHub-релизе <strong>без</strong> синхронизации не влияет на то, что получают пользователи. Это сделано намеренно и защищает от тихой подмены файлов после модерации.</p>
+<p>Чтобы выпустить новую версию, опубликуйте новый GitHub-релиз <strong>и</strong> запустите синхронизацию.</p>
+<h2>Проверки при синхронизации с каталогом</h2>
+<p>При добавлении или синхронизации аддона каталог проверяет:</p>
+<ol>
+<li>В релизе есть <code>manifest.json</code>, <code>logo.png</code> (или <code>logo.svg</code>) и <code>main.zip</code>.</li>
+<li>Поле <code>id</code> в <code>manifest.json</code> соответствует репозиторию по тем же правилам, что в <a href="./manifest.html">manifest.json</a>: <strong><code>ORG/REPO</code></strong> для сторонних репозиториев или <strong><code>REPO</code></strong> (только имя репозитория) для аддонов организации <code>RocketMan-StreamKit</code>.</li>
+<li>Файл <code>manifest.json</code> в assets релиза <strong>идентичен</strong> <code>manifest.json</code> внутри <code>main.zip</code>.</li>
+</ol>
+<p>При ошибке добавление или синхронизация отклоняются с пояснением.</p>
+<h2>Автоматическая синхронизация версии в каталоге</h2>
+<p>Используйте API синхронизации для разработчиков, чтобы обновлять каталог после каждого GitHub-релиза без ручного нажатия <em>Обновить версию</em> на сайте.</p>
+<blockquote>
+<p><strong>Базовый URL в примерах:</strong> <code>https://rocketman-streams.com</code>. Используйте домен сайта, на котором опубликован ваш аддон.</p>
+</blockquote>
+<h3>Токен разработчика</h3>
+<ol>
+<li>Откройте страницу <strong>Аддоны</strong> на сайте.</li>
+<li>Нажмите кнопку <strong>API key</strong> вверху.</li>
+<li>Скопируйте токен разработчика из модального окна.</li>
+</ol>
+<p>Токен можно перегенерировать в том же окне (с подтверждением). Перегенерация <strong>сразу аннулирует</strong> старый токен — обновите его везде, где он используется.</p>
+<p><strong>Храните токен в секрете.</strong> Любой, у кого он есть, может запускать обновление версий ваших аддонов. Сохраняйте его как секрет CI/CD (например GitHub Actions secret <code>ROCKETMAN_ADDON_TOKEN</code>) и не коммитьте в репозиторий.</p>
+<h3>API синхронизации</h3>
+<pre><code>POST https://rocketman-streams.com/api/extensions/dev/sync
+Content-Type: application/json
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обязателен</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>repo</code></td>
+<td>да</td>
+<td>Репозиторий аддона в формате <code>OWNER/NAME</code> (как <code>github.repository</code> в GitHub Actions). Должен совпадать с аддоном <strong>вашей</strong> собственности в каталоге.</td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td>да</td>
+<td>Токен разработчика из модального окна <strong>API key</strong>.</td>
+</tr>
+</tbody></table>
+<p>Параметры можно передать также как <code>application/x-www-form-urlencoded</code> или query-параметры URL; рекомендуется JSON.</p>
+<p>При успехе эндпоинт заново читает последний GitHub-релиз, перекачивает и обновляет кэшированные файлы и сохраняет новую версию и метаданные, если релиз изменился.</p>
+<p><strong>Пример:</strong></p>
+<pre><code class="language-bash">curl -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;repo&quot;:&quot;OWNER/REPO&quot;,&quot;token&quot;:&quot;YOUR_TOKEN&quot;}&#39;
+</code></pre>
+<p><strong>Успешный ответ:</strong></p>
+<pre><code class="language-json">{
+  &quot;status&quot;: true,
+  &quot;repo&quot;: &quot;OWNER/REPO&quot;,
+  &quot;updated&quot;: true,
+  &quot;version&quot;: &quot;1.2.3&quot;
+}
+</code></pre>
+<ul>
+<li><code>updated</code> — <code>true</code>, если версия или метаданные изменились относительно сохранённых; <code>false</code>, если релиз перечитан, но ничего не изменилось.</li>
+<li><code>version</code> — версия после синхронизации.</li>
+</ul>
+<p><strong>Ошибки</strong> (HTTP-статус и поле <code>error</code>):</p>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th><code>error</code></th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>400</td>
+<td><code>token_required</code></td>
+<td>Параметр <code>token</code> не передан.</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>invalid_repo</code></td>
+<td>Параметр <code>repo</code> не передан или некорректен.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>invalid_token</code></td>
+<td>Токен не принадлежит ни одному разработчику аддонов.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>not_owner</code></td>
+<td>Аддон есть в каталоге, но не принадлежит владельцу токена.</td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>addon_not_found</code></td>
+<td>В каталоге нет аддона с таким <code>repo</code>.</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_token</code></td>
+<td>Слишком много запросов для этого токена. См. <code>retryAfter</code> (секунды).</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited_repo</code></td>
+<td>Слишком много запросов для этого репозитория. См. <code>retryAfter</code> (секунды).</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>sync_failed</code></td>
+<td>Не удалось получить или разобрать GitHub-релиз (см. <code>message</code>).</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>internal_error</code></td>
+<td>Непредвиденная ошибка сервера.</td>
+</tr>
+</tbody></table>
+<h3>Лимиты запросов</h3>
+<ul>
+<li><strong>1 запрос за 30 секунд</strong> на токен разработчика.</li>
+<li><strong>1 запрос за 60 секунд</strong> на репозиторий.</li>
+</ul>
+<p>При превышении лимита в ответе есть поле <code>retryAfter</code> (в секундах).</p>
+<h3>Пример GitHub Actions</h3>
+<p>Workflow запускается при каждой публикации релиза и уведомляет каталог. Сохраните как <code>.github/workflows/rocketman-sync.yml</code> в репозитории аддона и добавьте secret <code>ROCKETMAN_ADDON_TOKEN</code> с токеном разработчика.</p>
+<pre><code class="language-yaml">name: Sync addon to RocketMan catalog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify catalog about the new release
+        run: |
+          curl -sS -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
+            -H &quot;Content-Type: application/json&quot; \
+            -d &quot;{\&quot;repo\&quot;:\&quot;${{ github.repository }}\&quot;,\&quot;token\&quot;:\&quot;${{ secrets.ROCKETMAN_ADDON_TOKEN }}\&quot;}&quot;
+</code></pre>
 <h2>Связанные материалы</h2>
 <ul>
 <li><a href="./manifest.html">manifest.json</a> — описание полей</li>
