@@ -38,6 +38,7 @@
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -51,6 +52,16 @@
       </nav>
     <main class="content">
       <h1>Publishing and releases</h1>
+<h2>Publishing to the catalog</h2>
+<p>Third-party developers publish addons on the <a href="https://rocketman-streams.com/#addons">RocketMan Addons</a> page.</p>
+<ol>
+<li>Host your addon in a <strong>public</strong> GitHub repository and publish at least one <a href="#github-release-layout">GitHub Release</a> with <code>main.zip</code>, <code>manifest.json</code>, and <code>logo.png</code> / <code>logo.svg</code>.</li>
+<li>Sign in on the site and open the <strong>Addons</strong> section.</li>
+<li>Add your addon by entering the GitHub repository address — <code>https://github.com/ORG/REPO</code> or <code>ORG/REPO</code>.</li>
+<li>The site reads the <strong>latest GitHub release</strong> and parses addon metadata automatically from <code>manifest.json</code> (name, version, type, description, permissions, and so on) and from the logo asset.</li>
+<li>After moderation and approval, the addon appears in the public catalog and in StreamKit+ settings.</li>
+</ol>
+<p>To ship an update, publish a new GitHub release and run a <a href="#catalog-file-caching">catalog sync</a> — on the site (<em>Update version</em>) or via the <a href="#automatic-catalog-version-sync">sync API</a>.</p>
 <h2>Repository and addon ID</h2>
 <p>Host your addon in a <strong>public GitHub repository</strong>. The manifest <code>id</code> must match the repository path on GitHub:</p>
 <table>

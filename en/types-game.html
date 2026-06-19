@@ -38,6 +38,7 @@
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -60,9 +61,48 @@
   &quot;version&quot;: &quot;1.0.0&quot;,
   &quot;author&quot;: &quot;Your Name&quot;,
   &quot;icon&quot;: &quot;logo.png&quot;,
-  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;]
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;, &quot;FILE_ACCESS&quot;]
 }
 </code></pre>
+<h2>Game mods and file access</h2>
+<p>Game addons can install or update mod files inside the user&#39;s game folder using the scoped <a href="./api-file-access.html"><code>files</code> API</a> (<code>FILE_ACCESS</code> permission).</p>
+<p><strong>Typical flow:</strong> ask for the game folder in settings (<code>folder</code> / <code>file</code> field), then call <code>files.requestAccess(gamePath, &#39;manage&#39;)</code> and copy your mod files with <code>writeFile</code> / <code>copyFile</code>.</p>
+<p>Example — Script Hook–style layout for GTA V:</p>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;game_dir&#39;,
+    type: &#39;folder&#39;,
+    default: &#39;&#39;,
+    editor: { label: { en: &#39;GTA V folder&#39; }, required: true },
+  },
+  {
+    key: &#39;mod_notice&#39;,
+    type: &#39;info&#39;,
+    editor: {
+      description: {
+        en: &#39;Anti-cheat may ban online play. Use only in single-player or allowed modded sessions.&#39;,
+      },
+      infoBorder: &#39;red&#39;,
+    },
+  },
+]);
+
+const params = await api.config.getParams();
+const gameDir = params.game_dir;
+if (gameDir &amp;&amp; (await files.requestAccess(gameDir, &#39;manage&#39;)).success) {
+  await files.writeFile(`${gameDir}\\scripts\\my_mod.asi`, &#39;...&#39;);
+}
+</code></pre>
+<h3>Developer responsibilities</h3>
+<ul>
+<li><strong>Least privilege</strong> — request only <code>read</code> or <code>manage</code> on the smallest path needed; never ask for whole-disk access.</li>
+<li><strong>Prefer established tools</strong> — integrate via well-known mod loaders (e.g. Script Hook V for GTA V) or official mod APIs instead of custom injectors when possible.</li>
+<li><strong>Warnings</strong> — if interaction can harm the PC, game account, or trigger anti-cheat, show a clear <code>info</code> block (<code>infoBorder: &#39;red&#39;</code> or <code>yellow</code>) in settings.</li>
+<li><strong>Platform</strong> — declare supported platforms in the manifest (<code>platforms</code>); game mods meant only for Windows must not break macOS/Linux users. Violations may lead to addon and author bans.</li>
+<li><strong>Prohibited games</strong> — do not build addons for games that forbid this kind of integration; such addons and accounts will be blocked.</li>
+<li><strong>Closed source</strong> — game modules may ship without source code, but catalog publication may be rejected if reviewers cannot verify safety without sources.</li>
+</ul>
+<p>See <a href="./api-file-access.html">File access</a> and <a href="./settings-schema.html">Settings schema</a>.</p>
 <h2>Register in-game actions</h2>
 <p>Call once at addon load:</p>
 <pre><code class="language-js">await game.registerInputTriggers([

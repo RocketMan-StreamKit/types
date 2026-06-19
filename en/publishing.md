@@ -1,5 +1,17 @@
 # Publishing and releases
 
+## Publishing to the catalog
+
+Third-party developers publish addons on the [RocketMan Addons](https://rocketman-streams.com/#addons) page.
+
+1. Host your addon in a **public** GitHub repository and publish at least one [GitHub Release](#github-release-layout) with `main.zip`, `manifest.json`, and `logo.png` / `logo.svg`.
+2. Sign in on the site and open the **Addons** section.
+3. Add your addon by entering the GitHub repository address — `https://github.com/ORG/REPO` or `ORG/REPO`.
+4. The site reads the **latest GitHub release** and parses addon metadata automatically from `manifest.json` (name, version, type, description, permissions, and so on) and from the logo asset.
+5. After moderation and approval, the addon appears in the public catalog and in StreamKit+ settings.
+
+To ship an update, publish a new GitHub release and run a [catalog sync](#catalog-file-caching) — on the site (*Update version*) or via the [sync API](#automatic-catalog-version-sync).
+
 ## Repository and addon ID
 
 Host your addon in a **public GitHub repository**. The manifest `id` must match the repository path on GitHub:

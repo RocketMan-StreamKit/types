@@ -24,6 +24,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `DASHBOARD_CHAT` | Chat window output and send: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_INCOMING` | Subscribe to chat lines: `onChatMessage` / `offChatMessage` |
 | `DASHBOARD_EVENTS_INCOMING` | Subscribe to event records: `onRecord` / `offRecord` |
+| `FILE_ACCESS` | Scoped file/folder API: `files.requestAccess`, `readFile`, `writeFile`, … (user approves each path; see [File access](./api-file-access.md)) |
 
 ## Example
 

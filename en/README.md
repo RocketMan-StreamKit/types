@@ -9,7 +9,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [Getting started](./getting-started.md) | Architecture, installation, project layout |
 | [Lifecycle](./lifecycle.md) | How addons are loaded, restarted, and crash-loop protection |
 | [manifest.json](./manifest.md) | Manifest fields, types, and validation rules |
-| [Publishing and releases](./publishing.md) | GitHub release layout, catalog caching, and automatic version sync |
+| [Publishing and releases](./publishing.md) | Catalog registration, GitHub release layout, caching, and version sync |
 | [TypeScript setup](./typescript.md) | `tsconfig.json`, typings, build output |
 | [Permissions](./permissions.md) | Capability flags and user approval |
 | [Settings schema](./settings-schema.md) | `GenerateConfig()` and settings UI |
@@ -25,6 +25,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [events](./api-events.md) | Event bus and HTTP handler binding |
 | [network](./api-network.md) | HTTP client, endpoints, WebSocket, Socket.IO |
 | [api.config & storage](./api-config-storage.md) | Params, app config, private file storage |
+| [File access](./api-file-access.md) | User-approved read/write to specific paths (`files` API) |
 | [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
 | [status, notify, ui](./api-status-notify-ui.md) | Status bar, notifications, OAuth result pages |

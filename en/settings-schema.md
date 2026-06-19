@@ -9,8 +9,8 @@ Each field has:
 | Property | Description |
 | --- | --- |
 | `key` | Storage key in params object |
-| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file` |
-| `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename, file only) |
+| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info` |
+| `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename), `namePattern` (regex on basename, file only) |
 | `default` | Initial value |
 | `editor` | If present, field appears in settings UI with label, validation, etc. |
 | `options` | For `select`: `{ value, label? }[]` |
@@ -42,8 +42,29 @@ GenerateConfig([
 - **object** — nested object with `fields`
 - **select** — `options: { value, label? }[]`; `default` must match an option or the first option is used
 - **button** — no stored value; triggers `events.On(event, …)` when clicked (gated to declared event names)
-- **folder** — absolute folder path string; native folder picker in settings UI
-- **file** — absolute file path string; native file picker with optional `pathPicker.filters` and `pathPicker.filename`
+- **folder** — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)
+- **file** — absolute file path; read-only display, browse with `filters` / `filename` / `namePattern`, open in file manager (highlights the file when possible)
+- **info** — read-only text block for hints and warnings; `editor.description` is the body; optional `editor.infoBorder`: `blue`, `red`, or `yellow`
+
+## Info block example
+
+```js
+{
+  key: 'mod_warning',
+  type: 'info',
+  editor: {
+    label: { en: 'Important' },
+    description: {
+      en: 'This mod may trigger anti-cheat on some servers. Use at your own risk.',
+    },
+    infoBorder: 'yellow',
+  },
+},
+```
+
+## Path picker UI
+
+`folder` and `file` fields render as a non-editable path field with **Browse** and **Open** actions. Open stays disabled until a path is chosen. For files, Open reveals the file in the system file manager.
 
 ## Example
 

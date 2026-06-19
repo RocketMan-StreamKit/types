@@ -125,6 +125,10 @@
 <td><code>DASHBOARD_EVENTS_INCOMING</code></td>
 <td>Подписка на записи событий: <code>onRecord</code> / <code>offRecord</code></td>
 </tr>
+<tr>
+<td><code>FILE_ACCESS</code></td>
+<td>Доступ к файлам и папкам: <code>files.requestAccess</code>, <code>readFile</code>, <code>writeFile</code>, … (пользователь одобряет каждый путь; см. <a href="./api-file-access.html">Доступ к файлам</a>)</td>
+</tr>
 </tbody></table>
 <h2>Пример</h2>
 <pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {

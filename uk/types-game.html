@@ -60,9 +60,41 @@
   &quot;version&quot;: &quot;1.0.0&quot;,
   &quot;author&quot;: &quot;Your Name&quot;,
   &quot;icon&quot;: &quot;logo.png&quot;,
-  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;]
+  &quot;permissions&quot;: [&quot;NETWORK_REQUEST&quot;, &quot;FILE_ACCESS&quot;]
 }
 </code></pre>
+<h2>Ігрові моди та доступ до файлів</h2>
+<p>Ігрові аддони можуть встановлювати або оновлювати мод-файли в папці гри через API <a href="./api-file-access.html"><code>files</code></a> (право <code>FILE_ACCESS</code> у маніфесті).</p>
+<p><strong>Типовий сценарій:</strong> у налаштуваннях користувач вказує папку гри (<code>folder</code> / <code>file</code>), аддон викликає <code>files.requestAccess(шлях, &#39;manage&#39;)</code> і копіює файли через <code>writeFile</code> / <code>copyFile</code> — як Script Hook для GTA V.</p>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;game_dir&#39;,
+    type: &#39;folder&#39;,
+    default: &#39;&#39;,
+    editor: { label: { uk: &#39;Папка GTA V&#39; }, required: true },
+  },
+  {
+    key: &#39;mod_notice&#39;,
+    type: &#39;info&#39;,
+    editor: {
+      description: {
+        uk: &#39;Античит може заблокувати онлайн. Використовуйте лише в одиночній грі або дозволених сесіях.&#39;,
+      },
+      infoBorder: &#39;red&#39;,
+    },
+  },
+]);
+</code></pre>
+<h3>Обов&#39;язки розробника</h3>
+<ul>
+<li><strong>Мінімальні права</strong> — запитуйте лише <code>read</code> або <code>manage</code> на мінімально потрібний шлях.</li>
+<li><strong>Відомі рішення</strong> — надавайте перевагу популярним мод-лоадерам (Script Hook V для GTA V) або офіційним API замість самописних інжекторів.</li>
+<li><strong>Попередження</strong> — якщо мод може зашкодити ПК, акаунту або спрацювати античит, покажіть блок <code>info</code> з рамкою <code>red</code> / <code>yellow</code> у налаштуваннях.</li>
+<li><strong>Платформа</strong> — вказуйте <code>platforms</code> у маніфесті; аддон лише для Windows не повинен ламатися на macOS/Linux. Порушення призводять до блокування аддона та автора.</li>
+<li><strong>Заборонені ігри</strong> — не робіть інтеграції з іграми, де це прямо заборонено.</li>
+<li><strong>Закритий код</strong> — допускається, але публікація в каталозі може бути відхилена без можливості перевірити вихідники.</li>
+</ul>
+<p>Див. <a href="./api-file-access.html">Доступ до файлів</a>, <a href="./settings-schema.html">Схема налаштувань</a>.</p>
 <h2>Реєстрація внутрішньоігрових дій</h2>
 <p>Викличте один раз під час завантаження аддона:</p>
 <pre><code class="language-js">await game.registerInputTriggers([
