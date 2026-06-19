@@ -38,6 +38,7 @@
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -67,11 +68,11 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code></td>
+<td><code>text</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code></td>
 </tr>
 <tr>
 <td><code>pathPicker</code></td>
-<td>For <code>folder</code> / <code>file</code>: <code>title</code>, <code>filters</code> (file only), <code>filename</code> (exact basename, file only)</td>
+<td>For <code>folder</code> / <code>file</code>: <code>title</code>, <code>filters</code> (file only), <code>filename</code> (exact basename), <code>namePattern</code> (regex on basename, file only)</td>
 </tr>
 <tr>
 <td><code>default</code></td>
@@ -117,9 +118,25 @@
 <li><strong>object</strong> — nested object with <code>fields</code></li>
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> must match an option or the first option is used</li>
 <li><strong>button</strong> — no stored value; triggers <code>events.On(event, …)</code> when clicked (gated to declared event names)</li>
-<li><strong>folder</strong> — absolute folder path string; native folder picker in settings UI</li>
-<li><strong>file</strong> — absolute file path string; native file picker with optional <code>pathPicker.filters</code> and <code>pathPicker.filename</code></li>
+<li><strong>folder</strong> — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)</li>
+<li><strong>file</strong> — absolute file path; read-only display, browse with <code>filters</code> / <code>filename</code> / <code>namePattern</code>, open in file manager (highlights the file when possible)</li>
+<li><strong>info</strong> — read-only text block for hints and warnings; <code>editor.description</code> is the body; optional <code>editor.infoBorder</code>: <code>blue</code>, <code>red</code>, or <code>yellow</code></li>
 </ul>
+<h2>Info block example</h2>
+<pre><code class="language-js">{
+  key: &#39;mod_warning&#39;,
+  type: &#39;info&#39;,
+  editor: {
+    label: { en: &#39;Important&#39; },
+    description: {
+      en: &#39;This mod may trigger anti-cheat on some servers. Use at your own risk.&#39;,
+    },
+    infoBorder: &#39;yellow&#39;,
+  },
+},
+</code></pre>
+<h2>Path picker UI</h2>
+<p><code>folder</code> and <code>file</code> fields render as a non-editable path field with <strong>Browse</strong> and <strong>Open</strong> actions. Open stays disabled until a path is chosen. For files, Open reveals the file in the system file manager.</p>
 <h2>Example</h2>
 <pre><code class="language-js">GenerateConfig([
   {

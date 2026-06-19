@@ -51,6 +51,16 @@
       </nav>
     <main class="content">
       <h1>Публикация и релизы</h1>
+<h2>Публикация в каталоге</h2>
+<p>Сторонние разработчики публикуют аддоны на странице <a href="https://rocketman-streams.com/#addons">RocketMan Addons</a>.</p>
+<ol>
+<li>Разместите аддон в <strong>публичном</strong> GitHub-репозитории и опубликуйте хотя бы один <a href="#%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0-github-%D1%80%D0%B5%D0%BB%D0%B8%D0%B7%D0%B0">GitHub-релиз</a> с файлами <code>main.zip</code>, <code>manifest.json</code> и <code>logo.png</code> / <code>logo.svg</code>.</li>
+<li>Войдите на сайт и откройте раздел <strong>Аддоны</strong>.</li>
+<li>Добавьте аддон, указав адрес GitHub-репозитория — <code>https://github.com/ORG/REPO</code> или <code>ORG/REPO</code>.</li>
+<li>Сайт читает <strong>последний GitHub-релиз</strong> и автоматически разбирает метаданные аддона из <code>manifest.json</code> (название, версия, тип, описание, разрешения и т. д.) и файла логотипа.</li>
+<li>После модерации и одобрения аддон появляется в публичном каталоге и в настройках StreamKit+.</li>
+</ol>
+<p>Чтобы выпустить обновление, опубликуйте новый GitHub-релиз и запустите <a href="#%D0%BA%D1%8D%D1%88%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B5">синхронизацию с каталогом</a> — на сайте (<em>Обновить версию</em>) или через <a href="#%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B2-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B5">API синхронизации</a>.</p>
 <h2>Репозиторий и ID аддона</h2>
 <p>Размещайте аддон в <strong>публичном GitHub-репозитории</strong>. Поле <code>id</code> в манифесте должно совпадать с путём репозитория на GitHub:</p>
 <table>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scoped file access (`files` API) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html" class="is-active">File access</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Scoped file access (<code>files</code> API)</h1>
+<p>Requires manifest permission <code>FILE_ACCESS</code>. Addons <strong>never</strong> get direct <code>require(&#39;fs&#39;)</code> (that needs <code>ROOT</code>). Instead they use the global <code>files</code> object: the user approves each path at runtime, and the main process enforces scope.</p>
+<h2>How it works</h2>
+<ol>
+<li>Declare <code>&quot;FILE_ACCESS&quot;</code> in <code>manifest.json</code> (user sees it at install time).</li>
+<li>Call <code>files.requestAccess(absolutePath, &#39;read&#39; | &#39;manage&#39;)</code> — a native consent dialog appears (like closing the app).</li>
+<li>On approval, the grant is stored; the addon can call <code>readFile</code>, <code>writeFile</code>, <code>stat</code>, etc. only inside granted paths.</li>
+<li>Folder grants include <strong>all subfolders and files</strong> inside.</li>
+<li><code>manage</code> access <strong>includes read</strong> and metadata.</li>
+<li>Two consecutive user denials for the same path block further requests for <strong>30 seconds</strong>.</li>
+<li>Subscribe to <code>fileAccessGranted</code> / <code>fileAccessRevoked</code> with <code>events.On</code>.</li>
+<li>User can revoke any grant in addon settings with one click.</li>
+</ol>
+<h2>Request access</h2>
+<pre><code class="language-js">const result = await files.requestAccess(&#39;C:\\Games\\GTAV&#39;, &#39;manage&#39;);
+if (!result.success) {
+  console.warn(result.message, result.blockedUntil);
+  return;
+}
+
+events.On(&#39;fileAccessGranted&#39;, grant =&gt; {
+  console.log(&#39;Granted&#39;, grant.path, grant.type);
+});
+
+events.On(&#39;fileAccessRevoked&#39;, grant =&gt; {
+  console.log(&#39;Revoked&#39;, grant.path);
+});
+</code></pre>
+<h2>Check and list</h2>
+<pre><code class="language-js">if (await files.hasAccess(&#39;C:\\Games\\GTAV\\mods\\hello.txt&#39;, &#39;read&#39;)) {
+  const { success, data } = await files.readFile(&#39;C:\\Games\\GTAV\\mods\\hello.txt&#39;);
+}
+
+const grants = await files.listAccess();
+await files.revokeAccess(grants[0].id);
+</code></pre>
+<h2>Operations</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Required grant</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>requestAccess(path, type)</code></td>
+<td><code>FILE_ACCESS</code></td>
+<td>User consent dialog</td>
+</tr>
+<tr>
+<td><code>revokeAccess(grantId)</code></td>
+<td><code>FILE_ACCESS</code></td>
+<td>Drop a grant</td>
+</tr>
+<tr>
+<td><code>hasAccess(path, type?)</code></td>
+<td><code>FILE_ACCESS</code></td>
+<td><code>true</code> / <code>false</code></td>
+</tr>
+<tr>
+<td><code>listAccess()</code></td>
+<td><code>FILE_ACCESS</code></td>
+<td>Active grants</td>
+</tr>
+<tr>
+<td><code>readFile(path, encoding?)</code></td>
+<td>read on path</td>
+<td>Read text file</td>
+</tr>
+<tr>
+<td><code>writeFile(path, data, encoding?)</code></td>
+<td>manage on path</td>
+<td>Write text file</td>
+</tr>
+<tr>
+<td><code>appendFile(path, data, encoding?)</code></td>
+<td>manage on path</td>
+<td>Append text</td>
+</tr>
+<tr>
+<td><code>readdir(path)</code></td>
+<td>read on folder</td>
+<td>List entries</td>
+</tr>
+<tr>
+<td><code>stat(path)</code></td>
+<td>read on path</td>
+<td>Size, created/modified/access times</td>
+</tr>
+<tr>
+<td><code>exists(path)</code></td>
+<td>read on path</td>
+<td>Existence inside scope</td>
+</tr>
+<tr>
+<td><code>mkdir(path)</code></td>
+<td>manage on parent/path</td>
+<td>Create directory</td>
+</tr>
+<tr>
+<td><code>unlink(path)</code></td>
+<td>manage on file</td>
+<td>Delete file</td>
+</tr>
+<tr>
+<td><code>rename(from, to)</code></td>
+<td>folder grant + manage on destination</td>
+<td>Rename/move items <strong>inside</strong> a granted folder (not the folder root itself); destination must have manage access</td>
+</tr>
+<tr>
+<td><code>copyFile(from, to)</code></td>
+<td>folder grant (read) + manage on destination</td>
+<td>Copy files from inside a granted folder; same destination rules as <code>rename</code></td>
+</tr>
+</tbody></table>
+<p><code>stat</code> returns: <code>path</code>, <code>isDirectory</code>, <code>isFile</code>, <code>size</code>, <code>createdAt</code>, <code>modifiedAt</code>, <code>accessedAt</code>.</p>
+<h3><code>rename</code> and <code>copyFile</code> rules</h3>
+<ul>
+<li>The <strong>source</strong> must lie <strong>strictly inside</strong> a granted folder (not on the granted folder root path).</li>
+<li>You <strong>cannot</strong> rename or copy the granted folder itself.</li>
+<li>The <strong>destination</strong> path must be covered by a grant with <strong>manage</strong> access (can be the same folder grant or another approved folder).</li>
+<li>A grant to a single file (without a parent folder grant) is <strong>not</strong> enough for <code>rename</code> / <code>copyFile</code>.</li>
+</ul>
+<h2>Principle of least privilege</h2>
+<ul>
+<li>Request <code>read</code> when you only need to inspect files.</li>
+<li>Request <code>manage</code> only for install/copy/write operations.</li>
+<li>Request the <strong>smallest</strong> path (a single mod folder, not the whole disk).</li>
+<li>Do not use <code>ROOT</code> for production game mods.</li>
+</ul>
+<h2>Settings UI</h2>
+<p>Users see active grants under the addon settings page and can revoke them instantly. The <code>FILE_ACCESS</code> permission is highlighted in <strong>yellow</strong> at install time with an explanation of risks.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доступ к файлам (`files` API) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Доступ к файлам (<code>files</code> API)</h1>
+<p>Требуется право <code>FILE_ACCESS</code> в манифесте. Прямой <code>require(&#39;fs&#39;)</code> недоступен (нужен <code>ROOT</code>). Используйте глобальный объект <code>files</code>: пользователь одобряет каждый путь; main process ограничивает область.</p>
+<h2>Как это работает</h2>
+<ol>
+<li>Укажите <code>&quot;FILE_ACCESS&quot;</code> в <code>manifest.json</code>.</li>
+<li><code>files.requestAccess(абсолютныйПуть, &#39;read&#39; | &#39;manage&#39;)</code> — нативный диалог согласия.</li>
+<li>Доступ к папке включает все вложенные файлы и папки.</li>
+<li><code>manage</code> включает чтение и метаданные.</li>
+<li>Два отказа подряд блокируют запрос на <strong>30 секунд</strong>.</li>
+<li>События <code>fileAccessGranted</code> / <code>fileAccessRevoked</code> через <code>events.On</code>.</li>
+<li>Пользователь может отозвать доступ в настройках аддона.</li>
+</ol>
+<h2>Пример</h2>
+<pre><code class="language-js">const result = await files.requestAccess(&#39;C:\\Games\\GTAV&#39;, &#39;manage&#39;);
+if (result.success) {
+  await files.writeFile(&#39;C:\\Games\\GTAV\\scripts\\mod.asi&#39;, &#39;...&#39;);
+}
+
+events.On(&#39;fileAccessGranted&#39;, grant =&gt; console.log(grant.path));
+events.On(&#39;fileAccessRevoked&#39;, grant =&gt; console.log(&#39;revoked&#39;, grant.path));
+</code></pre>
+<h2>Методы</h2>
+<p><code>requestAccess</code>, <code>revokeAccess</code>, <code>hasAccess</code>, <code>listAccess</code>, <code>readFile</code>, <code>writeFile</code>, <code>appendFile</code>, <code>readdir</code>, <code>stat</code>, <code>exists</code>, <code>mkdir</code>, <code>unlink</code>, <code>rename</code>, <code>copyFile</code>.</p>
+<h3><code>rename</code> и <code>copyFile</code></h3>
+<ul>
+<li>Источник должен быть <strong>строго внутри</strong> выданной папки (не корень гранта).</li>
+<li>Саму выданную папку переименовать/скопировать нельзя.</li>
+<li>Путь назначения должен иметь <strong>manage</strong>-доступ (та же или другая одобренная папка).</li>
+</ul>
+<p>Подробнее на английском: <a href="../en/api-file-access.html">api-file-access.md</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

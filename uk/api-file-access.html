@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доступ до файлів (`files` API) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Доступ до файлів (<code>files</code> API)</h1>
+<p>Потрібне право <code>FILE_ACCESS</code> у маніфесті. Прямий <code>require(&#39;fs&#39;)</code> недоступний (потрібен <code>ROOT</code>). Використовуйте глобальний об&#39;єкт <code>files</code>: користувач схвалює кожен шлях; main process обмежує область.</p>
+<h2>Як це працює</h2>
+<ol>
+<li>Вкажіть <code>&quot;FILE_ACCESS&quot;</code> у <code>manifest.json</code>.</li>
+<li><code>files.requestAccess(абсолютнийШлях, &#39;read&#39; | &#39;manage&#39;)</code> — нативний діалог згоди.</li>
+<li>Доступ до папки включає усі вкладені файли та папки.</li>
+<li><code>manage</code> включає читання та метадані.</li>
+<li>Два відмови поспіль блокують запит на <strong>30 секунд</strong>.</li>
+<li>Події <code>fileAccessGranted</code> / <code>fileAccessRevoked</code> через <code>events.On</code>.</li>
+<li>Користувач може відкликати доступ у налаштуваннях аддона.</li>
+</ol>
+<h2>Приклад</h2>
+<pre><code class="language-js">const result = await files.requestAccess(&#39;C:\\Games\\GTAV&#39;, &#39;manage&#39;);
+if (result.success) {
+  await files.writeFile(&#39;C:\\Games\\GTAV\\scripts\\mod.asi&#39;, &#39;...&#39;);
+}
+
+events.On(&#39;fileAccessGranted&#39;, grant =&gt; console.log(grant.path));
+events.On(&#39;fileAccessRevoked&#39;, grant =&gt; console.log(&#39;revoked&#39;, grant.path));
+</code></pre>
+<h2>Методи</h2>
+<p><code>requestAccess</code>, <code>revokeAccess</code>, <code>hasAccess</code>, <code>listAccess</code>, <code>readFile</code>, <code>writeFile</code>, <code>appendFile</code>, <code>readdir</code>, <code>stat</code>, <code>exists</code>, <code>mkdir</code>, <code>unlink</code>, <code>rename</code>, <code>copyFile</code>.</p>
+<h3><code>rename</code> та <code>copyFile</code></h3>
+<ul>
+<li>Джерело має бути <strong>суворо всередині</strong> наданої папки (не корінь гранта).</li>
+<li>Саму надану папку перейменувати/скопіювати не можна.</li>
+<li>Шлях призначення повинен мати <strong>manage</strong>-доступ (та сама або інша схвалена папка).</li>
+</ul>
+<p>Детальніше англійською: <a href="../en/api-file-access.html">api-file-access.md</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

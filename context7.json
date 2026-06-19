@@ -11,6 +11,7 @@
     "Validate query.token === data.token on HTTP endpoints meant only for embedded web pages (widget/application/overlay).",
     "Build TypeScript to index.js before install; the worker executes index.js only.",
     "Set manifest id to ORG/REPO matching the GitHub repository path.",
+    "Publish each version as a GitHub Release on a public repository with main.zip, manifest.json, and logo.png or logo.svg; register the addon on https://rocketman-streams.com/#addons by repository URL.",
     "Keep initial index.js load synchronous work under 5 seconds; defer heavy work to setTimeout, setInterval, or async handlers.",
     "Use @rocketman-streamkit/types for TypeScript; do not add @types/node to addon projects."
   ]
