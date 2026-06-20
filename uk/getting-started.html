@@ -38,6 +38,8 @@
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -90,6 +92,14 @@
 <li>Увімкніть аддон і налаштуйте параметри, якщо worker викликає <code>GenerateConfig()</code>.</li>
 </ol>
 <p>Для worker-аддонів на TypeScript: скомпілюйте в <code>index.js</code> перед встановленням або встановіть папку з виходом webpack.</p>
+<h2>Швидкий старт проєкту</h2>
+<p>Використовуйте <strong><code>@rocketman-streamkit/addon-generator</code></strong>, щоб розгорнути новий репозиторій аддона без ручного копіювання файлів.</p>
+<pre><code class="language-bash">npx @rocketman-streamkit/addon-generator
+</code></pre>
+<p>Аліас: <code>npx create-streamkit-addon</code>.</p>
+<p><strong>Навіщо:</strong> інтерактивний майстер готує проєкт під обрану категорію аддона — <code>manifest.json</code> з потрібним <code>type</code> і дозволами, заготовки worker або web-файлів, TypeScript-конфіг з актуальною версією <a href="https://www.npmjs.com/package/@rocketman-streamkit/types"><code>@rocketman-streamkit/types</code></a> з npm, а також GitHub Actions для релізів (<code>main.zip</code>, <code>manifest.json</code>, іконка) з перевіркою, що тег релізу ще не існує.</p>
+<p>Майстер запитає каталог виводу, категорію аддона (платформа, оверлей, віджет, застосунок, гра тощо), варіант з worker або статичний, JavaScript чи TypeScript, поля маніфесту (<code>id</code>, локалізована назва/опис, <code>app_version</code>, …) та опційний workflow синхронізації з каталогом.</p>
+<p>Потрібен Node.js 18+. Запускайте в порожній папці або вкажіть підкаталог, який буде створено.</p>
 <h2>Мінімальний приклад worker</h2>
 <pre><code class="language-js">await network.endpoints.create(&#39;hook&#39;, &#39;POST&#39;, &#39;onHook&#39;);
 

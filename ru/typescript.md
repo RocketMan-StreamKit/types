@@ -17,28 +17,14 @@ npm install --save-dev @rocketman-streamkit/types
 ```json
 {
   "compilerOptions": {
-    "types": [],
+    "types": ["@rocketman-streamkit/types/addon.d.ts"],
     "lib": ["ES2020"],
     "noEmit": true,
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "./node_modules/@rocketman-streamkit/types/addon.d.ts"]
-}
-```
-
-Либо подключите поле `types` пакета напрямую:
-
-```json
-{
-  "compilerOptions": {
-    "types": ["@rocketman-streamkit/types"],
-    "lib": ["ES2020"],
-    "noEmit": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
 }
 ```
 

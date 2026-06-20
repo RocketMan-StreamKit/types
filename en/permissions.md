@@ -25,6 +25,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `DASHBOARD_CHAT_INCOMING` | Subscribe to chat lines: `onChatMessage` / `offChatMessage` |
 | `DASHBOARD_EVENTS_INCOMING` | Subscribe to event records: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Scoped file/folder API: `files.requestAccess`, `readFile`, `writeFile`, … (user approves each path; see [File access](./api-file-access.md)) |
+| `TTS` | Text-to-speech: `tts.speak`, `tts.getEngine` (uses user TTS settings; see [TTS](./api-tts.md)) |
 
 ## Example
 
@@ -35,6 +36,12 @@ if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
 }
 
 const body = await network.request.get('https://api.example.com/status');
+```
+
+```js
+if (permissions.has(AddonsPermission.TTS)) {
+  await tts.speak('Connection restored');
+}
 ```
 
 ## Principle of least privilege

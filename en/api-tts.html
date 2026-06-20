@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text-to-speech (`tts`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html" class="is-active">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Text-to-speech (<code>tts</code>)</h1>
+<p><strong>Requires:</strong> <code>TTS</code></p>
+<p>Plays synthesized speech through the user&#39;s configured TTS engine (Piper, ElevenLabs, or Windows SAPI). Respects the master TTS enable switch, voice settings, and playback volume from the app settings UI.</p>
+<h2>Setup</h2>
+<ol>
+<li>Add <code>&quot;TTS&quot;</code> to <code>permissions</code> in <code>manifest.json</code> (the user approves it at install time).</li>
+<li>Check at runtime with <code>permissions.has(AddonsPermission.TTS)</code>.</li>
+<li>Call <code>tts.getEngine()</code> to see whether TTS is enabled and which engine is active.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;TTS&quot;, &quot;DASHBOARD_EVENTS&quot;]
+}
+</code></pre>
+<h2>How it works</h2>
+<ul>
+<li>Uses the <strong>same</strong> TTS configuration as the built-in Text to speech settings (engine, voices, enable switch, volume).</li>
+<li>Audio plays in the <strong>main window</strong> (same playback path as internal <code>speakWithTTS</code>).</li>
+<li><strong>Language:</strong> pass <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) or omit it — fastText auto-detects uk/ru/en (English fallback).</li>
+<li><strong>Volume:</strong> <code>options.volumeMultiplier</code> scales playback relative to the user&#39;s TTS volume (<code>0</code> = silent, <code>1</code> = full user volume). Values above <code>1</code> are clamped to <code>1</code> — addons cannot exceed the user&#39;s volume setting.</li>
+<li><strong>Queue:</strong> the main-process TTS manager serializes overlapping <code>speak</code> calls (from addons and from the app).</li>
+</ul>
+<h2><code>tts.getEngine()</code></h2>
+<p>Returns the active engine and whether TTS playback is enabled in settings.</p>
+<pre><code class="language-js">const { success, engine, enabled, message } = await tts.getEngine();
+// success: boolean
+// engine: &#39;piper&#39; | &#39;elevenlabs&#39; | &#39;windows&#39;  (when success)
+// enabled: boolean                             (when success)
+// message: string                              (when !success)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>engine</code></td>
+<td>Active synthesis backend selected in user settings</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td><code>false</code> when the user disabled TTS globally — <code>speak</code> will return <code>{ success: false }</code></td>
+</tr>
+</tbody></table>
+<h2><code>tts.speak(text, options?)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>text</code></td>
+<td>yes</td>
+<td>Message to speak (trimmed; empty text fails)</td>
+</tr>
+<tr>
+<td><code>options.language</code></td>
+<td>no</td>
+<td><code>en</code>, <code>ru</code>, or <code>uk</code>. When omitted, language is auto-detected</td>
+</tr>
+<tr>
+<td><code>options.volumeMultiplier</code></td>
+<td>no</td>
+<td><code>0</code>…<code>1</code> relative to the user&#39;s TTS volume. Values above <code>1</code> are clamped to <code>1</code></td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">await tts.speak(&#39;Thanks for the follow!&#39;);
+
+await tts.speak(&#39;Спасибо за донат!&#39;, { language: &#39;ru&#39; });
+
+await tts.speak(&#39;Quiet notification&#39;, { volumeMultiplier: 0.5 });
+</code></pre>
+<p>Returns <code>{ success: boolean, message?: string }</code>.</p>
+<p>Common <code>message</code> values when <code>success</code> is <code>false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TTS is disabled</code></td>
+<td>User turned off TTS in settings</td>
+</tr>
+<tr>
+<td><code>Text is empty</code></td>
+<td>Blank or whitespace-only <code>text</code></td>
+</tr>
+<tr>
+<td><code>No TTS model configured for this language</code></td>
+<td>Piper engine, no model for detected language</td>
+</tr>
+<tr>
+<td><code>Permission TTS is required…</code></td>
+<td>Missing manifest permission (sandbox-side check)</td>
+</tr>
+<tr>
+<td>ElevenLabs / Windows errors</td>
+<td>API quota, missing voice, platform unavailable, etc.</td>
+</tr>
+</tbody></table>
+<h2>Example: speak on dashboard event</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.TTS)) {
+  console.warn(&#39;TTS not granted&#39;);
+  return;
+}
+
+events.On(&#39;onDonation&#39;, async payload =&gt; {
+  const { success, enabled } = await tts.getEngine();
+  if (!success || !enabled) {
+    return;
+  }
+
+  const username = payload.body?.username || &#39;viewer&#39;;
+  await tts.speak(`Thank you ${username} for the donation!`, {
+    volumeMultiplier: 0.8,
+  });
+});
+</code></pre>
+<p>See also <a href="./permissions.html">Permissions</a> and <a href="./api-overview.html">API overview</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

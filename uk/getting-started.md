@@ -30,6 +30,22 @@
 
 Для worker-аддонів на TypeScript: скомпілюйте в `index.js` перед встановленням або встановіть папку з виходом webpack.
 
+## Швидкий старт проєкту
+
+Використовуйте **`@rocketman-streamkit/addon-generator`**, щоб розгорнути новий репозиторій аддона без ручного копіювання файлів.
+
+```bash
+npx @rocketman-streamkit/addon-generator
+```
+
+Аліас: `npx create-streamkit-addon`.
+
+**Навіщо:** інтерактивний майстер готує проєкт під обрану категорію аддона — `manifest.json` з потрібним `type` і дозволами, заготовки worker або web-файлів, TypeScript-конфіг з актуальною версією [`@rocketman-streamkit/types`](https://www.npmjs.com/package/@rocketman-streamkit/types) з npm, а також GitHub Actions для релізів (`main.zip`, `manifest.json`, іконка) з перевіркою, що тег релізу ще не існує.
+
+Майстер запитає каталог виводу, категорію аддона (платформа, оверлей, віджет, застосунок, гра тощо), варіант з worker або статичний, JavaScript чи TypeScript, поля маніфесту (`id`, локалізована назва/опис, `app_version`, …) та опційний workflow синхронізації з каталогом.
+
+Потрібен Node.js 18+. Запускайте в порожній папці або вкажіть підкаталог, який буде створено.
+
 ## Мінімальний приклад worker
 
 ```js

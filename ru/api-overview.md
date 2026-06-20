@@ -17,6 +17,7 @@
 | `dashboard` | Виджет событий, чат, платформы, триггеры оверлея |
 | `status` | Строка состояния главного окна |
 | `notify` | Центр уведомлений в заголовке |
+| `tts` | Озвучка текста (разрешение `TTS`) |
 | `storage` | Приватный JSON-файл в папке установки |
 | `ui.auth` | URL редиректа успеха/ошибки OAuth |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
@@ -36,4 +37,5 @@
 - [RPC аддонов](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Озвучка текста (`tts`)](./api-tts.md)
 - [Утилиты](./api-utilities.md)

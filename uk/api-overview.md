@@ -17,6 +17,7 @@
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |
 | `status` | Рядок стану головного вікна |
 | `notify` | Центр сповіщень у title bar |
+| `tts` | Озвучення тексту (дозвіл `TTS`) |
 | `storage` | Приватний JSON-файл у папці встановлення |
 | `ui.auth` | URL перенаправлення успіху/помилки OAuth |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
@@ -36,4 +37,5 @@
 - [addons RPC](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Озвучення тексту (`tts`)](./api-tts.md)
 - [Utilities](./api-utilities.md)

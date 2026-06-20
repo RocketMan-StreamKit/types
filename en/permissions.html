@@ -39,6 +39,7 @@
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
           <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -130,6 +131,10 @@
 <td><code>FILE_ACCESS</code></td>
 <td>Scoped file/folder API: <code>files.requestAccess</code>, <code>readFile</code>, <code>writeFile</code>, … (user approves each path; see <a href="./api-file-access.html">File access</a>)</td>
 </tr>
+<tr>
+<td><code>TTS</code></td>
+<td>Text-to-speech: <code>tts.speak</code>, <code>tts.getEngine</code> (uses user TTS settings; see <a href="./api-tts.html">TTS</a>)</td>
+</tr>
 </tbody></table>
 <h2>Example</h2>
 <pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
@@ -138,6 +143,10 @@
 }
 
 const body = await network.request.get(&#39;https://api.example.com/status&#39;);
+</code></pre>
+<pre><code class="language-js">if (permissions.has(AddonsPermission.TTS)) {
+  await tts.speak(&#39;Connection restored&#39;);
+}
 </code></pre>
 <h2>Principle of least privilege</h2>
 <p>Request only permissions your addon uses. For widget/application pages that only need static hosting, <code>WEB_CONTENT</code> alone may be enough. Add <code>WEB_END_POINTS</code> when the worker must expose HTTP APIs to the embedded page.</p>

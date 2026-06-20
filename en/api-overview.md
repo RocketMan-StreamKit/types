@@ -17,6 +17,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `dashboard` | Events widget, chat, platforms, overlay triggers |
 | `status` | Main window status bar |
 | `notify` | Title-bar notification center |
+| `tts` | Text-to-speech playback (`TTS` permission) |
 | `storage` | Private JSON file in install folder |
 | `ui.auth` | OAuth success/fail redirect URLs |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
@@ -36,4 +37,5 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 - [addons RPC](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Text-to-speech (`tts`)](./api-tts.md)
 - [Utilities](./api-utilities.md)

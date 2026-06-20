@@ -6,7 +6,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 
 | Section | Description |
 | --- | --- |
-| [Getting started](./getting-started.md) | Architecture, installation, project layout |
+| [Getting started](./getting-started.md) | Architecture, installation, project layout, `@rocketman-streamkit/addon-generator` |
 | [Lifecycle](./lifecycle.md) | How addons are loaded, restarted, and crash-loop protection |
 | [manifest.json](./manifest.md) | Manifest fields, types, and validation rules |
 | [Publishing and releases](./publishing.md) | Catalog registration, GitHub release layout, caching, and version sync |
@@ -26,6 +26,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [network](./api-network.md) | HTTP client, endpoints, WebSocket, Socket.IO |
 | [api.config & storage](./api-config-storage.md) | Params, app config, private file storage |
 | [File access](./api-file-access.md) | User-approved read/write to specific paths (`files` API) |
+| [Text-to-speech (`tts`)](./api-tts.md) | Play messages via the user's TTS engine (`TTS` permission) |
 | [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
 | [status, notify, ui](./api-status-notify-ui.md) | Status bar, notifications, OAuth result pages |

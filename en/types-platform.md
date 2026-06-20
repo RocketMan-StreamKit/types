@@ -17,6 +17,7 @@ Both types use the same install/enable flow in **Settings → Addons** (grouped 
 - Outbound API calls and WebSocket connections
 - `dashboard.registerPlatform`, `upsertUser`, `addRecord`, `addChatMessage`
 - `status.Update` and `notify.Send` for connection feedback
+- `tts.speak` when the addon should voice alerts (requires `TTS`; see [Text-to-speech](./api-tts.md))
 - `dashboard.registerTriggers` when overlay reactions are needed
 - Inbound webhooks via `network.endpoints.create`
 

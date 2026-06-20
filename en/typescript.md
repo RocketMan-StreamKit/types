@@ -17,28 +17,14 @@ Place `tsconfig.json` next to `index.ts` in your addon folder:
 ```json
 {
   "compilerOptions": {
-    "types": [],
+    "types": ["@rocketman-streamkit/types/addon.d.ts"],
     "lib": ["ES2020"],
     "noEmit": true,
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "./node_modules/@rocketman-streamkit/types/addon.d.ts"]
-}
-```
-
-Alternatively, reference the package types field directly:
-
-```json
-{
-  "compilerOptions": {
-    "types": ["@rocketman-streamkit/types"],
-    "lib": ["ES2020"],
-    "noEmit": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
 }
 ```
 

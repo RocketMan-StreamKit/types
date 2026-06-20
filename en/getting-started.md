@@ -30,6 +30,22 @@ Addon code must use **global** names from the sandbox context. `import` of the S
 
 For TypeScript worker addons: compile to `index.js` before install, or install the webpack output folder.
 
+## Scaffold a new project
+
+Use **`@rocketman-streamkit/addon-generator`** to bootstrap a new addon repository instead of copying files manually.
+
+```bash
+npx @rocketman-streamkit/addon-generator
+```
+
+Alias: `npx create-streamkit-addon`.
+
+**Why use it:** the interactive wizard sets up a ready-to-edit project for your addon category — `manifest.json` with the right `type` and permissions, starter worker or web files, TypeScript typings pinned to the latest [`@rocketman-streamkit/types`](https://www.npmjs.com/package/@rocketman-streamkit/types), and GitHub Actions to build releases (`main.zip`, `manifest.json`, icon) with a check that the release tag does not already exist.
+
+The wizard asks for the output folder, addon category (platform, overlay, widget, application, game, …), worker vs static variant, JavaScript or TypeScript, manifest fields (`id`, localized name/description, `app_version`, …), and optional catalog sync workflow.
+
+Requires Node.js 18+. Run it in an empty directory or let it create a subfolder you specify.
+
 ## Minimal worker example
 
 ```js

@@ -25,6 +25,7 @@
 | `DASHBOARD_CHAT_INCOMING` | Підписка на рядки чату: `onChatMessage` / `offChatMessage` |
 | `DASHBOARD_EVENTS_INCOMING` | Підписка на записи подій: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Доступ до файлів і папок: `files.requestAccess`, `readFile`, `writeFile`, … (користувач схвалює кожен шлях; див. [Доступ до файлів](./api-file-access.md)) |
+| `TTS` | Озвучення тексту: `tts.speak`, `tts.getEngine` (використовує налаштування TTS користувача; див. [TTS](./api-tts.md)) |
 
 ## Приклад
 
@@ -35,6 +36,12 @@ if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
 }
 
 const body = await network.request.get('https://api.example.com/status');
+```
+
+```js
+if (permissions.has(AddonsPermission.TTS)) {
+  await tts.speak("З'єднання відновлено");
+}
 ```
 
 ## Принцип мінімальних привілеїв

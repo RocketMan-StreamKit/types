@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Озвучення тексту (`tts`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html" class="is-active">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Озвучення тексту (<code>tts</code>)</h1>
+<p><strong>Потрібно:</strong> <code>TTS</code></p>
+<p>Відтворює синтезоване мовлення через налаштований користувачем TTS-движок (Piper, ElevenLabs або Windows SAPI). Враховує головний перемикач TTS, голосові налаштування та гучність з UI застосунку.</p>
+<h2>Підключення</h2>
+<ol>
+<li>Додайте <code>&quot;TTS&quot;</code> до <code>permissions</code> у <code>manifest.json</code> (користувач підтверджує під час встановлення).</li>
+<li>Перевіряйте під час виконання через <code>permissions.has(AddonsPermission.TTS)</code>.</li>
+<li>Викликайте <code>tts.getEngine()</code>, щоб дізнатися, чи увімкнено озвучення і який движок активний.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;TTS&quot;, &quot;DASHBOARD_EVENTS&quot;]
+}
+</code></pre>
+<h2>Як це працює</h2>
+<ul>
+<li>Використовує <strong>ту саму</strong> конфігурацію TTS, що й вбудовані налаштування «Text to speech» (движок, голоси, перемикач, гучність).</li>
+<li>Звук відтворюється в <strong>головному вікні</strong> (той самий шлях, що у внутрішнього <code>speakWithTTS</code>).</li>
+<li><strong>Мова:</strong> передайте <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) або опустіть — fastText визначає uk/ru/en автоматично (fallback на англійську).</li>
+<li><strong>Гучність:</strong> <code>options.volumeMultiplier</code> масштабує відтворення відносно гучності TTS користувача (<code>0</code> = тиша, <code>1</code> = повна гучність користувача). Значення вище <code>1</code> обмежуються до <code>1</code> — аддон не може зробити озвучення гучнішим за налаштування користувача.</li>
+<li><strong>Черга:</strong> TTS-менеджер основного процесу серіалізує паралельні виклики <code>speak</code> (від аддонів і від застосунку).</li>
+</ul>
+<h2><code>tts.getEngine()</code></h2>
+<p>Повертає активний движок і чи увімкнено озвучення в налаштуваннях.</p>
+<pre><code class="language-js">const { success, engine, enabled, message } = await tts.getEngine();
+// success: boolean
+// engine: &#39;piper&#39; | &#39;elevenlabs&#39; | &#39;windows&#39;  (коли success)
+// enabled: boolean                             (коли success)
+// message: string                              (коли !success)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>engine</code></td>
+<td>Активний движок синтезу з налаштувань користувача</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td><code>false</code>, якщо користувач вимкнув TTS глобально — <code>speak</code> поверне <code>{ success: false }</code></td>
+</tr>
+</tbody></table>
+<h2><code>tts.speak(text, options?)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обов&#39;язковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>text</code></td>
+<td>так</td>
+<td>Текст для озвучення (обрізається; порожній текст — помилка)</td>
+</tr>
+<tr>
+<td><code>options.language</code></td>
+<td>ні</td>
+<td><code>en</code>, <code>ru</code> або <code>uk</code>. Якщо не вказано — мова визначається автоматично</td>
+</tr>
+<tr>
+<td><code>options.volumeMultiplier</code></td>
+<td>ні</td>
+<td><code>0</code>…<code>1</code> відносно гучності TTS користувача. Значення вище <code>1</code> обмежуються до <code>1</code></td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">await tts.speak(&#39;Дякую за фоллоу!&#39;);
+
+await tts.speak(&#39;Дякую за донат!&#39;, { language: &#39;uk&#39; });
+
+await tts.speak(&#39;Тихе сповіщення&#39;, { volumeMultiplier: 0.5 });
+</code></pre>
+<p>Повертає <code>{ success: boolean, message?: string }</code>.</p>
+<p>Типові значення <code>message</code> при <code>success: false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Повідомлення</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TTS is disabled</code></td>
+<td>Користувач вимкнув TTS у налаштуваннях</td>
+</tr>
+<tr>
+<td><code>Text is empty</code></td>
+<td>Порожній або з пробілів <code>text</code></td>
+</tr>
+<tr>
+<td><code>No TTS model configured for this language</code></td>
+<td>Движок Piper, немає моделі для визначеної мови</td>
+</tr>
+<tr>
+<td><code>Permission TTS is required…</code></td>
+<td>Немає дозволу в маніфесті (перевірка в пісочниці)</td>
+</tr>
+<tr>
+<td>Помилки ElevenLabs / Windows</td>
+<td>Квота API, голос не обрано, платформа недоступна тощо</td>
+</tr>
+</tbody></table>
+<h2>Приклад: озвучення при події дашборду</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.TTS)) {
+  console.warn(&#39;TTS не надано&#39;);
+  return;
+}
+
+events.On(&#39;onDonation&#39;, async payload =&gt; {
+  const { success, enabled } = await tts.getEngine();
+  if (!success || !enabled) {
+    return;
+  }
+
+  const username = payload.body?.username || &#39;глядач&#39;;
+  await tts.speak(`Дякую ${username} за донат!`, {
+    volumeMultiplier: 0.8,
+  });
+});
+</code></pre>
+<p>Див. також <a href="./permissions.html">Дозволи</a> та <a href="./api-overview.html">Огляд API</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

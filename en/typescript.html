@@ -39,6 +39,7 @@
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
           <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -61,25 +62,14 @@
 <p>Place <code>tsconfig.json</code> next to <code>index.ts</code> in your addon folder:</p>
 <pre><code class="language-json">{
   &quot;compilerOptions&quot;: {
-    &quot;types&quot;: [],
+    &quot;types&quot;: [&quot;@rocketman-streamkit/types/addon.d.ts&quot;],
     &quot;lib&quot;: [&quot;ES2020&quot;],
     &quot;noEmit&quot;: true,
     &quot;strict&quot;: true,
     &quot;skipLibCheck&quot;: true
   },
-  &quot;include&quot;: [&quot;./**/*.ts&quot;, &quot;./node_modules/@rocketman-streamkit/types/addon.d.ts&quot;]
-}
-</code></pre>
-<p>Alternatively, reference the package types field directly:</p>
-<pre><code class="language-json">{
-  &quot;compilerOptions&quot;: {
-    &quot;types&quot;: [&quot;@rocketman-streamkit/types&quot;],
-    &quot;lib&quot;: [&quot;ES2020&quot;],
-    &quot;noEmit&quot;: true,
-    &quot;strict&quot;: true,
-    &quot;skipLibCheck&quot;: true
-  },
-  &quot;include&quot;: [&quot;./**/*.ts&quot;]
+  &quot;include&quot;: [&quot;./**/*.ts&quot;],
+  &quot;exclude&quot;: [&quot;node_modules&quot;]
 }
 </code></pre>
 <p>Do <strong>not</strong> add <code>@types/node</code> — addon workers are not Node.js processes.</p>
