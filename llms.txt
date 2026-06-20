@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.13.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.14.
 
 ## Web documentation
 
@@ -9,7 +9,7 @@
 
 ## English guides
 
-- [Getting started](https://rocketman-streamkit.github.io/types/en/getting-started.html): Architecture, installation, project layout
+- [Getting started](https://rocketman-streamkit.github.io/types/en/getting-started.html): Architecture, installation, project layout, `@rocketman-streamkit/addon-generator`
 - [Lifecycle](https://rocketman-streamkit.github.io/types/en/lifecycle.html): How addons are loaded, restarted, and crash-loop protection
 - [manifest.json](https://rocketman-streamkit.github.io/types/en/manifest.html): Manifest fields, types, and validation rules
 - [Publishing and releases](https://rocketman-streamkit.github.io/types/en/publishing.html): Catalog registration, GitHub release layout, caching, and version sync
@@ -24,6 +24,7 @@
 - [network](https://rocketman-streamkit.github.io/types/en/api-network.html): HTTP client, endpoints, WebSocket, Socket.IO
 - [api.config & storage](https://rocketman-streamkit.github.io/types/en/api-config-storage.html): Params, app config, private file storage
 - [File access](https://rocketman-streamkit.github.io/types/en/api-file-access.html): User-approved read/write to specific paths (`files` API)
+- [Text-to-speech (`tts`)](https://rocketman-streamkit.github.io/types/en/api-tts.html): Play messages via the user's TTS engine (`TTS` permission)
 - [addons (RPC)](https://rocketman-streamkit.github.io/types/en/api-addons-rpc.html): Addon-to-addon requests
 - [dashboard](https://rocketman-streamkit.github.io/types/en/api-dashboard.html): Events widget, chat, overlay triggers
 - [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, notifications, OAuth result pages

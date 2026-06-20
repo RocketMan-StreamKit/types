@@ -39,6 +39,7 @@
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config & storage</a></li>
           <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -91,6 +92,14 @@
 <li>Enable the addon and configure settings if the worker calls <code>GenerateConfig()</code>.</li>
 </ol>
 <p>For TypeScript worker addons: compile to <code>index.js</code> before install, or install the webpack output folder.</p>
+<h2>Scaffold a new project</h2>
+<p>Use <strong><code>@rocketman-streamkit/addon-generator</code></strong> to bootstrap a new addon repository instead of copying files manually.</p>
+<pre><code class="language-bash">npx @rocketman-streamkit/addon-generator
+</code></pre>
+<p>Alias: <code>npx create-streamkit-addon</code>.</p>
+<p><strong>Why use it:</strong> the interactive wizard sets up a ready-to-edit project for your addon category — <code>manifest.json</code> with the right <code>type</code> and permissions, starter worker or web files, TypeScript typings pinned to the latest <a href="https://www.npmjs.com/package/@rocketman-streamkit/types"><code>@rocketman-streamkit/types</code></a>, and GitHub Actions to build releases (<code>main.zip</code>, <code>manifest.json</code>, icon) with a check that the release tag does not already exist.</p>
+<p>The wizard asks for the output folder, addon category (platform, overlay, widget, application, game, …), worker vs static variant, JavaScript or TypeScript, manifest fields (<code>id</code>, localized name/description, <code>app_version</code>, …), and optional catalog sync workflow.</p>
+<p>Requires Node.js 18+. Run it in an empty directory or let it create a subfolder you specify.</p>
 <h2>Minimal worker example</h2>
 <pre><code class="language-js">await network.endpoints.create(&#39;hook&#39;, &#39;POST&#39;, &#39;onHook&#39;);
 

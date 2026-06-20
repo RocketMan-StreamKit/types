@@ -38,6 +38,8 @@
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
           <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -129,6 +131,10 @@
 <td><code>FILE_ACCESS</code></td>
 <td>Доступ до файлів і папок: <code>files.requestAccess</code>, <code>readFile</code>, <code>writeFile</code>, … (користувач схвалює кожен шлях; див. <a href="./api-file-access.html">Доступ до файлів</a>)</td>
 </tr>
+<tr>
+<td><code>TTS</code></td>
+<td>Озвучення тексту: <code>tts.speak</code>, <code>tts.getEngine</code> (використовує налаштування TTS користувача; див. <a href="./api-tts.html">TTS</a>)</td>
+</tr>
 </tbody></table>
 <h2>Приклад</h2>
 <pre><code class="language-js">if (!permissions.has(AddonsPermission.NETWORK_REQUEST)) {
@@ -137,6 +143,10 @@
 }
 
 const body = await network.request.get(&#39;https://api.example.com/status&#39;);
+</code></pre>
+<pre><code class="language-js">if (permissions.has(AddonsPermission.TTS)) {
+  await tts.speak(&quot;З&#39;єднання відновлено&quot;);
+}
 </code></pre>
 <h2>Принцип мінімальних привілеїв</h2>
 <p>Запитуйте лише ті дозволи, які використовує ваш аддон. Для сторінок віджета/застосунку, яким потрібне лише статичне хостування, може вистачити одного <code>WEB_CONTENT</code>. Додайте <code>WEB_END_POINTS</code>, коли worker має надавати HTTP API для вбудованої сторінки.</p>
