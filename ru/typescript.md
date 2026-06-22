@@ -21,7 +21,8 @@ npm install --save-dev @rocketman-streamkit/types
     "lib": ["ES2020"],
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "ES2020"
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]

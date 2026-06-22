@@ -21,7 +21,8 @@ Place `tsconfig.json` next to `index.ts` in your addon folder:
     "lib": ["ES2020"],
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "ES2020"
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]
