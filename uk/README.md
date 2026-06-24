@@ -29,7 +29,7 @@
 | [Озвучення тексту (`tts`)](./api-tts.md) | Озвучення через TTS-движок користувача (дозвіл `TTS`) |
 | [addons (RPC)](./api-addons-rpc.md) | Запити між аддонами |
 | [dashboard](./api-dashboard.md) | Віджет подій, чат, тригери оверлею |
-| [status, notify, ui](./api-status-notify-ui.md) | Рядок стану, сповіщення, сторінки OAuth |
+| [status, notify, ui](./api-status-notify-ui.md) | Рядок стану, онлайн глядачів, сповіщення, сторінки OAuth |
 | [Утиліти](./api-utilities.md) | Таймери, crypto, console, режим розробника |
 
 ### Категорії аддонів

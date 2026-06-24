@@ -9,7 +9,7 @@
 | Властивість | Опис |
 | --- | --- |
 | `key` | Ключ зберігання в об'єкті params |
-| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
 | `default` | Початкове значення |
 | `editor` | Якщо присутній — поле з'являється в UI налаштувань з міткою, валідацією тощо |
 | `options` | Для `select`: `{ value, label? }[]` |
@@ -34,6 +34,7 @@ GenerateConfig([
 ## Підтримувані типи
 
 - **text** — рядок
+- **hidden** — рядок (зберігання та валідація як у `text`); в UI маскується з кнопкою «Показати/Приховати» (за замовчуванням тип password)
 - **color** — hex-рядок (`#ff1744`)
 - **number** — число
 - **boolean** — логічне значення

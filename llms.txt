@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.15.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.16.
 
 ## Web documentation
 
@@ -27,7 +27,7 @@
 - [Text-to-speech (`tts`)](https://rocketman-streamkit.github.io/types/en/api-tts.html): Play messages via the user's TTS engine (`TTS` permission)
 - [addons (RPC)](https://rocketman-streamkit.github.io/types/en/api-addons-rpc.html): Addon-to-addon requests
 - [dashboard](https://rocketman-streamkit.github.io/types/en/api-dashboard.html): Events widget, chat, overlay triggers
-- [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, notifications, OAuth result pages
+- [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, viewer count, notifications, OAuth result pages
 - [Utilities](https://rocketman-streamkit.github.io/types/en/api-utilities.html): Timers, crypto, console, developer mode
 - [Platform addons](https://rocketman-streamkit.github.io/types/en/types-platform.html): `platform.streaming`, `platform.donation`
 - [Overlay addons](https://rocketman-streamkit.github.io/types/en/types-overlay.html): Effects, static web, simple media

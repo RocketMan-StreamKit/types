@@ -9,7 +9,7 @@ Each field has:
 | Property | Description |
 | --- | --- |
 | `key` | Storage key in params object |
-| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info` |
 | `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename), `namePattern` (regex on basename, file only) |
 | `default` | Initial value |
 | `editor` | If present, field appears in settings UI with label, validation, etc. |
@@ -35,6 +35,7 @@ GenerateConfig([
 ## Supported types
 
 - **text** — string
+- **hidden** — string (same storage and validation as `text`); masked in the UI with a Show/Hide toggle (password field by default)
 - **color** — hex string (`#ff1744`)
 - **number** — number
 - **boolean** — boolean

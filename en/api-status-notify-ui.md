@@ -17,6 +17,42 @@ status.OnClick(() => {
 
 Clickability is reflected in the main window status bar when `OnClick` is registered.
 
+## viewers
+
+**No permission required**
+
+Reports live viewer count for a platform in the main window status bar (left of the platform/version line). Click the block to open display settings.
+
+```js
+viewers.Update({
+  platform: 'twitch',
+  count: 128,
+});
+```
+
+| Field | Description |
+| --- | --- |
+| `platform` | Platform identifier. Use the same id as `dashboard.registerPlatform` when possible (e.g. `twitch`, `youtube`). |
+| `count` | Non-negative integer viewer count. |
+
+**Behavior:**
+
+- Only addons that call `Update` at least once are included in the UI.
+- Disabling the addon removes its viewer data.
+- The addon manifest icon is shown next to each platform count; hovering shows the change since the last update.
+- The user chooses display mode in the main window: per platform, per platform + total (app icon and sum), or total only. Optional inline delta (+N green / −N red). **Settings → Interface** controls whether zero counts are listed.
+
+Example with platform registration:
+
+```js
+await dashboard.registerPlatform({
+  id: 'twitch',
+  name: { en: 'Twitch', ru: 'Twitch', uk: 'Twitch' },
+});
+
+viewers.Update({ platform: 'twitch', count: viewerCount });
+```
+
 ## notify
 
 **Requires:** `NOTIFY`
@@ -38,6 +74,22 @@ notify.Remove(`${data.id}_status`);
 ```
 
 Removes a notification only when this addon created it. Notifications from other addons or the main process are ignored.
+
+## settings.notify
+
+Popup notifications shown above the addon settings window (no permission required). They can be sent only while the settings panel for this addon is open.
+
+```js
+if (settings.isOpen && !settings.isNotifyBlocked) {
+  settings.notify.Send({
+    title: { en: 'Settings saved' },
+    message: { en: 'Token stored' },
+    buttonText: { en: 'Close' },
+  });
+}
+```
+
+More than 5 notifications in 10 seconds blocks popups for 5 seconds. The block state is reflected in `settings.isNotifyBlocked`.
 
 ## ui.auth
 

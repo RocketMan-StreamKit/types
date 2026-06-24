@@ -16,6 +16,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `addons` | `request`, `onRequest`, `offRequest` — addon-to-addon RPC |
 | `dashboard` | Events widget, chat, platforms, overlay triggers |
 | `status` | Main window status bar |
+| `viewers` | Live viewer count in the main window status bar (no permission) |
 | `notify` | Title-bar notification center |
 | `tts` | Text-to-speech playback (`TTS` permission) |
 | `storage` | Private JSON file in install folder |

@@ -29,7 +29,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [Text-to-speech (`tts`)](./api-tts.md) | Play messages via the user's TTS engine (`TTS` permission) |
 | [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
-| [status, notify, ui](./api-status-notify-ui.md) | Status bar, notifications, OAuth result pages |
+| [status, notify, ui](./api-status-notify-ui.md) | Status bar, viewer count, notifications, OAuth result pages |
 | [Utilities](./api-utilities.md) | Timers, crypto, console, developer mode |
 
 ### Addon categories

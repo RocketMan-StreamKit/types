@@ -65,6 +65,45 @@ status.OnClick(() =&gt; {
 });
 </code></pre>
 <p>Clickability is reflected in the main window status bar when <code>OnClick</code> is registered.</p>
+<h2>viewers</h2>
+<p><strong>No permission required</strong></p>
+<p>Reports live viewer count for a platform in the main window status bar (left of the platform/version line). Click the block to open display settings.</p>
+<pre><code class="language-js">viewers.Update({
+  platform: &#39;twitch&#39;,
+  count: 128,
+});
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>platform</code></td>
+<td>Platform identifier. Use the same id as <code>dashboard.registerPlatform</code> when possible (e.g. <code>twitch</code>, <code>youtube</code>).</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>Non-negative integer viewer count.</td>
+</tr>
+</tbody></table>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Only addons that call <code>Update</code> at least once are included in the UI.</li>
+<li>Disabling the addon removes its viewer data.</li>
+<li>The addon manifest icon is shown next to each platform count; hovering shows the change since the last update.</li>
+<li>The user chooses display mode in the main window: per platform, per platform + total (app icon and sum), or total only. Optional inline delta (+N green / −N red). <strong>Settings → Interface</strong> controls whether zero counts are listed.</li>
+</ul>
+<p>Example with platform registration:</p>
+<pre><code class="language-js">await dashboard.registerPlatform({
+  id: &#39;twitch&#39;,
+  name: { en: &#39;Twitch&#39;, ru: &#39;Twitch&#39;, uk: &#39;Twitch&#39; },
+});
+
+viewers.Update({ platform: &#39;twitch&#39;, count: viewerCount });
+</code></pre>
 <h2>notify</h2>
 <p><strong>Requires:</strong> <code>NOTIFY</code></p>
 <pre><code class="language-js">notify.Send({
@@ -79,6 +118,17 @@ status.OnClick(() =&gt; {
 <pre><code class="language-js">notify.Remove(`${data.id}_status`);
 </code></pre>
 <p>Removes a notification only when this addon created it. Notifications from other addons or the main process are ignored.</p>
+<h2>settings.notify</h2>
+<p>Popup notifications shown above the addon settings window (no permission required). They can be sent only while the settings panel for this addon is open.</p>
+<pre><code class="language-js">if (settings.isOpen &amp;&amp; !settings.isNotifyBlocked) {
+  settings.notify.Send({
+    title: { en: &#39;Settings saved&#39; },
+    message: { en: &#39;Token stored&#39; },
+    buttonText: { en: &#39;Close&#39; },
+  });
+}
+</code></pre>
+<p>More than 5 notifications in 10 seconds blocks popups for 5 seconds. The block state is reflected in <code>settings.isNotifyBlocked</code>.</p>
 <h2>ui.auth</h2>
 <p>OAuth result pages on the local web server:</p>
 <pre><code class="language-js">ui.auth.generateSuccess(&#39;Account linked&#39;);

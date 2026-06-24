@@ -65,6 +65,45 @@ status.OnClick(() =&gt; {
 });
 </code></pre>
 <p>Кликабельность отражается в строке состояния главного окна, когда зарегистрирован <code>OnClick</code>.</p>
+<h2>viewers</h2>
+<p><strong>Разрешение не требуется</strong></p>
+<p>Передаёт количество зрителей на платформе в строку состояния главного окна (слева от платформы/версии). Клик по блоку открывает настройки отображения.</p>
+<pre><code class="language-js">viewers.Update({
+  platform: &#39;twitch&#39;,
+  count: 128,
+});
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>platform</code></td>
+<td>Идентификатор платформы. По возможности совпадает с id из <code>dashboard.registerPlatform</code> (например <code>twitch</code>, <code>youtube</code>).</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>Неотрицательное целое — число зрителей.</td>
+</tr>
+</tbody></table>
+<p><strong>Поведение:</strong></p>
+<ul>
+<li>В интерфейсе учитываются только аддоны, которые хотя бы раз вызвали <code>Update</code>.</li>
+<li>Отключение аддона удаляет его данные об онлайне.</li>
+<li>Рядом с цифрой показывается иконка аддона из манифеста; при наведении — изменение счётчика с прошлого обновления.</li>
+<li>Пользователь выбирает режим: по платформам, по платформам + суммарный (иконка приложения и сумма) или только суммарный. Опционально — inline-дельта (+N зелёным / −N красным). <strong>Настройки → Интерфейс</strong> — показывать ли нулевой онлайн.</li>
+</ul>
+<p>Пример вместе с регистрацией платформы:</p>
+<pre><code class="language-js">await dashboard.registerPlatform({
+  id: &#39;twitch&#39;,
+  name: { en: &#39;Twitch&#39;, ru: &#39;Twitch&#39;, uk: &#39;Twitch&#39; },
+});
+
+viewers.Update({ platform: &#39;twitch&#39;, count: viewerCount });
+</code></pre>
 <h2>notify</h2>
 <p><strong>Требуется:</strong> <code>NOTIFY</code></p>
 <pre><code class="language-js">notify.Send({
@@ -79,6 +118,17 @@ status.OnClick(() =&gt; {
 <pre><code class="language-js">notify.Remove(`${data.id}_status`);
 </code></pre>
 <p>Удаляет уведомление только если его создал этот аддон. Уведомления других аддонов и основного процесса игнорируются.</p>
+<h2>settings.notify</h2>
+<p>Всплывающие уведомления поверх окна настроек аддона (разрешение не требуется). Их можно отправлять только пока открыта панель настроек этого аддона.</p>
+<pre><code class="language-js">if (settings.isOpen &amp;&amp; !settings.isNotifyBlocked) {
+  settings.notify.Send({
+    title: { en: &#39;Settings saved&#39;, ru: &#39;Настройки сохранены&#39; },
+    message: { en: &#39;Token stored&#39;, ru: &#39;Токен сохранен&#39; },
+    buttonText: { en: &#39;Close&#39;, ru: &#39;Закрыть&#39; },
+  });
+}
+</code></pre>
+<p>Более 5 уведомлений за 10 секунд блокируют показ на 5 секунд. Состояние блокировки доступно в <code>settings.isNotifyBlocked</code>.</p>
 <h2>ui.auth</h2>
 <p>Страницы результата OAuth на локальном веб-сервере:</p>
 <pre><code class="language-js">ui.auth.generateSuccess(&#39;Account linked&#39;);

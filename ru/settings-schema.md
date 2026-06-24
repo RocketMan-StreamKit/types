@@ -9,7 +9,7 @@
 | Свойство | Описание |
 | --- | --- |
 | `key` | Ключ хранения в объекте params |
-| `type` | `text`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
 | `default` | Начальное значение |
 | `editor` | Если задан — поле показывается в UI настроек с подписью, валидацией и т.д. |
 | `options` | Для `select`: `{ value, label? }[]` |
@@ -34,6 +34,7 @@ GenerateConfig([
 ## Поддерживаемые типы
 
 - **text** — строка
+- **hidden** — строка (хранение и валидация как у `text`); в UI маскируется с кнопкой «Показать/Скрыть» (по умолчанию тип password)
 - **color** — hex-строка (`#ff1744`)
 - **number** — число
 - **boolean** — логическое значение

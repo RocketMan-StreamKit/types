@@ -17,6 +17,7 @@
 - Исходящие вызовы API и WebSocket-соединения
 - `dashboard.registerPlatform`, `upsertUser`, `addRecord`, `addChatMessage`
 - `status.Update` и `notify.Send` для обратной связи о соединении
+- `viewers.Update` для онлайна зрителей (без доп. разрешения; см. [status, notify, ui](./api-status-notify-ui.md#viewers))
 - `tts.speak`, когда аддон должен озвучивать оповещения (нужно `TTS`; см. [Озвучка текста](./api-tts.md))
 - `dashboard.registerTriggers`, когда нужны реакции оверлея
 - Входящие вебхуки через `network.endpoints.create`
