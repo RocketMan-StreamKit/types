@@ -227,4 +227,22 @@ events.On('triggers:applied-changed', ({ previous, current }) => {
 
 Use this to release internal resources when bindings are removed.
 
+### Query saved trigger bindings — `triggers.getApplied()`
+
+Any addon can request the current trigger map at any time (no extra permission):
+
+```js
+const res = await triggers.getApplied();
+if (res.success) {
+  const { categories } = res;
+  // categories.overlay, categories.timer, categories.game,
+  // categories.gameInput, categories.sounds, categories.hotkeys
+  // Each is a map: addonId → rules[]
+  const twitchOverlay = categories.overlay['twitch'] || [];
+  const allHotkeys = categories.hotkeys;
+}
+```
+
+Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except `gameInput` where keys are game addon ids.
+
 See JSDoc on `registerTriggers` in generated typings for full contract.

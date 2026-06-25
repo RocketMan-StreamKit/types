@@ -33,7 +33,7 @@ viewers.Update({
 | Field | Description |
 | --- | --- |
 | `platform` | Platform identifier. Use the same id as `dashboard.registerPlatform` when possible (e.g. `twitch`, `youtube`). |
-| `count` | Non-negative integer viewer count. |
+| `count` | Non-negative integer viewer count, or `-1` when the stream/platform is offline. |
 
 **Behavior:**
 

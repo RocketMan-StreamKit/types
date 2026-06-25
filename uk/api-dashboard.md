@@ -227,4 +227,22 @@ events.On('triggers:applied-changed', ({ previous, current }) => {
 
 Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив'язок.
 
+### Запит збережених прив'язок — `triggers.getApplied()`
+
+Будь-який аддон може в будь-який момент запросити актуальну карту тригерів (без додаткових прав):
+
+```js
+const res = await triggers.getApplied();
+if (res.success) {
+  const { categories } = res;
+  // categories.overlay, categories.timer, categories.game,
+  // categories.gameInput, categories.sounds, categories.hotkeys
+  // У кожній категорії: addonId → rules[]
+  const twitchOverlay = categories.overlay['twitch'] || [];
+  const allHotkeys = categories.hotkeys;
+}
+```
+
+Містить прив'язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім `gameInput` (ключі — id ігрових аддонів).
+
 Повний контракт — у JSDoc `registerTriggers` у згенерованих типах.

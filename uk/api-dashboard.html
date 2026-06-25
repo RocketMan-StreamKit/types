@@ -265,6 +265,19 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 });
 </code></pre>
 <p>Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив&#39;язок.</p>
+<h3>Запит збережених прив&#39;язок — <code>triggers.getApplied()</code></h3>
+<p>Будь-який аддон може в будь-який момент запросити актуальну карту тригерів (без додаткових прав):</p>
+<pre><code class="language-js">const res = await triggers.getApplied();
+if (res.success) {
+  const { categories } = res;
+  // categories.overlay, categories.timer, categories.game,
+  // categories.gameInput, categories.sounds, categories.hotkeys
+  // У кожній категорії: addonId → rules[]
+  const twitchOverlay = categories.overlay[&#39;twitch&#39;] || [];
+  const allHotkeys = categories.hotkeys;
+}
+</code></pre>
+<p>Містить прив&#39;язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім <code>gameInput</code> (ключі — id ігрових аддонів).</p>
 <p>Повний контракт — у JSDoc <code>registerTriggers</code> у згенерованих типах.</p>
 
     </main>
