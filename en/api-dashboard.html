@@ -265,6 +265,19 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 });
 </code></pre>
 <p>Use this to release internal resources when bindings are removed.</p>
+<h3>Query saved trigger bindings — <code>triggers.getApplied()</code></h3>
+<p>Any addon can request the current trigger map at any time (no extra permission):</p>
+<pre><code class="language-js">const res = await triggers.getApplied();
+if (res.success) {
+  const { categories } = res;
+  // categories.overlay, categories.timer, categories.game,
+  // categories.gameInput, categories.sounds, categories.hotkeys
+  // Each is a map: addonId → rules[]
+  const twitchOverlay = categories.overlay[&#39;twitch&#39;] || [];
+  const allHotkeys = categories.hotkeys;
+}
+</code></pre>
+<p>Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except <code>gameInput</code> where keys are game addon ids.</p>
 <p>See JSDoc on <code>registerTriggers</code> in generated typings for full contract.</p>
 
     </main>
