@@ -40,6 +40,7 @@
           <li><a href="api-config-storage.html">api.config і storage</a></li>
           <li><a href="api-file-access.html">Доступ до файлів</a></li>
           <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -83,6 +84,34 @@
 <pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
 </code></pre>
 <p>Той самий статичний маршрут, що й у віджетів. Id вікна: <code>addon-app:{addonId}</code>.</p>
+<h2>Стилі як у основному застосунку</h2>
+<p>StreamKit+ віддає зібрану копію основної таблиці стилів UI через локальний веб-сервер. Підключіть її в HTML застосунку, щоб кнопки, поля вводу, типографіка та CSS-змінні теми збігалися з іншими вікнами застосунку.</p>
+<table>
+<thead>
+<tr>
+<th>Ресурс</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Повний CSS</td>
+<td><code>http://localhost:{WEB_SERVER_PORT}/data/styles.css</code></td>
+</tr>
+<tr>
+<td>Шрифти</td>
+<td><code>http://localhost:{WEB_SERVER_PORT}/data/fonts/…</code> (підключаються з CSS)</td>
+</tr>
+</tbody></table>
+<p>Додайте у HTML entry file <strong>перед</strong> власними стилями аддона:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;http://localhost:3000/data/styles.css&quot;&gt;
+</code></pre>
+<p>Вкажіть порт веб-сервера застосунку, якщо він інший (за замовчуванням <code>WEB_SERVER_PORT</code> = <code>3000</code>).</p>
+<p>Примітки:</p>
+<ul>
+<li>Дозвіл аддона не потрібен — маршрут обслуговує основний застосунок, а не папка встановлення аддона.</li>
+<li>CSS-змінні теми збігаються з головним вікном (<code>--bg</code>, <code>--text</code>, <code>--btn-primary</code>, …). Темна тема вмикається атрибутом <code>data-theme=&quot;dark&quot;</code> на <code>&lt;html&gt;</code> (як у основному застосунку).</li>
+<li>Власні стилі аддона можна підключати після цього <code>&lt;link&gt;</code> і за потреби перевизначати правила.</li>
+</ul>
 <h2>Статичний application (без worker)</h2>
 <p>Лише <code>WEB_CONTENT</code> — HTML/JS/CSS у папці встановлення.</p>
 <h2>Повний application (worker)</h2>

@@ -19,6 +19,29 @@ http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
 
 Same static route as widgets. Window id: `addon-app:{addonId}`.
 
+## Matching main app styles
+
+StreamKit+ serves a bundled copy of the main UI stylesheet from the local web server. Link it in your application HTML so buttons, inputs, typography, and theme CSS variables match the rest of the app.
+
+| Resource | URL |
+| --- | --- |
+| Full stylesheet | `http://localhost:{WEB_SERVER_PORT}/data/styles.css` |
+| Font files | `http://localhost:{WEB_SERVER_PORT}/data/fonts/…` (referenced by the CSS) |
+
+Add to your HTML entry file **before** addon-specific styles:
+
+```html
+<link rel="stylesheet" href="http://localhost:3000/data/styles.css">
+```
+
+Use the app's web server port if it differs (`WEB_SERVER_PORT` defaults to `3000`).
+
+Notes:
+
+- No addon permission is required — the route is served by the main app, not from the addon install folder.
+- Theme variables use the same names as the main window (`--bg`, `--text`, `--btn-primary`, …). Dark overrides apply when `data-theme="dark"` is set on `<html>` (same attribute as the main app).
+- Your own CSS can override or extend these rules after the `<link>` tag.
+
 ## Static application (no worker)
 
 `WEB_CONTENT` only — HTML/JS/CSS in the install folder.

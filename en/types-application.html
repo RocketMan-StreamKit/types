@@ -40,6 +40,7 @@
           <li><a href="api-config-storage.html">api.config & storage</a></li>
           <li><a href="api-file-access.html">File access</a></li>
           <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -83,6 +84,34 @@
 <pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
 </code></pre>
 <p>Same static route as widgets. Window id: <code>addon-app:{addonId}</code>.</p>
+<h2>Matching main app styles</h2>
+<p>StreamKit+ serves a bundled copy of the main UI stylesheet from the local web server. Link it in your application HTML so buttons, inputs, typography, and theme CSS variables match the rest of the app.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Full stylesheet</td>
+<td><code>http://localhost:{WEB_SERVER_PORT}/data/styles.css</code></td>
+</tr>
+<tr>
+<td>Font files</td>
+<td><code>http://localhost:{WEB_SERVER_PORT}/data/fonts/…</code> (referenced by the CSS)</td>
+</tr>
+</tbody></table>
+<p>Add to your HTML entry file <strong>before</strong> addon-specific styles:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;http://localhost:3000/data/styles.css&quot;&gt;
+</code></pre>
+<p>Use the app&#39;s web server port if it differs (<code>WEB_SERVER_PORT</code> defaults to <code>3000</code>).</p>
+<p>Notes:</p>
+<ul>
+<li>No addon permission is required — the route is served by the main app, not from the addon install folder.</li>
+<li>Theme variables use the same names as the main window (<code>--bg</code>, <code>--text</code>, <code>--btn-primary</code>, …). Dark overrides apply when <code>data-theme=&quot;dark&quot;</code> is set on <code>&lt;html&gt;</code> (same attribute as the main app).</li>
+<li>Your own CSS can override or extend these rules after the <code>&lt;link&gt;</code> tag.</li>
+</ul>
 <h2>Static application (no worker)</h2>
 <p><code>WEB_CONTENT</code> only — HTML/JS/CSS in the install folder.</p>
 <h2>Full application (worker)</h2>

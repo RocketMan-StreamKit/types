@@ -12,13 +12,14 @@
 | `data` | Метадані екземпляра: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — прив'язка HTTP/Socket.IO callback |
 | `network` | HTTP-клієнт, вхідні маршрути, WebSocket, Socket.IO |
-| `api` | `openUrl`, `restart`, `config.*` |
+| `api` | `openUrl`, `restart`, `getProcessStats`, `config.*` |
 | `addons` | `request`, `onRequest`, `offRequest` — RPC між аддонами |
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |
 | `status` | Рядок стану головного вікна |
 | `viewers` | Онлайн глядачів у рядку стану головного вікна (без дозволу) |
 | `notify` | Центр сповіщень у title bar |
 | `tts` | Озвучення тексту (дозвіл `TTS`) |
+| `ytdlp` | Завантаження медіа через вбудований yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | `storage` | Приватний JSON-файл у папці встановлення |
 | `ui.auth` | URL перенаправлення успіху/помилки OAuth |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
@@ -39,4 +40,5 @@
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
 - [Озвучення тексту (`tts`)](./api-tts.md)
+- [Завантаження yt-dlp (`ytdlp`)](./api-ytdlp.md)
 - [Utilities](./api-utilities.md)

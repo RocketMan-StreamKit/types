@@ -40,6 +40,7 @@
           <li><a href="api-config-storage.html">api.config & storage</a></li>
           <li><a href="api-file-access.html">File access</a></li>
           <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -53,6 +54,46 @@
       </nav>
     <main class="content">
       <h1>Utilities</h1>
+<h2><code>api.getProcessStats</code></h2>
+<p>Returns CPU and RAM usage of <strong>this addon worker process</strong>. No extra permissions are required.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cpuPercent</code></td>
+<td><code>number</code></td>
+<td>CPU load since the previous call (first call returns <code>0</code>)</td>
+</tr>
+<tr>
+<td><code>ramMb</code></td>
+<td><code>number</code></td>
+<td>Resident memory in megabytes</td>
+</tr>
+<tr>
+<td><code>pid</code></td>
+<td><code>number</code></td>
+<td>OS process id of this addon worker</td>
+</tr>
+</tbody></table>
+<p>Use for self-monitoring, optimization, or automatic recovery (for example restart when memory exceeds a threshold). Pair with <code>api.restart()</code> or internal cache cleanup.</p>
+<pre><code class="language-js">const MAX_RAM_MB = 512;
+
+setInterval(() =&gt; {
+  const stats = api.getProcessStats();
+  console.log(&#39;Worker usage&#39;, stats);
+
+  if (stats.ramMb &gt; MAX_RAM_MB) {
+    console.warn(&#39;Memory limit exceeded, restarting worker&#39;);
+    api.restart();
+  }
+}, 10_000);
+</code></pre>
+<p>The same metrics are shown in addon settings lists in StreamKit+ (PID in the UI only when developer mode is enabled).</p>
 <h2><code>isDeveloperMode</code></h2>
 <p><code>true</code> when the app runs unpackaged (dev build) or the user enabled <strong>Developer mode</strong> in settings. Use for extra logging or debug endpoints; keep normal behaviour when <code>false</code>. Changing the setting requires app/worker restart.</p>
 <pre><code class="language-js">if (isDeveloperMode) {

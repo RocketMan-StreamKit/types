@@ -12,13 +12,14 @@
 | `data` | Метаданные экземпляра: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — привязка HTTP/Socket.IO callback |
 | `network` | HTTP-клиент, входящие маршруты, WebSocket, Socket.IO |
-| `api` | `openUrl`, `restart`, `config.*` |
+| `api` | `openUrl`, `restart`, `getProcessStats`, `config.*` |
 | `addons` | `request`, `onRequest`, `offRequest` — RPC между аддонами |
 | `dashboard` | Виджет событий, чат, платформы, триггеры оверлея |
 | `status` | Строка состояния главного окна |
 | `viewers` | Онлайн зрителей в строке состояния главного окна (без разрешения) |
 | `notify` | Центр уведомлений в заголовке |
 | `tts` | Озвучка текста (разрешение `TTS`) |
+| `ytdlp` | Загрузка медиа через встроенный yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | `storage` | Приватный JSON-файл в папке установки |
 | `ui.auth` | URL редиректа успеха/ошибки OAuth |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
@@ -39,4 +40,5 @@
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
 - [Озвучка текста (`tts`)](./api-tts.md)
+- [Загрузки yt-dlp (`ytdlp`)](./api-ytdlp.md)
 - [Утилиты](./api-utilities.md)

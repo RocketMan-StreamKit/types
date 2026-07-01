@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Завантаження через yt-dlp (`ytdlp`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-ytdlp.html" class="is-active">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Завантаження через yt-dlp (<code>ytdlp</code>)</h1>
+<p><strong>Потрібно:</strong> <code>FILE_ACCESS</code>, <code>NETWORK_REQUEST</code></p>
+<p>Завантаження медіа з підтримуваних сайтів через <strong>вбудований бінарник yt-dlp</strong> у головному процесі. Аддон не запускає yt-dlp напряму.</p>
+<h2>Налаштування</h2>
+<ol>
+<li>Додайте <code>&quot;FILE_ACCESS&quot;</code> і <code>&quot;NETWORK_REQUEST&quot;</code> до <code>permissions</code> у <code>manifest.json</code>.</li>
+<li>Запитайте доступ <strong>manage</strong> до папки призначення перед завантаженням:</li>
+</ol>
+<pre><code class="language-js">const folder = &#39;C:\\Videos\\clips&#39;;
+const access = await files.requestAccess(folder, &#39;manage&#39;);
+if (!access.success) {
+  console.warn(access.message);
+  return;
+}
+</code></pre>
+<ol start="3">
+<li>Підпишіться на прогрес і викличте <code>ytdlp.downloadFile</code>.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;FILE_ACCESS&quot;, &quot;NETWORK_REQUEST&quot;]
+}
+</code></pre>
+<h2>Як це працює</h2>
+<ul>
+<li>Завантаження виконується в <strong>головному процесі</strong> через вбудований yt-dlp (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
+<li>Шлях збереження передається в yt-dlp <code>-o</code>. У імені файлу можна використовувати <strong>змінні шаблону yt-dlp</strong> (див. нижче).</li>
+<li><strong>Літеральні</strong> (не шаблонні) частини шляху очищуються від недопустимих символів. Підставлені значення обмежуються прапорцем yt-dlp <code>--restrict-filenames</code>.</li>
+<li><strong>Батьківська папка</strong> вихідного шляху має бути покрита схваленим користувачем грантом <strong>manage</strong> (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li>Прогрес надходить у воркер аддона подією <code>ytdlp:download-progress</code>.</li>
+<li>Паралельні HLS/DASH-фрагменти (<code>concurrentFragments</code>) — від <code>1</code> до <code>10</code> (<code>--concurrent-fragments</code>).</li>
+</ul>
+<h2><code>ytdlp.downloadFile(url, outputPath, options?)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обов&#39;язковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>url</code></td>
+<td>так</td>
+<td>URL медіа (<code>http://</code> або <code>https://</code>)</td>
+</tr>
+<tr>
+<td><code>outputPath</code></td>
+<td>так</td>
+<td>Абсолютний шлях; допускаються змінні на кшталт <code>%(title)s.%(ext)s</code></td>
+</tr>
+<tr>
+<td><code>options.downloadId</code></td>
+<td>ні</td>
+<td>Зв&#39;язок із подіями прогресу; генерується автоматично</td>
+</tr>
+<tr>
+<td><code>options.concurrentFragments</code></td>
+<td>ні</td>
+<td>Паралельні фрагменти, <code>1</code>…<code>10</code></td>
+</tr>
+</tbody></table>
+<p>Повертає:</p>
+<pre><code class="language-js">{
+  success: boolean,
+  downloadId?: string,
+  error?: YtDlpAddonErrorCode,
+  message?: string,
+}
+</code></pre>
+<h3>Прогрес (<code>ytdlp:download-progress</code>)</h3>
+<p>Підпишіться <strong>до</strong> виклику <code>downloadFile</code>:</p>
+<pre><code class="language-js">const downloadId = random.id();
+
+events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt; {
+  if (id !== downloadId) return;
+
+  console.log(progress.stage, progress.percent, progress.speed, progress.eta);
+  // progress.downloadedBytes, progress.totalBytes
+});
+</code></pre>
+<p><code>progress.stage</code> — <code>&#39;downloading&#39;</code> під час завантаження та <code>&#39;done&#39;</code> при успіху.</p>
+<h3>Приклад</h3>
+<pre><code class="language-js">const outputDir = &#39;C:\\Videos\\clips&#39;;
+await files.requestAccess(outputDir, &#39;manage&#39;);
+
+const downloadId = random.id();
+events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt; {
+  if (id !== downloadId) return;
+  status.Update({
+    current: &#39;online&#39;,
+    message: { uk: `Завантаження ${progress.percent.toFixed(1)}%` },
+  });
+});
+
+const result = await ytdlp.downloadFile(
+  &#39;https://www.twitch.tv/videos/1234567890&#39;,
+  `${outputDir}\\%(uploader)s - %(title)s.%(ext)s`,
+  { downloadId, concurrentFragments: 4 }
+);
+
+if (!result.success) {
+  console.warn(result.error, result.message);
+}
+</code></pre>
+<h2>Змінні шаблону виводу</h2>
+<p>У <code>outputPath</code> можна використовувати поля yt-dlp. Основні змінні:</p>
+<h3>Ідентифікація</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(id)s</code></td>
+<td>ID відео</td>
+</tr>
+<tr>
+<td><code>%(title)s</code></td>
+<td>Назва</td>
+</tr>
+<tr>
+<td><code>%(fulltitle)s</code></td>
+<td>Повна назва (без обрізання)</td>
+</tr>
+<tr>
+<td><code>%(description)s</code></td>
+<td>Опис</td>
+</tr>
+<tr>
+<td><code>%(webpage_url)s</code></td>
+<td>Посилання на сторінку</td>
+</tr>
+<tr>
+<td><code>%(original_url)s</code></td>
+<td>Вихідний URL</td>
+</tr>
+</tbody></table>
+<h3>Формат</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(ext)s</code></td>
+<td>Розширення (<code>mp4</code>, <code>mkv</code>, <code>webm</code>, …)</td>
+</tr>
+<tr>
+<td><code>%(format)s</code></td>
+<td>Обраний формат (рядок)</td>
+</tr>
+<tr>
+<td><code>%(format_id)s</code></td>
+<td>ID формату</td>
+</tr>
+<tr>
+<td><code>%(resolution)s</code></td>
+<td>Роздільність (наприклад <code>1920x1080</code>)</td>
+</tr>
+<tr>
+<td><code>%(height)s</code></td>
+<td>Висота</td>
+</tr>
+<tr>
+<td><code>%(width)s</code></td>
+<td>Ширина</td>
+</tr>
+<tr>
+<td><code>%(fps)s</code></td>
+<td>FPS</td>
+</tr>
+<tr>
+<td><code>%(vcodec)s</code></td>
+<td>Відеокодек</td>
+</tr>
+<tr>
+<td><code>%(acodec)s</code></td>
+<td>Аудіокодек</td>
+</tr>
+<tr>
+<td><code>%(tbr)s</code></td>
+<td>Загальний bitrate</td>
+</tr>
+</tbody></table>
+<h3>Автор / канал</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(uploader)s</code></td>
+<td>Ім&#39;я каналу/автора</td>
+</tr>
+<tr>
+<td><code>%(uploader_id)s</code></td>
+<td>ID каналу</td>
+</tr>
+<tr>
+<td><code>%(uploader_url)s</code></td>
+<td>Посилання на канал</td>
+</tr>
+<tr>
+<td><code>%(channel)s</code></td>
+<td>Канал (YouTube/Twitch)</td>
+</tr>
+<tr>
+<td><code>%(channel_id)s</code></td>
+<td>ID каналу</td>
+</tr>
+<tr>
+<td><code>%(channel_url)s</code></td>
+<td>Посилання на канал</td>
+</tr>
+</tbody></table>
+<h3>Дата й час</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(upload_date)s</code></td>
+<td>Дата (<code>YYYYMMDD</code>)</td>
+</tr>
+<tr>
+<td><code>%(timestamp)s</code></td>
+<td>UNIX timestamp</td>
+</tr>
+<tr>
+<td><code>%(release_date)s</code></td>
+<td>Дата релізу (якщо є)</td>
+</tr>
+</tbody></table>
+<h3>Тривалість</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(duration)s</code></td>
+<td>Тривалість у секундах</td>
+</tr>
+<tr>
+<td><code>%(duration_string)s</code></td>
+<td>Зручний формат (наприклад <code>01:23:45</code>)</td>
+</tr>
+</tbody></table>
+<h3>Статистика</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(view_count)s</code></td>
+<td>Перегляди</td>
+</tr>
+<tr>
+<td><code>%(like_count)s</code></td>
+<td>Лайки</td>
+</tr>
+<tr>
+<td><code>%(comment_count)s</code></td>
+<td>Коментарі</td>
+</tr>
+<tr>
+<td><code>%(average_rating)s</code></td>
+<td>Рейтинг (рідко)</td>
+</tr>
+</tbody></table>
+<h3>Метадані</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(categories)s</code></td>
+<td>Категорії</td>
+</tr>
+<tr>
+<td><code>%(tags)s</code></td>
+<td>Теги (через кому)</td>
+</tr>
+<tr>
+<td><code>%(language)s</code></td>
+<td>Мова</td>
+</tr>
+<tr>
+<td><code>%(availability)s</code></td>
+<td>Доступність</td>
+</tr>
+</tbody></table>
+<h3>Плейлисти</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(playlist)s</code></td>
+<td>Ім&#39;я плейлиста</td>
+</tr>
+<tr>
+<td><code>%(playlist_id)s</code></td>
+<td>ID плейлиста</td>
+</tr>
+<tr>
+<td><code>%(playlist_index)s</code></td>
+<td>Позиція</td>
+</tr>
+<tr>
+<td><code>%(playlist_title)s</code></td>
+<td>Назва плейлиста</td>
+</tr>
+</tbody></table>
+<h3>Субтитри</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(subtitles)s</code></td>
+<td>Субтитри</td>
+</tr>
+<tr>
+<td><code>%(automatic_captions)s</code></td>
+<td>Автосубтитри</td>
+</tr>
+</tbody></table>
+<h3>Сайт / екстрактор</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(extractor)s</code></td>
+<td>Сайт (<code>twitch</code>, <code>youtube</code>, …)</td>
+</tr>
+<tr>
+<td><code>%(extractor_key)s</code></td>
+<td>Ключ екстрактора</td>
+</tr>
+</tbody></table>
+<h3>Twitch</h3>
+<table>
+<thead>
+<tr>
+<th>Змінна</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(creator)s</code></td>
+<td>Автор кліпу</td>
+</tr>
+<tr>
+<td><code>%(is_live)s</code></td>
+<td>Прапорець трансляції</td>
+</tr>
+<tr>
+<td><code>%(start_time)s</code></td>
+<td>Початок сегмента</td>
+</tr>
+<tr>
+<td><code>%(end_time)s</code></td>
+<td>Кінець сегмента</td>
+</tr>
+</tbody></table>
+<p><strong>Повний список:</strong> <a href="https://github.com/yt-dlp/yt-dlp#output-template">шаблон виводу yt-dlp</a></p>
+<h2>Коди помилок</h2>
+<p>При <code>success: false</code> поле <code>error</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Код</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no_permission</code></td>
+<td>Немає <code>FILE_ACCESS</code> і/або <code>NETWORK_REQUEST</code> у маніфесті</td>
+</tr>
+<tr>
+<td><code>no_file_access</code></td>
+<td>Папка виводу не покрита грантом <strong>manage</strong> — спочатку <code>files.requestAccess(folder, &#39;manage&#39;)</code></td>
+</tr>
+<tr>
+<td><code>unsupported_platform</code></td>
+<td>Немає вбудованого yt-dlp для цієї ОС</td>
+</tr>
+<tr>
+<td><code>binary_missing</code></td>
+<td>Бінарник не знайдено в установці застосунку</td>
+</tr>
+<tr>
+<td><code>invalid_url</code></td>
+<td>Порожній або не <code>http(s)</code> URL</td>
+</tr>
+<tr>
+<td><code>invalid_path</code></td>
+<td>Порожній або невірний шлях виводу</td>
+</tr>
+<tr>
+<td><code>incorrect_url</code></td>
+<td>yt-dlp відхилив URL або не знайшов формати</td>
+</tr>
+<tr>
+<td><code>network_error</code></td>
+<td>Мережа/DNS/HTTP або помилка запуску процесу</td>
+</tr>
+<tr>
+<td><code>download_failed</code></td>
+<td>yt-dlp завершився з помилкою без точнішої класифікації</td>
+</tr>
+</tbody></table>
+<p><code>message</code> — зрозумілий опис (часто stderr yt-dlp).</p>
+<h2>Див. також</h2>
+<ul>
+<li><a href="./api-file-access.html">Доступ до файлів</a></li>
+<li><a href="./permissions.html">Дозволи</a></li>
+<li><a href="./api-overview.html">Огляд API</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -58,6 +58,7 @@ The user must **restart the addon manually** from settings (↻ button) or disab
 - Keep the initial `index.js` load phase short; defer heavy or risky work to async callbacks after load.
 - Use `try/catch` in long-running code paths; unhandled rejections or throws outside sandbox-wrapped handlers can still take down the worker.
 - `api.restart()` only works while the addon is running; it cannot restart an addon that was stopped by crash-loop protection.
+- `api.getProcessStats()` reports this worker's CPU, RAM, and PID. CPU percent needs at least two calls ~1 s apart; use it to detect leaks or trigger `api.restart()` when limits are exceeded.
 
 ## Static web routes
 

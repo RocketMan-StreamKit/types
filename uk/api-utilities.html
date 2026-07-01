@@ -40,6 +40,7 @@
           <li><a href="api-config-storage.html">api.config і storage</a></li>
           <li><a href="api-file-access.html">Доступ до файлів</a></li>
           <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -53,6 +54,46 @@
       </nav>
     <main class="content">
       <h1>Утиліти</h1>
+<h2><code>api.getProcessStats</code></h2>
+<p>Повертає навантаження CPU та RAM <strong>цього worker-процесу аддона</strong>. Додаткові дозволи не потрібні.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Тип</th>
+<th>Примітка</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cpuPercent</code></td>
+<td><code>number</code></td>
+<td>CPU від попереднього виклику (перший виклик — <code>0</code>)</td>
+</tr>
+<tr>
+<td><code>ramMb</code></td>
+<td><code>number</code></td>
+<td>Resident memory у мегабайтах</td>
+</tr>
+<tr>
+<td><code>pid</code></td>
+<td><code>number</code></td>
+<td>PID worker-процесу цього аддона</td>
+</tr>
+</tbody></table>
+<p>Підходить для самодіагностики, оптимізації або автоматичного відновлення (наприклад, перезапуск при перевищенні ліміту пам&#39;яті). Можна поєднувати з <code>api.restart()</code> або очищенням внутрішніх кешів.</p>
+<pre><code class="language-js">const MAX_RAM_MB = 512;
+
+setInterval(() =&gt; {
+  const stats = api.getProcessStats();
+  console.log(&#39;Worker usage&#39;, stats);
+
+  if (stats.ramMb &gt; MAX_RAM_MB) {
+    console.warn(&#39;Memory limit exceeded, restarting worker&#39;);
+    api.restart();
+  }
+}, 10_000);
+</code></pre>
+<p>Ті самі метрики показуються в списках аддонів у налаштуваннях StreamKit+ (PID в UI — лише в режимі розробника).</p>
 <h2><code>isDeveloperMode</code></h2>
 <p><code>true</code>, коли застосунок запущено без упаковки (dev-збірка) або користувач увімкнув <strong>Developer mode</strong> в налаштуваннях. Використовуйте для додаткового логування або debug-ендпоінтів; зберігайте звичайну поведінку, коли <code>false</code>. Зміна налаштування потребує перезапуску застосунку/worker.</p>
 <pre><code class="language-js">if (isDeveloperMode) {
