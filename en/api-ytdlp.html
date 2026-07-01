@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>yt-dlp downloads (`ytdlp`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-ytdlp.html" class="is-active">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>yt-dlp downloads (<code>ytdlp</code>)</h1>
+<p><strong>Requires:</strong> <code>FILE_ACCESS</code>, <code>NETWORK_REQUEST</code></p>
+<p>Downloads media from supported sites using the <strong>bundled yt-dlp binary</strong> in the main process. Addons never spawn yt-dlp directly.</p>
+<h2>Setup</h2>
+<ol>
+<li>Add <code>&quot;FILE_ACCESS&quot;</code> and <code>&quot;NETWORK_REQUEST&quot;</code> to <code>permissions</code> in <code>manifest.json</code>.</li>
+<li>Request <strong>manage</strong> access to the output folder before downloading:</li>
+</ol>
+<pre><code class="language-js">const folder = &#39;C:\\Videos\\clips&#39;;
+const access = await files.requestAccess(folder, &#39;manage&#39;);
+if (!access.success) {
+  console.warn(access.message);
+  return;
+}
+</code></pre>
+<ol start="3">
+<li>Subscribe to progress, then call <code>ytdlp.downloadFile</code>.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;FILE_ACCESS&quot;, &quot;NETWORK_REQUEST&quot;]
+}
+</code></pre>
+<h2>How it works</h2>
+<ul>
+<li>Downloads run in the <strong>main process</strong> via the bundled yt-dlp binary (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
+<li>The output path is passed to yt-dlp <code>-o</code>. You may use <strong>yt-dlp output template variables</strong> in the filename (see below).</li>
+<li><strong>Literal</strong> (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values are restricted with yt-dlp <code>--restrict-filenames</code>.</li>
+<li>The <strong>parent directory</strong> of the output path must be covered by a user-approved <strong>manage</strong> file-access grant (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li>Progress is pushed to the addon worker as <code>ytdlp:download-progress</code> events while the download runs.</li>
+<li>Up to <strong>10</strong> parallel HLS/DASH fragments can be requested with <code>concurrentFragments</code> (maps to <code>--concurrent-fragments</code>).</li>
+</ul>
+<h2><code>ytdlp.downloadFile(url, outputPath, options?)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>url</code></td>
+<td>yes</td>
+<td>Source media URL (<code>http://</code> or <code>https://</code>)</td>
+</tr>
+<tr>
+<td><code>outputPath</code></td>
+<td>yes</td>
+<td>Absolute output path; may include yt-dlp variables like <code>%(title)s.%(ext)s</code></td>
+</tr>
+<tr>
+<td><code>options.downloadId</code></td>
+<td>no</td>
+<td>Correlates progress events; auto-generated when omitted</td>
+</tr>
+<tr>
+<td><code>options.concurrentFragments</code></td>
+<td>no</td>
+<td>Parallel fragments, <code>1</code>…<code>10</code> (default: yt-dlp default)</td>
+</tr>
+</tbody></table>
+<p>Returns:</p>
+<pre><code class="language-js">{
+  success: boolean,
+  downloadId?: string,
+  error?: YtDlpAddonErrorCode,
+  message?: string,
+}
+</code></pre>
+<h3>Progress (<code>ytdlp:download-progress</code>)</h3>
+<p>Subscribe <strong>before</strong> calling <code>downloadFile</code>:</p>
+<pre><code class="language-js">const downloadId = random.id();
+
+events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt; {
+  if (id !== downloadId) return;
+
+  console.log(progress.stage, progress.percent, progress.speed, progress.eta);
+  // progress.downloadedBytes, progress.totalBytes
+});
+</code></pre>
+<p><code>progress.stage</code> is <code>&#39;downloading&#39;</code> during the transfer and <code>&#39;done&#39;</code> on success.</p>
+<h3>Example</h3>
+<pre><code class="language-js">const outputDir = &#39;C:\\Videos\\clips&#39;;
+await files.requestAccess(outputDir, &#39;manage&#39;);
+
+const downloadId = random.id();
+events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt; {
+  if (id !== downloadId) return;
+  status.Update({
+    current: &#39;online&#39;,
+    message: { en: `Downloading ${progress.percent.toFixed(1)}%` },
+  });
+});
+
+const result = await ytdlp.downloadFile(
+  &#39;https://www.twitch.tv/videos/1234567890&#39;,
+  `${outputDir}\\%(uploader)s - %(title)s.%(ext)s`,
+  { downloadId, concurrentFragments: 4 }
+);
+
+if (!result.success) {
+  console.warn(result.error, result.message);
+}
+</code></pre>
+<h2>Output template variables</h2>
+<p>You can embed yt-dlp fields in <code>outputPath</code>. Common variables:</p>
+<h3>Identification</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(id)s</code></td>
+<td>Video ID</td>
+</tr>
+<tr>
+<td><code>%(title)s</code></td>
+<td>Title</td>
+</tr>
+<tr>
+<td><code>%(fulltitle)s</code></td>
+<td>Full title (not truncated)</td>
+</tr>
+<tr>
+<td><code>%(description)s</code></td>
+<td>Description</td>
+</tr>
+<tr>
+<td><code>%(webpage_url)s</code></td>
+<td>Page URL</td>
+</tr>
+<tr>
+<td><code>%(original_url)s</code></td>
+<td>Original URL passed to yt-dlp</td>
+</tr>
+</tbody></table>
+<h3>Format</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(ext)s</code></td>
+<td>File extension (<code>mp4</code>, <code>mkv</code>, <code>webm</code>, …)</td>
+</tr>
+<tr>
+<td><code>%(format)s</code></td>
+<td>Selected format (string)</td>
+</tr>
+<tr>
+<td><code>%(format_id)s</code></td>
+<td>Format ID</td>
+</tr>
+<tr>
+<td><code>%(resolution)s</code></td>
+<td>Resolution (e.g. <code>1920x1080</code>)</td>
+</tr>
+<tr>
+<td><code>%(height)s</code></td>
+<td>Video height</td>
+</tr>
+<tr>
+<td><code>%(width)s</code></td>
+<td>Video width</td>
+</tr>
+<tr>
+<td><code>%(fps)s</code></td>
+<td>Frames per second</td>
+</tr>
+<tr>
+<td><code>%(vcodec)s</code></td>
+<td>Video codec</td>
+</tr>
+<tr>
+<td><code>%(acodec)s</code></td>
+<td>Audio codec</td>
+</tr>
+<tr>
+<td><code>%(tbr)s</code></td>
+<td>Total bitrate</td>
+</tr>
+</tbody></table>
+<h3>Author / channel</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(uploader)s</code></td>
+<td>Channel or author name</td>
+</tr>
+<tr>
+<td><code>%(uploader_id)s</code></td>
+<td>Channel ID</td>
+</tr>
+<tr>
+<td><code>%(uploader_url)s</code></td>
+<td>Channel URL</td>
+</tr>
+<tr>
+<td><code>%(channel)s</code></td>
+<td>Channel name (YouTube/Twitch)</td>
+</tr>
+<tr>
+<td><code>%(channel_id)s</code></td>
+<td>Channel ID</td>
+</tr>
+<tr>
+<td><code>%(channel_url)s</code></td>
+<td>Channel URL</td>
+</tr>
+</tbody></table>
+<h3>Date and time</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(upload_date)s</code></td>
+<td>Upload date (<code>YYYYMMDD</code>)</td>
+</tr>
+<tr>
+<td><code>%(timestamp)s</code></td>
+<td>UNIX timestamp</td>
+</tr>
+<tr>
+<td><code>%(release_date)s</code></td>
+<td>Release date (when available)</td>
+</tr>
+</tbody></table>
+<h3>Duration</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(duration)s</code></td>
+<td>Duration in seconds</td>
+</tr>
+<tr>
+<td><code>%(duration_string)s</code></td>
+<td>Human-readable duration (e.g. <code>01:23:45</code>)</td>
+</tr>
+</tbody></table>
+<h3>Statistics</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(view_count)s</code></td>
+<td>View count</td>
+</tr>
+<tr>
+<td><code>%(like_count)s</code></td>
+<td>Like count</td>
+</tr>
+<tr>
+<td><code>%(comment_count)s</code></td>
+<td>Comment count</td>
+</tr>
+<tr>
+<td><code>%(average_rating)s</code></td>
+<td>Average rating (rare)</td>
+</tr>
+</tbody></table>
+<h3>Metadata</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(categories)s</code></td>
+<td>Categories</td>
+</tr>
+<tr>
+<td><code>%(tags)s</code></td>
+<td>Tags (comma-separated)</td>
+</tr>
+<tr>
+<td><code>%(language)s</code></td>
+<td>Language</td>
+</tr>
+<tr>
+<td><code>%(availability)s</code></td>
+<td>Availability</td>
+</tr>
+</tbody></table>
+<h3>Playlists</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(playlist)s</code></td>
+<td>Playlist name</td>
+</tr>
+<tr>
+<td><code>%(playlist_id)s</code></td>
+<td>Playlist ID</td>
+</tr>
+<tr>
+<td><code>%(playlist_index)s</code></td>
+<td>Position in playlist</td>
+</tr>
+<tr>
+<td><code>%(playlist_title)s</code></td>
+<td>Playlist title</td>
+</tr>
+</tbody></table>
+<h3>Subtitles</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(subtitles)s</code></td>
+<td>Subtitles</td>
+</tr>
+<tr>
+<td><code>%(automatic_captions)s</code></td>
+<td>Auto-generated captions</td>
+</tr>
+</tbody></table>
+<h3>Site / extractor</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(extractor)s</code></td>
+<td>Site name (<code>twitch</code>, <code>youtube</code>, …)</td>
+</tr>
+<tr>
+<td><code>%(extractor_key)s</code></td>
+<td>Extractor key</td>
+</tr>
+</tbody></table>
+<h3>Twitch-specific</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%(creator)s</code></td>
+<td>Clip creator</td>
+</tr>
+<tr>
+<td><code>%(is_live)s</code></td>
+<td>Live flag</td>
+</tr>
+<tr>
+<td><code>%(start_time)s</code></td>
+<td>Segment start</td>
+</tr>
+<tr>
+<td><code>%(end_time)s</code></td>
+<td>Segment end</td>
+</tr>
+</tbody></table>
+<p><strong>Full list:</strong> <a href="https://github.com/yt-dlp/yt-dlp#output-template">yt-dlp output template</a></p>
+<h2>Error codes</h2>
+<p>When <code>success</code> is <code>false</code>, <code>error</code> is one of:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no_permission</code></td>
+<td>Missing <code>FILE_ACCESS</code> and/or <code>NETWORK_REQUEST</code> in manifest or sandbox check</td>
+</tr>
+<tr>
+<td><code>no_file_access</code></td>
+<td>Output folder not covered by a <strong>manage</strong> grant — call <code>files.requestAccess(folder, &#39;manage&#39;)</code> first</td>
+</tr>
+<tr>
+<td><code>unsupported_platform</code></td>
+<td>No bundled yt-dlp binary for this OS</td>
+</tr>
+<tr>
+<td><code>binary_missing</code></td>
+<td>Bundled binary not found in the app install</td>
+</tr>
+<tr>
+<td><code>invalid_url</code></td>
+<td>Empty or non-<code>http(s)</code> URL</td>
+</tr>
+<tr>
+<td><code>invalid_path</code></td>
+<td>Empty or invalid output path</td>
+</tr>
+<tr>
+<td><code>incorrect_url</code></td>
+<td>yt-dlp rejected the URL or found no formats</td>
+</tr>
+<tr>
+<td><code>network_error</code></td>
+<td>Network/DNS/HTTP failure or yt-dlp process spawn error</td>
+</tr>
+<tr>
+<td><code>download_failed</code></td>
+<td>yt-dlp exited with an error not classified above</td>
+</tr>
+</tbody></table>
+<p><code>message</code> contains a human-readable detail string when available (often yt-dlp stderr).</p>
+<h2>Related</h2>
+<ul>
+<li><a href="./api-file-access.html">File access</a> — <code>files.requestAccess</code>, grants, revoke</li>
+<li><a href="./permissions.html">Permissions</a></li>
+<li><a href="./api-overview.html">API overview</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

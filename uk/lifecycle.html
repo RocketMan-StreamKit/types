@@ -40,6 +40,7 @@
           <li><a href="api-config-storage.html">api.config і storage</a></li>
           <li><a href="api-file-access.html">Доступ до файлів</a></li>
           <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
@@ -114,6 +115,7 @@
 <li>Тримайте початкову фазу завантаження <code>index.js</code> короткою; важку або ризиковану роботу переносьте в async-колбеки після завантаження.</li>
 <li>Обгортайте довготривалий код у <code>try/catch</code>; необроблені reject/throw поза обгорнутими пісочницею обробниками все ще можуть звалити worker.</li>
 <li><code>api.restart()</code> працює лише поки аддон запущений; ним не можна перезапустити аддон, зупинений через цикл падінь.</li>
+<li><code>api.getProcessStats()</code> повертає CPU, RAM і PID цього worker. Для CPU % потрібні щонайменше два виклики з інтервалом ~1 с; використовуйте для контролю витоків або виклику <code>api.restart()</code> при перевищенні лімітів.</li>
 </ul>
 <h2>Статичні web-маршрути</h2>
 <p>Коли встановлено <code>manifest.web</code> і надано <code>WEB_CONTENT</code> (або <code>ROOT</code>), main process реєструє статичні маршрути:</p>
