@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Widget addons — StreamKit+ Addon Docs</title>
+  <title>Currency — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -44,80 +44,83 @@
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
-          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-currency.html" class="is-active">Currency</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
-          <li><a href="types-widget.html" class="is-active">Widget addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
           <li><a href="types-application.html">Application addons</a></li>
           <li><a href="types-game.html">Game addons</a></li>
         </ul>
       </nav>
     <main class="content">
-      <h1>Widget addons</h1>
-<p>Widgets are <strong>persistent</strong> web pages (alerts, goals, chat overlays). They are not tied to the overlay trigger queue.</p>
-<h2>Manifest</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>type</code></td>
-<td><code>widget</code></td>
-</tr>
-<tr>
-<td><code>web</code></td>
-<td>HTML entry file</td>
-</tr>
-<tr>
-<td><code>web_type</code></td>
-<td><code>widget</code> (required)</td>
-</tr>
-<tr>
-<td><code>web_contents</code></td>
-<td>Additional assets</td>
-</tr>
-</tbody></table>
-<h2>Direct URL</h2>
-<p>Always available when enabled:</p>
-<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
-</code></pre>
-<p>Shown in settings as <strong>Widget URL</strong> for OBS Browser Source. The <code>token</code> query parameter is the addon frontend access token.</p>
-<h2>Static widget (no worker)</h2>
-<p>Only <code>manifest.json</code>, icon, HTML, and <code>web_contents</code>. Permission: <code>WEB_CONTENT</code>.</p>
-<h2>Full widget (worker)</h2>
-<p>Worker exposes HTTP or Socket.IO for live data; web page fetches from <code>/addon/{id}/…</code> or Socket.IO namespace.</p>
-<p>Protect private endpoints:</p>
-<pre><code class="language-js">if (query.token !== data.token) {
-  return { error: &#39;Unauthorized&#39; };
+      <h1>Currency</h1>
+<p>Read the user&#39;s primary currency from app settings and convert amounts using the same exchange rates as the main application. No extra permissions are required.</p>
+<p>Rates are loaded and refreshed by the main process (<code>Config.data.CURRENCY_RATES</code>). Conversion uses the shared <code>ConvertCurrencyShared</code> helper (USD as the intermediate rate).</p>
+<h2><code>currency.getCurrent()</code></h2>
+<p>Returns the currency code selected in <strong>Settings → Main → Currency</strong>.</p>
+<pre><code class="language-js">const res = await currency.getCurrent();
+if (res.success) {
+  console.log(&#39;User currency:&#39;, res.currency); // e.g. &quot;USD&quot;, &quot;EUR&quot;, &quot;UAH&quot;
 }
 </code></pre>
-<h2>Display in overlay shell</h2>
-<p>App config <code>widgets[]</code> per installed widget:</p>
+<p>Returns <code>{ success: true, currency }</code> where <code>currency</code> is a <code>CurrencyCode</code> (for example <code>USD</code>, <code>EUR</code>, <code>RUB</code>).</p>
+<h2><code>currency.convert(amount, from, to)</code></h2>
+<p>Converts a numeric amount between two currency codes.</p>
+<pre><code class="language-js">const res = await currency.convert(100, &#39;USD&#39;, &#39;EUR&#39;);
+if (res.success) {
+  console.log(&#39;Converted:&#39;, res.amount);
+}
+</code></pre>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Purpose</th>
+<th>Argument</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>display.app</code></td>
-<td>Embed in transparent overlay app window</td>
+<td><code>amount</code></td>
+<td><code>number</code></td>
+<td>Value in the source currency</td>
 </tr>
 <tr>
-<td><code>display.web</code></td>
-<td>Embed in OBS overlay browser source shell</td>
+<td><code>from</code></td>
+<td><code>CurrencyCode</code></td>
+<td>Source currency code</td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td><code>CurrencyCode</code></td>
+<td>Target currency code</td>
 </tr>
 </tbody></table>
-<p>Direct URL works regardless of display flags.</p>
-<p>Live sync: Socket.IO namespace <code>/overlay</code>, event <code>widget:sync</code> with <code>{ widgets: [{ widgetId, url }] }</code>.</p>
-<p>Snapshot: <code>GET /widget/snapshot?display=app|web&amp;token=</code></p>
-<h2>Settings UI</h2>
-<p><strong>Settings → Widgets</strong>: install, enable, <code>GenerateConfig</code> fields, display checkboxes, copy widget URL.</p>
+<p>Returns <code>{ success: true, amount }</code> with the converted value, or <code>{ success: false, message? }</code> when:</p>
+<ul>
+<li><code>amount</code> is not a finite number</li>
+<li>either currency code is unknown</li>
+<li>the exchange rate for either currency is zero or unavailable (for example <code>CHEER</code>)</li>
+</ul>
+<h3>Example: donation in user&#39;s currency</h3>
+<pre><code class="language-js">events.On(&#39;onDonation&#39;, async ({ body }) =&gt; {
+  const { amount, currency: from } = body;
+  const current = await currency.getCurrent();
+  if (!current.success) {
+    return;
+  }
+
+  if (from === current.currency) {
+    console.log(`${amount} ${from}`);
+    return;
+  }
+
+  const converted = await currency.convert(amount, from, current.currency);
+  if (converted.success) {
+    console.log(`${amount} ${from} (${converted.amount} ${current.currency})`);
+  }
+});
+</code></pre>
 
     </main>
   </div>

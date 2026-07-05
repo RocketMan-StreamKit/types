@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Валюта — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-file-access.html">Доступ к файлам</a></li>
+          <li><a href="api-tts.html">Озвучка текста (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">Загрузки yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html" class="is-active">Валюта</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Валюта</h1>
+<p>Чтение основной валюты из настроек приложения и конвертация сумм по тем же курсам, что использует основное приложение. Дополнительные разрешения не требуются.</p>
+<p>Курсы загружаются и обновляются главным процессом (<code>Config.data.CURRENCY_RATES</code>). Конвертация выполняется через общий хелпер <code>ConvertCurrencyShared</code> (промежуточная валюта — USD).</p>
+<h2><code>currency.getCurrent()</code></h2>
+<p>Возвращает код валюты, выбранной в <strong>Настройки → Основные → Валюта</strong>.</p>
+<pre><code class="language-js">const res = await currency.getCurrent();
+if (res.success) {
+  console.log(&#39;Валюта пользователя:&#39;, res.currency); // например &quot;USD&quot;, &quot;EUR&quot;, &quot;RUB&quot;
+}
+</code></pre>
+<p>Возвращает <code>{ success: true, currency }</code>, где <code>currency</code> — <code>CurrencyCode</code> (например <code>USD</code>, <code>EUR</code>, <code>UAH</code>).</p>
+<h2><code>currency.convert(amount, from, to)</code></h2>
+<p>Конвертирует числовую сумму между двумя валютами.</p>
+<pre><code class="language-js">const res = await currency.convert(100, &#39;USD&#39;, &#39;EUR&#39;);
+if (res.success) {
+  console.log(&#39;Сконвертировано:&#39;, res.amount);
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Аргумент</th>
+<th>Тип</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>amount</code></td>
+<td><code>number</code></td>
+<td>Сумма в исходной валюте</td>
+</tr>
+<tr>
+<td><code>from</code></td>
+<td><code>CurrencyCode</code></td>
+<td>Код исходной валюты</td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td><code>CurrencyCode</code></td>
+<td>Код целевой валюты</td>
+</tr>
+</tbody></table>
+<p>Возвращает <code>{ success: true, amount }</code> со сконвертированным значением или <code>{ success: false, message? }</code>, когда:</p>
+<ul>
+<li><code>amount</code> не является конечным числом</li>
+<li>один из кодов валюты неизвестен</li>
+<li>курс для одной из валют равен нулю или недоступен (например <code>CHEER</code>)</li>
+</ul>
+<h3>Пример: донат в валюте пользователя</h3>
+<pre><code class="language-js">events.On(&#39;onDonation&#39;, async ({ body }) =&gt; {
+  const { amount, currency: from } = body;
+  const current = await currency.getCurrent();
+  if (!current.success) {
+    return;
+  }
+
+  if (from === current.currency) {
+    console.log(`${amount} ${from}`);
+    return;
+  }
+
+  const converted = await currency.convert(amount, from, current.currency);
+  if (converted.success) {
+    console.log(`${amount} ${from} (${converted.amount} ${current.currency})`);
+  }
+});
+</code></pre>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
