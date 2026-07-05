@@ -18,6 +18,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `status` | Main window status bar |
 | `viewers` | Live viewer count in the main window status bar (no permission) |
 | `currency` | User's primary currency and amount conversion (no permission) |
+| `license` | License status and MD5 device key fingerprint (no permission) |
 | `notify` | Title-bar notification center |
 | `tts` | Text-to-speech playback (`TTS` permission) |
 | `ytdlp` | Media downloads via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
@@ -41,6 +42,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
 - [Currency](./api-currency.md)
+- [License](./api-license.md)
 - [Text-to-speech (`tts`)](./api-tts.md)
 - [yt-dlp downloads (`ytdlp`)](./api-ytdlp.md)
 - [Utilities](./api-utilities.md)

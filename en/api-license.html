@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>License (`license`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>License (<code>license</code>)</h1>
+<p>Read the application license state from an integration addon. No extra permissions are required.</p>
+<p>The raw device license key is <strong>never</strong> exposed. <code>getInfo()</code> returns an MD5 hex digest (<code>keyMd5</code>) so addons can identify the installation on external services without leaking the key.</p>
+<h2><code>license.active</code></h2>
+<p>Synchronous flag mirrored in the integration worker. Updated when license validity changes in the main process (same gate as integration triggers).</p>
+<pre><code class="language-js">if (!license.active) {
+  console.warn(&#39;Integration triggers are disabled&#39;);
+}
+</code></pre>
+<h2><code>license.id</code></h2>
+<p>Synchronous <strong>license order ID</strong> (settings → “License ID”). Empty string when no license is active.</p>
+<pre><code class="language-js">if (license.id) {
+  console.log(&#39;License ID&#39;, license.id);
+}
+</code></pre>
+<h2><code>license.keyMd5</code></h2>
+<p>Synchronous MD5 hex digest of the device license key (raw key is never exposed).</p>
+<pre><code class="language-js">console.log(&#39;Key fingerprint&#39;, license.keyMd5);
+</code></pre>
+<h2><code>license.getInfo()</code></h2>
+<p>Returns the current license snapshot:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>valid</code></td>
+<td><code>boolean</code></td>
+<td>Whether the license is active</td>
+</tr>
+<tr>
+<td><code>expiresSeconds</code></td>
+<td><code>number</code></td>
+<td>Remaining seconds; <code>-1</code> = perpetual; <code>0</code> = expired</td>
+</tr>
+<tr>
+<td><code>licenseId</code></td>
+<td><code>string</code></td>
+<td>License order ID (empty when inactive)</td>
+</tr>
+<tr>
+<td><code>keyMd5</code></td>
+<td><code>string</code></td>
+<td>MD5 hex digest of the device license key</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const info = await license.getInfo();
+if (info.success &amp;&amp; info.valid) {
+  console.log(&#39;Order&#39;, info.licenseId);
+  console.log(&#39;Key fingerprint&#39;, info.keyMd5);
+}
+</code></pre>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
