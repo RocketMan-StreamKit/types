@@ -44,6 +44,7 @@
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
@@ -80,7 +81,7 @@ if (!access.success) {
 <ul>
 <li>Downloads run in the <strong>main process</strong> via the bundled yt-dlp binary (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
 <li>The output path is passed to yt-dlp <code>-o</code>. You may use <strong>yt-dlp output template variables</strong> in the filename (see below).</li>
-<li><strong>Literal</strong> (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values are restricted with yt-dlp <code>--restrict-filenames</code>.</li>
+<li><strong>Literal</strong> (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values (for example <code>%(title)s</code>) are kept as-is, including Cyrillic characters.</li>
 <li>The <strong>parent directory</strong> of the output path must be covered by a user-approved <strong>manage</strong> file-access grant (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
 <li>Progress is pushed to the addon worker as <code>ytdlp:download-progress</code> events while the download runs.</li>
 <li>Up to <strong>10</strong> parallel HLS/DASH fragments can be requested with <code>concurrentFragments</code> (maps to <code>--concurrent-fragments</code>).</li>
@@ -134,7 +135,47 @@ events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt
   // progress.downloadedBytes, progress.totalBytes
 });
 </code></pre>
-<p><code>progress.stage</code> is <code>&#39;downloading&#39;</code> during the transfer and <code>&#39;done&#39;</code> on success.</p>
+<p><code>progress.stage</code> is <code>&#39;downloading&#39;</code> during the transfer, <code>&#39;done&#39;</code> on success, and <code>&#39;cancelled&#39;</code> when <code>ytdlp.cancelDownload</code> stops the process.</p>
+<h2><code>ytdlp.cancelDownload(downloadId)</code></h2>
+<p>Stops an active download started with the same <code>downloadId</code>. The original <code>downloadFile</code> promise resolves with <code>success: false</code> and <code>error: &#39;cancelled&#39;</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>downloadId</code></td>
+<td>yes</td>
+<td>Same id passed to <code>downloadFile</code> (or returned by it)</td>
+</tr>
+</tbody></table>
+<p>Returns:</p>
+<pre><code class="language-js">{
+  success: boolean,
+  downloadId?: string,
+  error?: &#39;no_permission&#39; | &#39;not_found&#39; | &#39;invalid_download_id&#39;,
+  message?: string,
+}
+</code></pre>
+<h3>Cancel example</h3>
+<pre><code class="language-js">const downloadId = random.id();
+const downloadPromise = ytdlp.downloadFile(url, outputPath, { downloadId });
+
+cancelButton.onClick(async () =&gt; {
+  const cancelled = await ytdlp.cancelDownload(downloadId);
+  if (!cancelled.success) {
+    console.warn(cancelled.error, cancelled.message);
+  }
+});
+
+const result = await downloadPromise;
+if (result.error === &#39;cancelled&#39;) {
+  console.log(&#39;Download stopped by user&#39;);
+}
+</code></pre>
 <h3>Example</h3>
 <pre><code class="language-js">const outputDir = &#39;C:\\Videos\\clips&#39;;
 await files.requestAccess(outputDir, &#39;manage&#39;);
@@ -492,6 +533,31 @@ if (!result.success) {
 <tr>
 <td><code>download_failed</code></td>
 <td>yt-dlp exited with an error not classified above</td>
+</tr>
+<tr>
+<td><code>cancelled</code></td>
+<td>Download was stopped via <code>ytdlp.cancelDownload</code></td>
+</tr>
+</tbody></table>
+<p><code>cancelDownload</code> errors:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no_permission</code></td>
+<td>Missing <code>FILE_ACCESS</code> and/or <code>NETWORK_REQUEST</code></td>
+</tr>
+<tr>
+<td><code>invalid_download_id</code></td>
+<td>Empty <code>downloadId</code></td>
+</tr>
+<tr>
+<td><code>not_found</code></td>
+<td>No active download with this id (already finished or never started)</td>
 </tr>
 </tbody></table>
 <p><code>message</code> contains a human-readable detail string when available (often yt-dlp stderr).</p>

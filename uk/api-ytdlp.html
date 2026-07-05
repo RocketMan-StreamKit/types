@@ -44,6 +44,7 @@
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
           <li><a href="types-platform.html">Платформені аддони</a></li>
           <li><a href="types-overlay.html">Оверлеї</a></li>
@@ -80,7 +81,7 @@ if (!access.success) {
 <ul>
 <li>Завантаження виконується в <strong>головному процесі</strong> через вбудований yt-dlp (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
 <li>Шлях збереження передається в yt-dlp <code>-o</code>. У імені файлу можна використовувати <strong>змінні шаблону yt-dlp</strong> (див. нижче).</li>
-<li><strong>Літеральні</strong> (не шаблонні) частини шляху очищуються від недопустимих символів. Підставлені значення обмежуються прапорцем yt-dlp <code>--restrict-filenames</code>.</li>
+<li><strong>Літеральні</strong> (не шаблонні) частини шляху очищуються від недопустимих символів. Підставлені значення (наприклад <code>%(title)s</code>) зберігаються як є, включно з кирилицею.</li>
 <li><strong>Батьківська папка</strong> вихідного шляху має бути покрита схваленим користувачем грантом <strong>manage</strong> (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
 <li>Прогрес надходить у воркер аддона подією <code>ytdlp:download-progress</code>.</li>
 <li>Паралельні HLS/DASH-фрагменти (<code>concurrentFragments</code>) — від <code>1</code> до <code>10</code> (<code>--concurrent-fragments</code>).</li>
@@ -134,7 +135,47 @@ events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt
   // progress.downloadedBytes, progress.totalBytes
 });
 </code></pre>
-<p><code>progress.stage</code> — <code>&#39;downloading&#39;</code> під час завантаження та <code>&#39;done&#39;</code> при успіху.</p>
+<p><code>progress.stage</code> — <code>&#39;downloading&#39;</code> під час завантаження, <code>&#39;done&#39;</code> при успіху та <code>&#39;cancelled&#39;</code> при зупинці через <code>ytdlp.cancelDownload</code>.</p>
+<h2><code>ytdlp.cancelDownload(downloadId)</code></h2>
+<p>Перериває активне завантаження з тим самим <code>downloadId</code>. Проміс <code>downloadFile</code> завершиться з <code>success: false</code> і <code>error: &#39;cancelled&#39;</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обов&#39;язковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>downloadId</code></td>
+<td>так</td>
+<td>Той самий id, що передано в <code>downloadFile</code> (або повернутий ним)</td>
+</tr>
+</tbody></table>
+<p>Повертає:</p>
+<pre><code class="language-js">{
+  success: boolean,
+  downloadId?: string,
+  error?: &#39;no_permission&#39; | &#39;not_found&#39; | &#39;invalid_download_id&#39;,
+  message?: string,
+}
+</code></pre>
+<h3>Приклад скасування</h3>
+<pre><code class="language-js">const downloadId = random.id();
+const downloadPromise = ytdlp.downloadFile(url, outputPath, { downloadId });
+
+cancelButton.onClick(async () =&gt; {
+  const cancelled = await ytdlp.cancelDownload(downloadId);
+  if (!cancelled.success) {
+    console.warn(cancelled.error, cancelled.message);
+  }
+});
+
+const result = await downloadPromise;
+if (result.error === &#39;cancelled&#39;) {
+  console.log(&#39;Завантаження зупинено користувачем&#39;);
+}
+</code></pre>
 <h3>Приклад</h3>
 <pre><code class="language-js">const outputDir = &#39;C:\\Videos\\clips&#39;;
 await files.requestAccess(outputDir, &#39;manage&#39;);
@@ -492,6 +533,31 @@ if (!result.success) {
 <tr>
 <td><code>download_failed</code></td>
 <td>yt-dlp завершився з помилкою без точнішої класифікації</td>
+</tr>
+<tr>
+<td><code>cancelled</code></td>
+<td>Завантаження зупинено через <code>ytdlp.cancelDownload</code></td>
+</tr>
+</tbody></table>
+<p>Помилки <code>cancelDownload</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Код</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no_permission</code></td>
+<td>Немає <code>FILE_ACCESS</code> і/або <code>NETWORK_REQUEST</code></td>
+</tr>
+<tr>
+<td><code>invalid_download_id</code></td>
+<td>Порожній <code>downloadId</code></td>
+</tr>
+<tr>
+<td><code>not_found</code></td>
+<td>Немає активного завантаження з цим id (вже завершене або не запускалось)</td>
 </tr>
 </tbody></table>
 <p><code>message</code> — зрозумілий опис (часто stderr yt-dlp).</p>

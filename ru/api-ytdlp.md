@@ -31,7 +31,7 @@ if (!access.success) {
 
 - Загрузка выполняется в **основном процессе** через встроенный yt-dlp (`yt-dlp_linux`, `yt-dlp_macos`, `yt-dlp.exe`).
 - Путь сохранения передаётся в yt-dlp `-o`. В имени файла можно использовать **переменные шаблона yt-dlp** (см. ниже).
-- **Литеральные** (не шаблонные) части пути очищаются от недопустимых символов. Подставленные значения ограничиваются флагом yt-dlp `--restrict-filenames`.
+- **Литеральные** (не шаблонные) части пути очищаются от недопустимых символов. Подставленные значения (например `%(title)s`) сохраняются как есть, включая кириллицу.
 - **Родительская папка** выходного пути должна быть покрыта одобренным пользователем грантом **manage** (`files.requestAccess(folder, 'manage')`).
 - Прогресс приходит в воркер аддона событием `ytdlp:download-progress`.
 - Параллельные HLS/DASH-фрагменты (`concurrentFragments`) — от `1` до `10` (`--concurrent-fragments`).
@@ -71,7 +71,45 @@ events.On('ytdlp:download-progress', ({ downloadId: id, progress }) => {
 });
 ```
 
-`progress.stage` — `'downloading'` во время загрузки и `'done'` при успехе.
+`progress.stage` — `'downloading'` во время загрузки, `'done'` при успехе и `'cancelled'` при остановке через `ytdlp.cancelDownload`.
+
+## `ytdlp.cancelDownload(downloadId)`
+
+Прерывает активную загрузку с тем же `downloadId`. Промис `downloadFile` завершится с `success: false` и `error: 'cancelled'`.
+
+| Параметр | Обязателен | Описание |
+| --- | --- | --- |
+| `downloadId` | да | Тот же id, что передан в `downloadFile` (или возвращён им) |
+
+Возвращает:
+
+```js
+{
+  success: boolean,
+  downloadId?: string,
+  error?: 'no_permission' | 'not_found' | 'invalid_download_id',
+  message?: string,
+}
+```
+
+### Пример отмены
+
+```js
+const downloadId = random.id();
+const downloadPromise = ytdlp.downloadFile(url, outputPath, { downloadId });
+
+cancelButton.onClick(async () => {
+  const cancelled = await ytdlp.cancelDownload(downloadId);
+  if (!cancelled.success) {
+    console.warn(cancelled.error, cancelled.message);
+  }
+});
+
+const result = await downloadPromise;
+if (result.error === 'cancelled') {
+  console.log('Загрузка остановлена пользователем');
+}
+```
 
 ### Пример
 
@@ -222,6 +260,15 @@ if (!result.success) {
 | `incorrect_url` | yt-dlp отклонил URL или не нашёл форматы |
 | `network_error` | Сеть/DNS/HTTP или ошибка запуска процесса |
 | `download_failed` | yt-dlp завершился с ошибкой без более точной классификации |
+| `cancelled` | Загрузка остановлена через `ytdlp.cancelDownload` |
+
+Ошибки `cancelDownload`:
+
+| Код | Причина |
+| --- | --- |
+| `no_permission` | Нет `FILE_ACCESS` и/или `NETWORK_REQUEST` |
+| `invalid_download_id` | Пустой `downloadId` |
+| `not_found` | Нет активной загрузки с этим id (уже завершена или не запускалась) |
 
 `message` — читаемое описание (часто stderr yt-dlp).
 

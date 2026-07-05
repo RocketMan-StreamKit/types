@@ -31,6 +31,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
 | [status, notify, ui](./api-status-notify-ui.md) | Status bar, viewer count, notifications, OAuth result pages |
+| [Currency](./api-currency.md) | User's primary currency and amount conversion |
 | [Utilities](./api-utilities.md) | Timers, crypto, console, developer mode |
 
 ### Addon categories

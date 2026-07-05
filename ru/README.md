@@ -31,6 +31,7 @@
 | [addons (RPC)](./api-addons-rpc.md) | Запросы между аддонами |
 | [dashboard](./api-dashboard.md) | Виджет событий, чат, триггеры оверлея |
 | [status, notify, ui](./api-status-notify-ui.md) | Строка состояния, онлайн зрителей, уведомления, страницы OAuth |
+| [Валюта](./api-currency.md) | Основная валюта пользователя и конвертация сумм |
 | [Утилиты](./api-utilities.md) | Таймеры, crypto, console, режим разработчика |
 
 ### Категории аддонов

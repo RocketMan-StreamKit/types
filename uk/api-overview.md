@@ -17,6 +17,7 @@
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |
 | `status` | Рядок стану головного вікна |
 | `viewers` | Онлайн глядачів у рядку стану головного вікна (без дозволу) |
+| `currency` | Основна валюта користувача та конвертація сум (без дозволу) |
 | `notify` | Центр сповіщень у title bar |
 | `tts` | Озвучення тексту (дозвіл `TTS`) |
 | `ytdlp` | Завантаження медіа через вбудований yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
@@ -39,6 +40,7 @@
 - [addons RPC](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Валюта](./api-currency.md)
 - [Озвучення тексту (`tts`)](./api-tts.md)
 - [Завантаження yt-dlp (`ytdlp`)](./api-ytdlp.md)
 - [Utilities](./api-utilities.md)

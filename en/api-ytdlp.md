@@ -31,7 +31,7 @@ if (!access.success) {
 
 - Downloads run in the **main process** via the bundled yt-dlp binary (`yt-dlp_linux`, `yt-dlp_macos`, `yt-dlp.exe`).
 - The output path is passed to yt-dlp `-o`. You may use **yt-dlp output template variables** in the filename (see below).
-- **Literal** (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values are restricted with yt-dlp `--restrict-filenames`.
+- **Literal** (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values (for example `%(title)s`) are kept as-is, including Cyrillic characters.
 - The **parent directory** of the output path must be covered by a user-approved **manage** file-access grant (`files.requestAccess(folder, 'manage')`).
 - Progress is pushed to the addon worker as `ytdlp:download-progress` events while the download runs.
 - Up to **10** parallel HLS/DASH fragments can be requested with `concurrentFragments` (maps to `--concurrent-fragments`).
@@ -71,7 +71,45 @@ events.On('ytdlp:download-progress', ({ downloadId: id, progress }) => {
 });
 ```
 
-`progress.stage` is `'downloading'` during the transfer and `'done'` on success.
+`progress.stage` is `'downloading'` during the transfer, `'done'` on success, and `'cancelled'` when `ytdlp.cancelDownload` stops the process.
+
+## `ytdlp.cancelDownload(downloadId)`
+
+Stops an active download started with the same `downloadId`. The original `downloadFile` promise resolves with `success: false` and `error: 'cancelled'`.
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| `downloadId` | yes | Same id passed to `downloadFile` (or returned by it) |
+
+Returns:
+
+```js
+{
+  success: boolean,
+  downloadId?: string,
+  error?: 'no_permission' | 'not_found' | 'invalid_download_id',
+  message?: string,
+}
+```
+
+### Cancel example
+
+```js
+const downloadId = random.id();
+const downloadPromise = ytdlp.downloadFile(url, outputPath, { downloadId });
+
+cancelButton.onClick(async () => {
+  const cancelled = await ytdlp.cancelDownload(downloadId);
+  if (!cancelled.success) {
+    console.warn(cancelled.error, cancelled.message);
+  }
+});
+
+const result = await downloadPromise;
+if (result.error === 'cancelled') {
+  console.log('Download stopped by user');
+}
+```
 
 ### Example
 
@@ -222,6 +260,15 @@ When `success` is `false`, `error` is one of:
 | `incorrect_url` | yt-dlp rejected the URL or found no formats |
 | `network_error` | Network/DNS/HTTP failure or yt-dlp process spawn error |
 | `download_failed` | yt-dlp exited with an error not classified above |
+| `cancelled` | Download was stopped via `ytdlp.cancelDownload` |
+
+`cancelDownload` errors:
+
+| Code | Cause |
+| --- | --- |
+| `no_permission` | Missing `FILE_ACCESS` and/or `NETWORK_REQUEST` |
+| `invalid_download_id` | Empty `downloadId` |
+| `not_found` | No active download with this id (already finished or never started) |
 
 `message` contains a human-readable detail string when available (often yt-dlp stderr).
 
