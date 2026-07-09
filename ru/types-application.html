@@ -82,9 +82,31 @@
 </tr>
 </tbody></table>
 <h2>URL запуска</h2>
-<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}
+<p>Оболочка приложения загружает ваш HTML во iframe. Главный процесс формирует URL iframe:</p>
+<pre><code>http://localhost:{WEB_SERVER_PORT}/addon_static/{id}/?token={data.token}&amp;bg={hex}&amp;dataTheme={themeId}
 </code></pre>
+<table>
+<thead>
+<tr>
+<th>Query-параметр</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>token</code></td>
+<td>Токен доступа для установки (<code>data.token</code> в воркере). Проверяйте на приватных API-маршрутах.</td>
+</tr>
+<tr>
+<td><code>bg</code></td>
+<td>Цвет фона активной темы (<code>--bg</code>), hex в URL-кодировке (например <code>%230e0e10</code> для <code>#0e0e10</code>).</td>
+</tr>
+<tr>
+<td><code>dataTheme</code></td>
+<td>Значение атрибута <code>data-theme</code> на <code>&lt;html&gt;</code>: <code>light</code>, <code>dark</code>, id кастомной темы (<code>custom-…</code>) или встроенного пресета (<code>preset-…</code>).</td>
+</tr>
+</tbody></table>
 <p>Тот же статический маршрут, что у виджетов. Id окна: <code>addon-app:{addonId}</code>.</p>
+<p>Читать эти query-параметры вручную <strong>не обязательно</strong>, если вы подключаете <code>/data/styles.css</code> — StreamKit+ автоматически встраивает bootstrap-скрипт (см. <a href="#%D1%82%D0%B5%D0%BC%D1%8B">Темы</a> ниже).</p>
 <h2>Стили как в основном приложении</h2>
 <p>StreamKit+ отдаёт собранную копию основной таблицы стилей UI через локальный веб-сервер. Подключите её в HTML приложения, чтобы кнопки, поля ввода, типографика и CSS-переменные темы совпадали с остальными окнами приложения.</p>
 <table>
@@ -106,13 +128,72 @@
 <p>Добавьте в HTML-файл входа <strong>до</strong> собственных стилей аддона:</p>
 <pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;http://localhost:3000/data/styles.css&quot;&gt;
 </code></pre>
+<p>Динамический <code>&lt;link&gt;</code> или любое упоминание <code>/data/styles.css</code> в исходнике HTML (в том числе во inline-скриптах) тоже учитывается.</p>
 <p>Укажите порт веб-сервера приложения, если он отличается (по умолчанию <code>WEB_SERVER_PORT</code> = <code>3000</code>).</p>
 <p>Примечания:</p>
 <ul>
 <li>Разрешение аддона не требуется — маршрут обслуживает основное приложение, а не папка установки аддона.</li>
-<li>CSS-переменные темы совпадают с главным окном (<code>--bg</code>, <code>--text</code>, <code>--btn-primary</code>, …). Тёмная тема включается атрибутом <code>data-theme=&quot;dark&quot;</code> на <code>&lt;html&gt;</code> (как в основном приложении).</li>
-<li>Собственные стили аддона можно подключать после этого <code>&lt;link&gt;</code> и переопределять правила при необходимости.</li>
+<li><code>/data/styles.css</code> включает встроенные светлую/тёмную темы (в базовом бандле), <strong>все</strong> встроенные пресеты (<code>preset-…</code>) и сохранённые пользователем кастомные схемы. Файл пересобирается при изменении кастомных тем в <strong>Настройки → Интерфейс</strong>.</li>
+<li>CSS-переменные темы совпадают с главным окном (<code>--bg</code>, <code>--text</code>, <code>--btn-primary</code>, …). Переопределения применяются по значению <code>data-theme</code> на <code>&lt;html&gt;</code> (как в основном приложении).</li>
+<li>Собственные стили аддона можно подключать после таблицы стилей и переопределять правила при необходимости.</li>
 </ul>
+<h2>Темы</h2>
+<p>Когда StreamKit+ отдаёт HTML-страницу <strong>application</strong>-аддона со ссылкой на <code>/data/styles.css</code>, перед <code>&lt;/head&gt;</code> вставляется небольшой inline bootstrap-скрипт. Он:</p>
+<ol>
+<li>При загрузке — читает <code>dataTheme</code> и <code>bg</code> из URL iframe и применяет к <code>document.documentElement</code> (<code>data-theme</code>, <code>background</code>, <code>color-scheme</code>).</li>
+<li>При смене темы — слушает <code>postMessage</code> от оболочки приложения (без перезагрузки iframe).</li>
+<li>При смене URL — повторно читает query-параметры, если изменился <code>location.search</code>.</li>
+</ol>
+<p>Копировать этот скрипт в аддон не нужно — достаточно подключить <code>/data/styles.css</code>, синхронизацию темы выполняет оболочка.</p>
+<h3>Значения <code>data-theme</code></h3>
+<table>
+<thead>
+<tr>
+<th>Значение</th>
+<th>Смысл</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>light</code></td>
+<td>Встроенная светлая тема</td>
+</tr>
+<tr>
+<td><code>dark</code></td>
+<td>Встроенная тёмная тема</td>
+</tr>
+<tr>
+<td><code>custom-…</code></td>
+<td>Id пользовательской схемы</td>
+</tr>
+<tr>
+<td><code>preset-…</code></td>
+<td>Id встроенного пресета (например <code>preset-twitch</code>)</td>
+</tr>
+</tbody></table>
+<p>Если в настройках выбрана тема <strong>Системная</strong>, <code>dataTheme</code> становится <code>light</code> или <code>dark</code> в зависимости от ОС.</p>
+<h3>Обновление на лету (<code>postMessage</code>)</h3>
+<p>При смене темы пользователем (или переключении ОС при выбранной <strong>Системной</strong> теме) оболочка отправляет в iframe:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;streamkit:theme&quot;,
+  &quot;dataTheme&quot;: &quot;preset-twitch&quot;,
+  &quot;bg&quot;: &quot;#0e0e10&quot;
+}
+</code></pre>
+<p>Встроенный bootstrap-скрипт применяет payload автоматически. Чтобы обработать смену темы в своём JS (опционально):</p>
+<pre><code class="language-js">window.addEventListener(&#39;message&#39;, (event) =&gt; {
+  const payload = event.data;
+  if (!payload || payload.type !== &#39;streamkit:theme&#39;) return;
+  console.log(&#39;Theme changed:&#39;, payload.dataTheme, payload.bg);
+});
+</code></pre>
+<h3>Ручная обработка темы (продвинутый вариант)</h3>
+<p>Если <code>/data/styles.css</code> <strong>не</strong> подключён, bootstrap-скрипт не вставляется и query-параметры темы не применяются автоматически. Их можно прочитать при загрузке:</p>
+<pre><code class="language-js">const params = new URLSearchParams(location.search);
+const dataTheme = params.get(&#39;dataTheme&#39;);
+const bg = params.get(&#39;bg&#39;);
+if (dataTheme) document.documentElement.setAttribute(&#39;data-theme&#39;, dataTheme);
+if (bg) document.documentElement.style.background = bg;
+</code></pre>
 <h2>Статическое приложение (без воркера)</h2>
 <p>Только <code>WEB_CONTENT</code> — HTML/JS/CSS в папке установки.</p>
 <h2>Полное приложение (с воркером)</h2>

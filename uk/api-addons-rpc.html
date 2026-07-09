@@ -74,6 +74,19 @@ if (res.success) {
 <p>Обробник отримує <code>{ fromAddonId, params }</code> і повертає payload відповіді.</p>
 <h2><code>addons.offRequest(method)</code></h2>
 <p>Видаляє раніше зареєстрований обробник.</p>
+<h2><code>addons.getInfo(addonIds?)</code></h2>
+<p>Читає маніфест і статус увімкнення встановлених аддонів. <strong>Додатковий дозвіл не потрібен.</strong></p>
+<p>Без <code>addonIds</code> повертаються всі встановлені аддони. Передайте масив id, щоб запитати конкретні аддони. Невідомі id включаються з <code>missing: true</code> та <code>enabled: false</code>.</p>
+<pre><code class="language-js">const all = await addons.getInfo();
+if (all.success) {
+  for (const addon of all.addons) {
+    console.log(addon.id, addon.enabled, addon.manifest?.version);
+  }
+}
+
+const pair = await addons.getInfo([&#39;twitch&#39;, &#39;other_addon&#39;]);
+</code></pre>
+<p>Кожен запис: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> — розібраний <code>manifest.json</code> або <code>null</code>, якщо файли відсутні.</p>
 <h2>Залежності в маніфесті</h2>
 <p>Використовуйте <code>depends_on: [&quot;other_addon&quot;]</code> в <code>manifest.json</code>, коли ваш аддон потребує, щоб інший аддон був встановлений і увімкнений перед активацією.</p>
 
