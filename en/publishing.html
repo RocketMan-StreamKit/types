@@ -268,22 +268,36 @@ Content-Type: application/json
 </ul>
 <p>When rate-limited, the response includes <code>retryAfter</code> (in seconds).</p>
 <h3>GitHub Actions example</h3>
-<p>This workflow runs on every published release and notifies the catalog. Save it as <code>.github/workflows/rocketman-sync.yml</code> in your addon repository and add a repository secret named <code>ROCKETMAN_ADDON_TOKEN</code> with your developer token.</p>
+<p>This workflow runs on every published release and notifies the catalog via <strong>GitHub OIDC</strong> (no repository secrets). Save it as <code>.github/workflows/rocketman-sync.yml</code> in your addon repository. The workflow needs <code>permissions: id-token: write</code>; your GitHub org/repo must be linked to your developer account on the RocketMan site.</p>
 <pre><code class="language-yaml">name: Sync addon to RocketMan catalog
 
 on:
   release:
     types: [published]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Get OIDC token
+        id: oidc
+        run: |
+          TOKEN=$(curl -s \
+            -H &quot;Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN&quot; \
+            &quot;${ACTIONS_ID_TOKEN_REQUEST_URL}&amp;audience=rocketman-streamkit_plus-extension&quot; \
+            | jq -r &#39;.value&#39;)
+
+          echo &quot;token=$TOKEN&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;
+
       - name: Notify catalog about the new release
         run: |
           curl -sS -X POST &quot;https://rocketman-streams.com/api/extensions/dev/sync&quot; \
-            -H &quot;Content-Type: application/json&quot; \
-            -d &quot;{\&quot;repo\&quot;:\&quot;${{ github.repository }}\&quot;,\&quot;token\&quot;:\&quot;${{ secrets.ROCKETMAN_ADDON_TOKEN }}\&quot;}&quot;
+            -H &quot;Authorization: Bearer ${{ steps.oidc.outputs.token }}&quot;
 </code></pre>
 <h2>Related reading</h2>
 <ul>

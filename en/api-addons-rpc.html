@@ -74,6 +74,19 @@ if (res.success) {
 <p>Handler receives <code>{ fromAddonId, params }</code> and returns the response payload.</p>
 <h2><code>addons.offRequest(method)</code></h2>
 <p>Remove a previously registered handler.</p>
+<h2><code>addons.getInfo(addonIds?)</code></h2>
+<p>Read manifest and enabled status for installed addons. <strong>No extra permission.</strong></p>
+<p>Omit <code>addonIds</code> to return every installed addon. Pass an array of ids to query specific addons. Unknown ids are included with <code>missing: true</code> and <code>enabled: false</code>.</p>
+<pre><code class="language-js">const all = await addons.getInfo();
+if (all.success) {
+  for (const addon of all.addons) {
+    console.log(addon.id, addon.enabled, addon.manifest?.version);
+  }
+}
+
+const pair = await addons.getInfo([&#39;twitch&#39;, &#39;other_addon&#39;]);
+</code></pre>
+<p>Each entry: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> is the parsed <code>manifest.json</code> or <code>null</code> when files are missing.</p>
 <h2>Manifest dependencies</h2>
 <p>Use <code>depends_on: [&quot;other_addon&quot;]</code> in <code>manifest.json</code> when your addon requires another addon to be installed and enabled before activation.</p>
 

@@ -161,7 +161,7 @@ curl -X POST "https://rocketman-streams.com/api/extensions/dev/sync" \
 
 ### Пример GitHub Actions
 
-Workflow запускается при каждой публикации релиза и уведомляет каталог. Сохраните как `.github/workflows/rocketman-sync.yml` в репозитории аддона и добавьте secret `ROCKETMAN_ADDON_TOKEN` с токеном разработчика.
+Workflow запускается при каждой публикации релиза и уведомляет каталог через **GitHub OIDC** (секреты репозитория не нужны). Сохраните как `.github/workflows/rocketman-sync.yml` в репозитории аддона. Workflow требует `permissions: id-token: write`; организация/репозиторий GitHub должны быть привязаны к вашему аккаунту разработчика на сайте RocketMan.
 
 ```yaml
 name: Sync addon to RocketMan catalog
@@ -169,16 +169,30 @@ name: Sync addon to RocketMan catalog
 on:
   release:
     types: [published]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Get OIDC token
+        id: oidc
+        run: |
+          TOKEN=$(curl -s \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=rocketman-streamkit_plus-extension" \
+            | jq -r '.value')
+
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
       - name: Notify catalog about the new release
         run: |
           curl -sS -X POST "https://rocketman-streams.com/api/extensions/dev/sync" \
-            -H "Content-Type: application/json" \
-            -d "{\"repo\":\"${{ github.repository }}\",\"token\":\"${{ secrets.ROCKETMAN_ADDON_TOKEN }}\"}"
+            -H "Authorization: Bearer ${{ steps.oidc.outputs.token }}"
 ```
 
 ## Связанные материалы
