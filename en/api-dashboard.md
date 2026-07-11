@@ -241,6 +241,26 @@ events.On('triggers:applied-changed', ({ previous, current }) => {
 
 Use this to release internal resources when bindings are removed.
 
+### Validate trigger bindings before settings save
+
+Before the app persists trigger-related settings, it calls each related addon:
+
+```js
+events.On('triggers:validate', ({ draft }) => {
+  for (const rule of draft.overlay || []) {
+    if (rule.trigger.key === 'redeems' && !String(rule.trigger.value || '').trim()) {
+      return {
+        success: false,
+        message: 'Generate or select a channel point reward first',
+      };
+    }
+  }
+  return { success: true };
+});
+```
+
+Return `{ success: false, message }` to block the save. Omitting the handler (or returning success) allows the save. No extra permission is required.
+
 ### Query saved trigger bindings — `triggers.getApplied()`
 
 Any addon can request the current trigger map at any time (no extra permission):
@@ -258,5 +278,16 @@ if (res.success) {
 ```
 
 Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except `gameInput` where keys are game addon ids.
+
+### Delete this addon's trigger bindings — `triggers.removeApplied()`
+
+Remove persisted rules where this addon is the dashboard source (and related overlay/game target bindings) without extra permissions:
+
+```js
+await triggers.removeApplied(); // every system
+await triggers.removeApplied({ systems: ['sounds', 'hotkeys'] });
+```
+
+Unreferenced managed dynamic values are released afterward.
 
 See JSDoc on `registerTriggers` in generated typings for full contract.

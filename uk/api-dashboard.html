@@ -305,6 +305,21 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 });
 </code></pre>
 <p>Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив&#39;язок.</p>
+<h3>Валідація прив&#39;язок перед збереженням налаштувань</h3>
+<p>Перед записом налаштувань, пов&#39;язаних із тригерами, застосунок викликає кожен пов&#39;язаний аддон:</p>
+<pre><code class="language-js">events.On(&#39;triggers:validate&#39;, ({ draft }) =&gt; {
+  for (const rule of draft.overlay || []) {
+    if (rule.trigger.key === &#39;redeems&#39; &amp;&amp; !String(rule.trigger.value || &#39;&#39;).trim()) {
+      return {
+        success: false,
+        message: &#39;Спочатку згенеруйте або виберіть нагороду за бали каналу&#39;,
+      };
+    }
+  }
+  return { success: true };
+});
+</code></pre>
+<p>Поверніть <code>{ success: false, message }</code>, щоб заблокувати збереження. Якщо обробника немає (або він повернув success), збереження триває. Додаткових прав не потрібно.</p>
 <h3>Запит збережених прив&#39;язок — <code>triggers.getApplied()</code></h3>
 <p>Будь-який аддон може в будь-який момент запросити актуальну карту тригерів (без додаткових прав):</p>
 <pre><code class="language-js">const res = await triggers.getApplied();
@@ -318,6 +333,12 @@ if (res.success) {
 }
 </code></pre>
 <p>Містить прив&#39;язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім <code>gameInput</code> (ключі — id ігрових аддонів).</p>
+<h3>Видалення своїх прив&#39;язок — <code>triggers.removeApplied()</code></h3>
+<p>Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов&#39;язані overlay/game target-правила), без додаткових прав:</p>
+<pre><code class="language-js">await triggers.removeApplied(); // усі системи
+await triggers.removeApplied({ systems: [&#39;sounds&#39;, &#39;hotkeys&#39;] });
+</code></pre>
+<p>Після цього звільняються невикористані managed dynamic values.</p>
 <p>Повний контракт — у JSDoc <code>registerTriggers</code> у згенерованих типах.</p>
 
     </main>
