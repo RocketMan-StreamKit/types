@@ -137,7 +137,7 @@ Read APIs (require `DASHBOARD_CHAT` or `DASHBOARD_CHAT_INCOMING`):
 
 ## Chat send / incoming
 
-**Send (composer):** `DASHBOARD_CHAT`
+**Receive composer sends (be a send target):** `DASHBOARD_CHAT`
 
 ```js
 await dashboard.onChatSend(async ({ text }) => {
@@ -145,6 +145,21 @@ await dashboard.onChatSend(async ({ text }) => {
 });
 dashboard.offChatSend();
 ```
+
+**Dispatch outgoing text (same path as the chat window):** `DASHBOARD_CHAT_SEND`
+
+Omit the second argument to send through **all** registered chat-send subscribers. Pass a string array to target specific addon ids.
+
+```js
+// Through every addon that called onChatSend
+await dashboard.sendChatMessage('Hello everyone!');
+
+// Through specific addons only
+await dashboard.sendChatMessage('Hi Twitch!', ['twitch']);
+await dashboard.sendChatMessage('Multi', ['twitch', 'kick']);
+```
+
+Returns `{ success: true }` when at least one target accepts the message, or `{ success: false, message }` when the text is empty, no valid targets are registered, or every target fails.
 
 **Incoming lines:** `DASHBOARD_CHAT_INCOMING`
 

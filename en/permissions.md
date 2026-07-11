@@ -21,7 +21,8 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `STATUS` | Status bar: `status.Update`, `status.OnClick` |
 | `NOTIFY` | Title-bar notifications: `notify.Send` |
 | `DASHBOARD_EVENTS` | Latest-events widget: `dashboard.addRecord`, `registerTriggers`, … |
-| `DASHBOARD_CHAT` | Chat window output and send: `addChatMessage`, `onChatSend`, … |
+| `DASHBOARD_CHAT` | Chat window output and send target: `addChatMessage`, `onChatSend`, … |
+| `DASHBOARD_CHAT_SEND` | Dispatch outgoing chat text through other addons: `dashboard.sendChatMessage` |
 | `DASHBOARD_CHAT_INCOMING` | Subscribe to chat lines: `onChatMessage` / `offChatMessage` |
 | `DASHBOARD_EVENTS_INCOMING` | Subscribe to event records: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Scoped file/folder API: `files.requestAccess`, `readFile`, `writeFile`, … (user approves each path; see [File access](./api-file-access.md)) |

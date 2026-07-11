@@ -21,7 +21,8 @@
 | `STATUS` | Рядок стану: `status.Update`, `status.OnClick` |
 | `NOTIFY` | Сповіщення в title bar: `notify.Send` |
 | `DASHBOARD_EVENTS` | Віджет останніх подій: `dashboard.addRecord`, `registerTriggers`, … |
-| `DASHBOARD_CHAT` | Вивід і відправка в вікно чату: `addChatMessage`, `onChatSend`, … |
+| `DASHBOARD_CHAT` | Вивід і ціль відправки у вікні чату: `addChatMessage`, `onChatSend`, … |
+| `DASHBOARD_CHAT_SEND` | Вихідна відправка через інші аддони: `dashboard.sendChatMessage` |
 | `DASHBOARD_CHAT_INCOMING` | Підписка на рядки чату: `onChatMessage` / `offChatMessage` |
 | `DASHBOARD_EVENTS_INCOMING` | Підписка на записи подій: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Доступ до файлів і папок: `files.requestAccess`, `readFile`, `writeFile`, … (користувач схвалює кожен шлях; див. [Доступ до файлів](./api-file-access.md)) |

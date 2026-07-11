@@ -200,12 +200,22 @@ await dashboard.registerChatEmotes({
 <li><code>listPlatforms()</code></li>
 </ul>
 <h2>Chat send / incoming</h2>
-<p><strong>Send (composer):</strong> <code>DASHBOARD_CHAT</code></p>
+<p><strong>Receive composer sends (be a send target):</strong> <code>DASHBOARD_CHAT</code></p>
 <pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
   // send text to your platform API
 });
 dashboard.offChatSend();
 </code></pre>
+<p><strong>Dispatch outgoing text (same path as the chat window):</strong> <code>DASHBOARD_CHAT_SEND</code></p>
+<p>Omit the second argument to send through <strong>all</strong> registered chat-send subscribers. Pass a string array to target specific addon ids.</p>
+<pre><code class="language-js">// Through every addon that called onChatSend
+await dashboard.sendChatMessage(&#39;Hello everyone!&#39;);
+
+// Through specific addons only
+await dashboard.sendChatMessage(&#39;Hi Twitch!&#39;, [&#39;twitch&#39;]);
+await dashboard.sendChatMessage(&#39;Multi&#39;, [&#39;twitch&#39;, &#39;kick&#39;]);
+</code></pre>
+<p>Returns <code>{ success: true }</code> when at least one target accepts the message, or <code>{ success: false, message }</code> when the text is empty, no valid targets are registered, or every target fails.</p>
 <p><strong>Incoming lines:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
 <pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
   console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);

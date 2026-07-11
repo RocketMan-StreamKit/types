@@ -137,7 +137,7 @@ API чтения (требуют `DASHBOARD_CHAT` или `DASHBOARD_CHAT_INCOMIN
 
 ## Отправка / входящий чат
 
-**Отправка (поле ввода):** `DASHBOARD_CHAT`
+**Приём из поля ввода (стать целью отправки):** `DASHBOARD_CHAT`
 
 ```js
 await dashboard.onChatSend(async ({ text }) => {
@@ -145,6 +145,21 @@ await dashboard.onChatSend(async ({ text }) => {
 });
 dashboard.offChatSend();
 ```
+
+**Исходящая отправка (тот же путь, что у окна чата):** `DASHBOARD_CHAT_SEND`
+
+Второй аргумент можно не указывать — сообщение уйдёт через **все** зарегистрированные подписчики `onChatSend`. Массив строк — только выбранные id аддонов.
+
+```js
+// Через все аддоны, подписанные на onChatSend
+await dashboard.sendChatMessage('Hello everyone!');
+
+// Через конкретные аддоны
+await dashboard.sendChatMessage('Hi Twitch!', ['twitch']);
+await dashboard.sendChatMessage('Multi', ['twitch', 'kick']);
+```
+
+Возвращает `{ success: true }`, если хотя бы одна цель приняла сообщение, или `{ success: false, message }`, если текст пустой, нет валидных целей или все цели завершились ошибкой.
 
 **Входящие строки:** `DASHBOARD_CHAT_INCOMING`
 
