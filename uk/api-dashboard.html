@@ -200,12 +200,22 @@ await dashboard.registerChatEmotes({
 <li><code>listPlatforms()</code></li>
 </ul>
 <h2>Відправка / вхідний чат</h2>
-<p><strong>Відправка (composer):</strong> <code>DASHBOARD_CHAT</code></p>
+<p><strong>Прийом з поля вводу (стати ціллю відправки):</strong> <code>DASHBOARD_CHAT</code></p>
 <pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
   // send text to your platform API
 });
 dashboard.offChatSend();
 </code></pre>
+<p><strong>Вихідна відправка (той самий шлях, що й у вікна чату):</strong> <code>DASHBOARD_CHAT_SEND</code></p>
+<p>Другий аргумент можна не вказувати — повідомлення піде через <strong>усі</strong> зареєстровані підписники <code>onChatSend</code>. Масив рядків — лише вибрані id аддонів.</p>
+<pre><code class="language-js">// Через усі аддони, підписані на onChatSend
+await dashboard.sendChatMessage(&#39;Hello everyone!&#39;);
+
+// Через конкретні аддони
+await dashboard.sendChatMessage(&#39;Hi Twitch!&#39;, [&#39;twitch&#39;]);
+await dashboard.sendChatMessage(&#39;Multi&#39;, [&#39;twitch&#39;, &#39;kick&#39;]);
+</code></pre>
+<p>Повертає <code>{ success: true }</code>, якщо хоча б одна ціль прийняла повідомлення, або <code>{ success: false, message }</code>, якщо текст порожній, немає валідних цілей або всі цілі завершились помилкою.</p>
 <p><strong>Вхідні рядки:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
 <pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
   console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
