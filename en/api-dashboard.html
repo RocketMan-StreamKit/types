@@ -98,6 +98,7 @@
     content: &#39;Hello chat!&#39;,
     platform: &#39;myplatform&#39;,
     from: &#39;user-1&#39;,
+    color: &#39;_as_user_&#39;,
     emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
     style: {
       color: &#39;#7c4dff&#39;,
@@ -105,10 +106,46 @@
       icon: &#39;megaphone&#39;,
     },
   },
-  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39;, color: &#39;#9147ff&#39; },
 );
 </code></pre>
 <p><code>content</code> accepts plain <code>string</code> or <code>{ en, ru?, uk? }</code> — not app <code>LangData</code> tuples (addons use their own localized objects).</p>
+<p>Optional <code>color</code> sets the <strong>message text</strong> color (not the border). Accepted values:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Example</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hex with <code>#</code></td>
+<td><code>&#39;#ff0000&#39;</code>, <code>&#39;#f00&#39;</code></td>
+<td>Normalized to <code>#rrggbb</code></td>
+</tr>
+<tr>
+<td>Hex without <code>#</code></td>
+<td><code>&#39;ff0000&#39;</code>, <code>&#39;f00&#39;</code></td>
+<td>Same</td>
+</tr>
+<tr>
+<td>RGB tuple</td>
+<td><code>[255, 128, 0]</code></td>
+<td><code>#ff8000</code></td>
+</tr>
+<tr>
+<td>RGB object</td>
+<td><code>{ r: 0, g: 0, b: 255 }</code></td>
+<td><code>#0000ff</code></td>
+</tr>
+<tr>
+<td><code>_as_user_</code></td>
+<td><code>&#39;_as_user_&#39;</code></td>
+<td>Same color as the author&#39;s nickname (<code>user.color</code>)</td>
+</tr>
+</tbody></table>
+<p>Invalid values are ignored. Channels outside <code>0…255</code> are clamped.</p>
 <p>Optional <code>style</code> adds a colored border and optional header bar:</p>
 <table>
 <thead>
@@ -136,6 +173,7 @@
 <pre><code class="language-js">await dashboard.addSystemChatMessage({
   content: { en: &#39;Connected to chat&#39;, ru: &#39;Подключено к чату&#39; },
   sender: { en: &#39;My addon&#39; },
+  color: &#39;#4caf50&#39;,
   style: {
     color: &#39;#4caf50&#39;,
     header: { en: &#39;Notice&#39; },
@@ -143,7 +181,7 @@
   },
 });
 </code></pre>
-<p><code>content</code>, <code>sender</code>, and <code>style.header</code> accept <code>string</code> or <code>{ en, ru?, uk? }</code> only.</p>
+<p><code>content</code>, <code>sender</code>, and <code>style.header</code> accept <code>string</code> or <code>{ en, ru?, uk? }</code> only. Optional <code>color</code> uses the same formats as <code>addChatMessage</code> (hex / RGB / <code>_as_user_</code>).</p>
 <h2>Chat badges and emotes</h2>
 <pre><code class="language-js">await dashboard.registerChatBadges([
   { id: &#39;badge-vip&#39;, url: &#39;https://example.com/vip.png&#39;, title: &#39;VIP&#39; },
