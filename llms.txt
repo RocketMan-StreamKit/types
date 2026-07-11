@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.28.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.29.
 
 ## Web documentation
 
@@ -30,6 +30,7 @@
 - [dashboard](https://rocketman-streamkit.github.io/types/en/api-dashboard.html): Events widget, chat, overlay triggers
 - [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, viewer count, notifications, OAuth result pages
 - [Currency](https://rocketman-streamkit.github.io/types/en/api-currency.html): User's primary currency and amount conversion
+- [Language detection (`language`)](https://rocketman-streamkit.github.io/types/en/api-language.html): Detect text language via fastText (~176 languages; no permission)
 - [Utilities](https://rocketman-streamkit.github.io/types/en/api-utilities.html): Timers, crypto, console, developer mode
 - [Platform addons](https://rocketman-streamkit.github.io/types/en/types-platform.html): `platform.streaming`, `platform.donation`
 - [Overlay addons](https://rocketman-streamkit.github.io/types/en/types-overlay.html): Effects, static web, simple media

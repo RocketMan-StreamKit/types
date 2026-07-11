@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Визначення мови (`language`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html" class="is-active">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Визначення мови (<code>language</code>)</h1>
+<p>Визначає мову довільного тексту тією ж моделлю fastText, що й TTS (<code>lid.176.ftz</code>, ~176 мов). <strong>Додатковий дозвіл не потрібен.</strong></p>
+<p>На відміну від автовизначення TTS (яке зводить результат лише до <code>en</code> / <code>ru</code> / <code>uk</code>), цей API повертає <strong>повний</strong> ISO-код мови з моделі (наприклад <code>de</code>, <code>fr</code>, <code>ja</code>, <code>pl</code>, <code>es</code>).</p>
+<h2>Як це працює</h2>
+<ul>
+<li>Використовується fastText <a href="https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz">lid.176.ftz</a> (завантажується при першому використанні в user data застосунку).</li>
+<li>Повертає ISO-639-1 (<code>language</code>) і, якщо доступно, ISO-639-3 (<code>alpha3</code>) плюс англійську назву <code>name</code>.</li>
+<li>Якщо модель недоступна — запасний варіант за кирилицею (<code>uk</code> за наявності і/ї/є/ґ, інакше <code>ru</code>). Інші письменності без завантаженої моделі не класифікуються.</li>
+<li>Порожній текст / лише пробіли — <code>{ success: false }</code>.</li>
+</ul>
+<h2><code>language.detect(text)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Обовʼязковий</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>text</code></td>
+<td>так</td>
+<td>Повідомлення або довільний рядок для класифікації</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const res = await language.detect(&#39;Bonjour le monde!&#39;);
+if (res.success) {
+  console.log(res.language); // &#39;fr&#39;
+  console.log(res.alpha3);   // &#39;fra&#39; (якщо є)
+  console.log(res.name);     // &#39;French&#39; (якщо є)
+}
+
+const ja = await language.detect(&#39;こんにちは&#39;);
+// { success: true, language: &#39;ja&#39;, alpha3: &#39;jpn&#39;, name: &#39;Japanese&#39; }
+
+const empty = await language.detect(&#39;   &#39;);
+// { success: false, message: &#39;Text is empty&#39; }
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>language</code></td>
+<td>Дволітерний ISO-639-1 (наприклад <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
+</tr>
+<tr>
+<td><code>alpha3</code></td>
+<td>Трилітерний ISO-639-3, якщо модель його повернула</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>Англійська назва мови з моделі, якщо доступна</td>
+</tr>
+</tbody></table>
+<p>Поширені значення <code>message</code> при <code>success: false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Text is empty</code></td>
+<td>Порожній <code>text</code> або лише пробіли</td>
+</tr>
+<tr>
+<td><code>Language could not be detected</code></td>
+<td>Модель недоступна / невпевнена і немає кириличної підказки</td>
+</tr>
+</tbody></table>
+<h2>Приклад: маршрутизація чату за мовою</h2>
+<pre><code class="language-js">events.On(&#39;onChatMessage&#39;, async payload =&gt; {
+  const text = payload.body?.message || &#39;&#39;;
+  const res = await language.detect(text);
+  if (!res.success) {
+    return;
+  }
+
+  if (res.language === &#39;uk&#39;) {
+    // українська
+  } else if (res.language === &#39;ru&#39;) {
+    // російська
+  } else if (res.language === &#39;en&#39;) {
+    // англійська
+  } else {
+    console.log(&#39;Інша мова:&#39;, res.language, res.name);
+  }
+});
+</code></pre>
+<h2>Звʼязок із TTS</h2>
+<ul>
+<li><code>tts.speak</code> як і раніше автовизначає лише <code>en</code> / <code>ru</code> / <code>uk</code> (fallback на англійську), якщо <code>options.language</code> не вказано.</li>
+<li>Використовуйте <code>language.detect</code>, коли потрібен розширений набір мов; під час озвучення передайте явний <code>options.language</code> у <code>tts.speak</code>, якщо самі зіставляєте результат із підтримуваним голосом TTS.</li>
+</ul>
+<p>Див. також <a href="./api-tts.html">Озвучення тексту</a>, <a href="./localization.html">Локалізація</a> та <a href="./api-overview.html">Огляд API</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

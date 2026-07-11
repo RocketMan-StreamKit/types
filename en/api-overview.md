@@ -18,6 +18,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `status` | Main window status bar |
 | `viewers` | Live viewer count in the main window status bar (no permission) |
 | `currency` | User's primary currency and amount conversion (no permission) |
+| `language` | Detect text language via fastText lid.176 (~176 ISO codes; no permission) |
 | `license` | License status and MD5 device key fingerprint (no permission) |
 | `notify` | Title-bar notification center |
 | `tts` | Text-to-speech playback (`TTS` permission) |
@@ -42,6 +43,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
 - [Currency](./api-currency.md)
+- [Language detection (`language`)](./api-language.md)
 - [License](./api-license.md)
 - [Text-to-speech (`tts`)](./api-tts.md)
 - [yt-dlp downloads (`ytdlp`)](./api-ytdlp.md)

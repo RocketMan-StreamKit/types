@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Language detection (`language`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html" class="is-active">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Language detection (<code>language</code>)</h1>
+<p>Detects the language of arbitrary text using the same fastText model as TTS (<code>lid.176.ftz</code>, ~176 languages). <strong>No permission is required.</strong></p>
+<p>Unlike TTS auto-detect (which maps results to <code>en</code> / <code>ru</code> / <code>uk</code> only), this API returns the <strong>full</strong> ISO language code from the model (for example <code>de</code>, <code>fr</code>, <code>ja</code>, <code>pl</code>, <code>es</code>).</p>
+<h2>How it works</h2>
+<ul>
+<li>Uses fastText <a href="https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz">lid.176.ftz</a> (downloaded on first use into app user data).</li>
+<li>Returns ISO-639-1 (<code>language</code>) and, when available, ISO-639-3 (<code>alpha3</code>) plus an English reference <code>name</code>.</li>
+<li>When the model is unavailable, falls back to a Cyrillic script hint (<code>uk</code> when і/ї/є/ґ are present, otherwise <code>ru</code>). Other scripts without a loaded model cannot be classified.</li>
+<li>Empty / whitespace-only text fails with <code>{ success: false }</code>.</li>
+</ul>
+<h2><code>language.detect(text)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>text</code></td>
+<td>yes</td>
+<td>Message or arbitrary string to classify</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const res = await language.detect(&#39;Bonjour le monde!&#39;);
+if (res.success) {
+  console.log(res.language); // &#39;fr&#39;
+  console.log(res.alpha3);   // &#39;fra&#39; (when provided)
+  console.log(res.name);     // &#39;French&#39; (when provided)
+}
+
+const ja = await language.detect(&#39;こんにちは&#39;);
+// { success: true, language: &#39;ja&#39;, alpha3: &#39;jpn&#39;, name: &#39;Japanese&#39; }
+
+const empty = await language.detect(&#39;   &#39;);
+// { success: false, message: &#39;Text is empty&#39; }
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>language</code></td>
+<td>ISO-639-1 two-letter code (e.g. <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
+</tr>
+<tr>
+<td><code>alpha3</code></td>
+<td>ISO-639-3 three-letter code when the model provides it</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>English reference name from the model when available</td>
+</tr>
+</tbody></table>
+<p>Common <code>message</code> values when <code>success</code> is <code>false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Text is empty</code></td>
+<td>Blank or whitespace-only <code>text</code></td>
+</tr>
+<tr>
+<td><code>Language could not be detected</code></td>
+<td>Model unavailable / uncertain and no Cyrillic script hint</td>
+</tr>
+</tbody></table>
+<h2>Example: route chat by language</h2>
+<pre><code class="language-js">events.On(&#39;onChatMessage&#39;, async payload =&gt; {
+  const text = payload.body?.message || &#39;&#39;;
+  const res = await language.detect(text);
+  if (!res.success) {
+    return;
+  }
+
+  if (res.language === &#39;uk&#39;) {
+    // handle Ukrainian
+  } else if (res.language === &#39;ru&#39;) {
+    // handle Russian
+  } else if (res.language === &#39;en&#39;) {
+    // handle English
+  } else {
+    console.log(&#39;Other language:&#39;, res.language, res.name);
+  }
+});
+</code></pre>
+<h2>Relation to TTS</h2>
+<ul>
+<li><code>tts.speak</code> still auto-detects only <code>en</code> / <code>ru</code> / <code>uk</code> (English fallback) when <code>options.language</code> is omitted.</li>
+<li>Use <code>language.detect</code> when you need the broader language set; pass an explicit <code>options.language</code> to <code>tts.speak</code> if you map the result yourself to a supported TTS voice.</li>
+</ul>
+<p>See also <a href="./api-tts.html">Text-to-speech</a>, <a href="./localization.html">Localization</a>, and <a href="./api-overview.html">API overview</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -18,6 +18,7 @@
 | `status` | Рядок стану головного вікна |
 | `viewers` | Онлайн глядачів у рядку стану головного вікна (без дозволу) |
 | `currency` | Основна валюта користувача та конвертація сум (без дозволу) |
+| `language` | Визначення мови тексту через fastText lid.176 (~176 ISO-кодів; без дозволу) |
 | `license` | Статус ліцензії та MD5-відбиток ключа пристрою (без дозволу) |
 | `notify` | Центр сповіщень у title bar |
 | `tts` | Озвучення тексту (дозвіл `TTS`) |
@@ -42,6 +43,7 @@
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
 - [Валюта](./api-currency.md)
+- [Визначення мови (`language`)](./api-language.md)
 - [Ліцензія](./api-license.md)
 - [Озвучення тексту (`tts`)](./api-tts.md)
 - [Завантаження yt-dlp (`ytdlp`)](./api-ytdlp.md)

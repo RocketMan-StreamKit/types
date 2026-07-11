@@ -32,6 +32,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
 | [status, notify, ui](./api-status-notify-ui.md) | Status bar, viewer count, notifications, OAuth result pages |
 | [Currency](./api-currency.md) | User's primary currency and amount conversion |
+| [Language detection (`language`)](./api-language.md) | Detect text language via fastText (~176 languages; no permission) |
 | [Utilities](./api-utilities.md) | Timers, crypto, console, developer mode |
 
 ### Addon categories

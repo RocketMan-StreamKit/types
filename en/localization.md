@@ -13,6 +13,8 @@ The sandbox exposes a read-only bridge to the user's **UI locale** in settings:
 
 No permission is required. Use `LANG.current` to pick the right string from your own per-locale objects (see below). This does **not** give access to app translation keys or JSON files.
 
+To classify the language of **message text** (not the UI locale), use [`language.detect`](./api-language.md) — it returns ISO codes from fastText lid.176 (~176 languages) and is independent of `LANG`.
+
 ```js
 const labels = {
   en: 'Connected',

@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
@@ -75,7 +76,7 @@
 <p>Writes to <code>api.config.updateParams</code> and <code>api.config.setConfig</code> are validated in the main process (size limits, permission gates).</p>
 <h2>VM execution</h2>
 <p>Initial <code>index.js</code> execution has a <strong>5 second</strong> timeout. Errors in timers and event handlers are caught and logged; they do not crash the worker.</p>
-<p>Uncaught errors outside those wrappers can still crash the worker process. After <strong>3 consecutive crashes</strong> without a stable run, auto-restart stops until the user restarts the addon from settings — see <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
+<p>Uncaught errors outside those wrappers can still crash the worker process. After <strong>3 consecutive crashes</strong> without a stable run, auto-restart stops until the user restarts the addon from settings (or restarts the app) — see <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
 <h2>Frontend access token (<code>data.token</code>)</h2>
 <p>Each addon instance receives a stable per-device, per-addon-id, per-install-path secret in <code>data.token</code>. It is appended to widget/static URLs as <code>?token=…</code>.</p>
 <p><strong>Validate</strong> <code>query.token === data.token</code> (or equivalent header) on HTTP endpoints meant only for your embedded web page so other local pages cannot call them.</p>

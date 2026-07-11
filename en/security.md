@@ -27,7 +27,7 @@ Writes to `api.config.updateParams` and `api.config.setConfig` are validated in 
 
 Initial `index.js` execution has a **5 second** timeout. Errors in timers and event handlers are caught and logged; they do not crash the worker.
 
-Uncaught errors outside those wrappers can still crash the worker process. After **3 consecutive crashes** without a stable run, auto-restart stops until the user restarts the addon from settings — see [Lifecycle — Crash loop protection](./lifecycle.md#crash-loop-protection).
+Uncaught errors outside those wrappers can still crash the worker process. After **3 consecutive crashes** without a stable run, auto-restart stops until the user restarts the addon from settings (or restarts the app) — see [Lifecycle — Crash loop protection](./lifecycle.md#crash-loop-protection).
 
 ## Frontend access token (`data.token`)
 

@@ -45,16 +45,16 @@ To avoid an infinite restart loop, the app tracks **consecutive crashes**:
 
 1. Auto-restart stops; the addon worker is not started again.
 2. The user sees an error notification and an error status for the addon.
-3. In addon settings the addon stays **enabled** but shows a **Stopped after errors** badge.
-4. After an app restart the addon is still not started until the user acts.
+3. In addon settings the addon stays **enabled** but shows a **Stopped after errors** badge (with a tooltip that a manual restart is required).
+4. After an **app** restart the crash-stop flag is cleared and the addon is started again automatically.
 
 **How to recover**
 
-The user must **restart the addon manually** from settings (↻ button) or disable and re-enable it. That clears the crash-stop flag and starts a fresh worker with a reset crash counter.
+During the same session the user must **restart the addon manually** from settings (↻ button) or disable and re-enable it. That clears the crash-stop flag and starts a fresh worker with a reset crash counter. Restarting the whole app also clears the flag and starts enabled addons again.
 
 **Implications for addon authors**
 
-- Do not rely on crashing the worker as a recovery mechanism — after three crashes the addon will stay offline until user action.
+- Do not rely on crashing the worker as a recovery mechanism — after three crashes the addon stays offline until the user restarts it (or restarts the app).
 - Keep the initial `index.js` load phase short; defer heavy or risky work to async callbacks after load.
 - Use `try/catch` in long-running code paths; unhandled rejections or throws outside sandbox-wrapped handlers can still take down the worker.
 - `api.restart()` only works while the addon is running; it cannot restart an addon that was stopped by crash-loop protection.

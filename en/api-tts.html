@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
@@ -73,6 +74,7 @@
 <li>Uses the <strong>same</strong> TTS configuration as the built-in Text to speech settings (engine, voices, enable switch, volume).</li>
 <li>Audio plays in the <strong>main window</strong> (same playback path as internal <code>speakWithTTS</code>).</li>
 <li><strong>Language:</strong> pass <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) or omit it — fastText auto-detects uk/ru/en (English fallback).</li>
+<li>For the <strong>full</strong> language set (~176 ISO codes), use <a href="./api-language.html"><code>language.detect</code></a> separately (no TTS permission). TTS itself still only uses <code>en</code> / <code>ru</code> / <code>uk</code>.</li>
 <li><strong>Volume:</strong> <code>options.volumeMultiplier</code> scales playback relative to the user&#39;s TTS volume (<code>0</code> = silent, <code>1</code> = full user volume). Values above <code>1</code> are clamped to <code>1</code> — addons cannot exceed the user&#39;s volume setting.</li>
 <li><strong>Queue:</strong> the main-process TTS manager serializes overlapping <code>speak</code> calls (from addons and from the app).</li>
 </ul>

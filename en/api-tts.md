@@ -22,6 +22,7 @@ Plays synthesized speech through the user's configured TTS engine (Piper, Eleven
 - Uses the **same** TTS configuration as the built-in Text to speech settings (engine, voices, enable switch, volume).
 - Audio plays in the **main window** (same playback path as internal `speakWithTTS`).
 - **Language:** pass `options.language` (`en`, `ru`, `uk`) or omit it — fastText auto-detects uk/ru/en (English fallback).
+- For the **full** language set (~176 ISO codes), use [`language.detect`](./api-language.md) separately (no TTS permission). TTS itself still only uses `en` / `ru` / `uk`.
 - **Volume:** `options.volumeMultiplier` scales playback relative to the user's TTS volume (`0` = silent, `1` = full user volume). Values above `1` are clamped to `1` — addons cannot exceed the user's volume setting.
 - **Queue:** the main-process TTS manager serializes overlapping `speak` calls (from addons and from the app).
 
