@@ -61,6 +61,7 @@ await dashboard.addChatMessage(
     content: 'Hello chat!',
     platform: 'myplatform',
     from: 'user-1',
+    color: '_as_user_',
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -68,11 +69,23 @@ await dashboard.addChatMessage(
       icon: 'megaphone',
     },
   },
-  { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
+  { id: 'user-1', name: 'Viewer', platform: 'myplatform', color: '#9147ff' },
 );
 ```
 
 `content` принимает простую `string` или `{ en, ru?, uk? }` — не кортежи `LangData` приложения (аддоны используют свои объекты локализации).
+
+Опциональный `color` задаёт цвет **текста сообщения** (не рамки). Допустимые значения:
+
+| Значение | Пример | Результат |
+| --- | --- | --- |
+| Hex с `#` | `'#ff0000'`, `'#f00'` | Нормализуется в `#rrggbb` |
+| Hex без `#` | `'ff0000'`, `'f00'` | То же |
+| RGB-кортеж | `[255, 128, 0]` | `#ff8000` |
+| RGB-объект | `{ r: 0, g: 0, b: 255 }` | `#0000ff` |
+| `_as_user_` | `'_as_user_'` | Цвет ника автора (`user.color`) |
+
+Некорректные значения игнорируются. Каналы вне `0…255` ограничиваются.
 
 Опциональный `style` добавляет цветную рамку и опциональную шапку:
 
@@ -92,6 +105,7 @@ await dashboard.addChatMessage(
 await dashboard.addSystemChatMessage({
   content: { en: 'Connected to chat', ru: 'Подключено к чату' },
   sender: { en: 'My addon' },
+  color: '#4caf50',
   style: {
     color: '#4caf50',
     header: { en: 'Notice' },
@@ -100,7 +114,7 @@ await dashboard.addSystemChatMessage({
 });
 ```
 
-`content`, `sender` и `style.header` принимают только `string` или `{ en, ru?, uk? }`.
+`content`, `sender` и `style.header` принимают только `string` или `{ en, ru?, uk? }`. Опциональный `color` — те же форматы, что у `addChatMessage` (hex / RGB / `_as_user_`).
 
 ## Значки и эмоуты чата
 

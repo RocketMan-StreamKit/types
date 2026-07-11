@@ -61,6 +61,7 @@ await dashboard.addChatMessage(
     content: 'Hello chat!',
     platform: 'myplatform',
     from: 'user-1',
+    color: '_as_user_',
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -68,11 +69,23 @@ await dashboard.addChatMessage(
       icon: 'megaphone',
     },
   },
-  { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
+  { id: 'user-1', name: 'Viewer', platform: 'myplatform', color: '#9147ff' },
 );
 ```
 
 `content` accepts plain `string` or `{ en, ru?, uk? }` — not app `LangData` tuples (addons use their own localized objects).
+
+Optional `color` sets the **message text** color (not the border). Accepted values:
+
+| Value | Example | Result |
+| --- | --- | --- |
+| Hex with `#` | `'#ff0000'`, `'#f00'` | Normalized to `#rrggbb` |
+| Hex without `#` | `'ff0000'`, `'f00'` | Same |
+| RGB tuple | `[255, 128, 0]` | `#ff8000` |
+| RGB object | `{ r: 0, g: 0, b: 255 }` | `#0000ff` |
+| `_as_user_` | `'_as_user_'` | Same color as the author's nickname (`user.color`) |
+
+Invalid values are ignored. Channels outside `0…255` are clamped.
 
 Optional `style` adds a colored border and optional header bar:
 
@@ -92,6 +105,7 @@ System lines are not from platform users. The UI shows this addon's icon. Option
 await dashboard.addSystemChatMessage({
   content: { en: 'Connected to chat', ru: 'Подключено к чату' },
   sender: { en: 'My addon' },
+  color: '#4caf50',
   style: {
     color: '#4caf50',
     header: { en: 'Notice' },
@@ -100,7 +114,7 @@ await dashboard.addSystemChatMessage({
 });
 ```
 
-`content`, `sender`, and `style.header` accept `string` or `{ en, ru?, uk? }` only.
+`content`, `sender`, and `style.header` accept `string` or `{ en, ru?, uk? }` only. Optional `color` uses the same formats as `addChatMessage` (hex / RGB / `_as_user_`).
 
 ## Chat badges and emotes
 

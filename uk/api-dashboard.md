@@ -61,6 +61,7 @@ await dashboard.addChatMessage(
     content: 'Hello chat!',
     platform: 'myplatform',
     from: 'user-1',
+    color: '_as_user_',
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -68,11 +69,23 @@ await dashboard.addChatMessage(
       icon: 'megaphone',
     },
   },
-  { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
+  { id: 'user-1', name: 'Viewer', platform: 'myplatform', color: '#9147ff' },
 );
 ```
 
 `content` приймає звичайний `string` або `{ en, ru?, uk? }` — не кортежі `LangData` застосунку (аддони використовують власні об'єкти локалізації).
+
+Опційний `color` задає колір **тексту повідомлення** (не рамки). Допустимі значення:
+
+| Значення | Приклад | Результат |
+| --- | --- | --- |
+| Hex з `#` | `'#ff0000'`, `'#f00'` | Нормалізується до `#rrggbb` |
+| Hex без `#` | `'ff0000'`, `'f00'` | Те саме |
+| RGB-кортеж | `[255, 128, 0]` | `#ff8000` |
+| RGB-об'єкт | `{ r: 0, g: 0, b: 255 }` | `#0000ff` |
+| `_as_user_` | `'_as_user_'` | Колір ніка автора (`user.color`) |
+
+Некоректні значення ігноруються. Канали поза `0…255` обмежуються.
 
 Опційний `style` додає кольорову рамку та опційну шапку:
 
@@ -92,6 +105,7 @@ await dashboard.addChatMessage(
 await dashboard.addSystemChatMessage({
   content: { en: 'Connected to chat', uk: 'Підключено до чату' },
   sender: { en: 'My addon' },
+  color: '#4caf50',
   style: {
     color: '#4caf50',
     header: { en: 'Notice' },
@@ -100,7 +114,7 @@ await dashboard.addSystemChatMessage({
 });
 ```
 
-`content`, `sender` і `style.header` приймають лише `string` або `{ en, ru?, uk? }`.
+`content`, `sender` і `style.header` приймають лише `string` або `{ en, ru?, uk? }`. Опційний `color` — ті самі формати, що й у `addChatMessage` (hex / RGB / `_as_user_`).
 
 ## Значки і емotes чату
 

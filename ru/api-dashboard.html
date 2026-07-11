@@ -98,6 +98,7 @@
     content: &#39;Hello chat!&#39;,
     platform: &#39;myplatform&#39;,
     from: &#39;user-1&#39;,
+    color: &#39;_as_user_&#39;,
     emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
     style: {
       color: &#39;#7c4dff&#39;,
@@ -105,10 +106,46 @@
       icon: &#39;megaphone&#39;,
     },
   },
-  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
+  { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39;, color: &#39;#9147ff&#39; },
 );
 </code></pre>
 <p><code>content</code> принимает простую <code>string</code> или <code>{ en, ru?, uk? }</code> — не кортежи <code>LangData</code> приложения (аддоны используют свои объекты локализации).</p>
+<p>Опциональный <code>color</code> задаёт цвет <strong>текста сообщения</strong> (не рамки). Допустимые значения:</p>
+<table>
+<thead>
+<tr>
+<th>Значение</th>
+<th>Пример</th>
+<th>Результат</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hex с <code>#</code></td>
+<td><code>&#39;#ff0000&#39;</code>, <code>&#39;#f00&#39;</code></td>
+<td>Нормализуется в <code>#rrggbb</code></td>
+</tr>
+<tr>
+<td>Hex без <code>#</code></td>
+<td><code>&#39;ff0000&#39;</code>, <code>&#39;f00&#39;</code></td>
+<td>То же</td>
+</tr>
+<tr>
+<td>RGB-кортеж</td>
+<td><code>[255, 128, 0]</code></td>
+<td><code>#ff8000</code></td>
+</tr>
+<tr>
+<td>RGB-объект</td>
+<td><code>{ r: 0, g: 0, b: 255 }</code></td>
+<td><code>#0000ff</code></td>
+</tr>
+<tr>
+<td><code>_as_user_</code></td>
+<td><code>&#39;_as_user_&#39;</code></td>
+<td>Цвет ника автора (<code>user.color</code>)</td>
+</tr>
+</tbody></table>
+<p>Некорректные значения игнорируются. Каналы вне <code>0…255</code> ограничиваются.</p>
 <p>Опциональный <code>style</code> добавляет цветную рамку и опциональную шапку:</p>
 <table>
 <thead>
@@ -136,6 +173,7 @@
 <pre><code class="language-js">await dashboard.addSystemChatMessage({
   content: { en: &#39;Connected to chat&#39;, ru: &#39;Подключено к чату&#39; },
   sender: { en: &#39;My addon&#39; },
+  color: &#39;#4caf50&#39;,
   style: {
     color: &#39;#4caf50&#39;,
     header: { en: &#39;Notice&#39; },
@@ -143,7 +181,7 @@
   },
 });
 </code></pre>
-<p><code>content</code>, <code>sender</code> и <code>style.header</code> принимают только <code>string</code> или <code>{ en, ru?, uk? }</code>.</p>
+<p><code>content</code>, <code>sender</code> и <code>style.header</code> принимают только <code>string</code> или <code>{ en, ru?, uk? }</code>. Опциональный <code>color</code> — те же форматы, что у <code>addChatMessage</code> (hex / RGB / <code>_as_user_</code>).</p>
 <h2>Значки и эмоуты чата</h2>
 <pre><code class="language-js">await dashboard.registerChatBadges([
   { id: &#39;badge-vip&#39;, url: &#39;https://example.com/vip.png&#39;, title: &#39;VIP&#39; },
