@@ -305,6 +305,21 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 });
 </code></pre>
 <p>Используйте это, чтобы освобождать внутренние ресурсы при удалении привязок.</p>
+<h3>Валидация привязок перед сохранением настроек</h3>
+<p>Перед записью настроек, связанных с триггерами, приложение вызывает каждый связанный аддон:</p>
+<pre><code class="language-js">events.On(&#39;triggers:validate&#39;, ({ draft }) =&gt; {
+  for (const rule of draft.overlay || []) {
+    if (rule.trigger.key === &#39;redeems&#39; &amp;&amp; !String(rule.trigger.value || &#39;&#39;).trim()) {
+      return {
+        success: false,
+        message: &#39;Сначала сгенерируйте или выберите награду за баллы канала&#39;,
+      };
+    }
+  }
+  return { success: true };
+});
+</code></pre>
+<p>Верните <code>{ success: false, message }</code>, чтобы заблокировать сохранение. Если обработчика нет (или он вернул success), сохранение продолжается. Дополнительных прав не требуется.</p>
 <h3>Запрос сохранённых привязок — <code>triggers.getApplied()</code></h3>
 <p>Любой аддон может в любой момент запросить актуальную карту триггеров (без дополнительных прав):</p>
 <pre><code class="language-js">const res = await triggers.getApplied();
@@ -318,6 +333,12 @@ if (res.success) {
 }
 </code></pre>
 <p>Включает привязки всех аддонов (не только вызывающего). Ключи — id аддона-источника событий дашборда, кроме <code>gameInput</code> (ключи — id игровых аддонов).</p>
+<h3>Удаление своих привязок — <code>triggers.removeApplied()</code></h3>
+<p>Удаляет сохранённые правила, где этот аддон — источник событий дашборда (и связанные overlay/game target-правила), без дополнительных прав:</p>
+<pre><code class="language-js">await triggers.removeApplied(); // все системы
+await triggers.removeApplied({ systems: [&#39;sounds&#39;, &#39;hotkeys&#39;] });
+</code></pre>
+<p>После этого освобождаются неиспользуемые managed dynamic values.</p>
 <p>Полный контракт — в JSDoc <code>registerTriggers</code> в сгенерированных типах.</p>
 
     </main>
