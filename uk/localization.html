@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
           <li><a href="types-platform.html">Платформені аддони</a></li>
           <li><a href="types-overlay.html">Оверлеї</a></li>
@@ -75,6 +76,7 @@
 </tr>
 </tbody></table>
 <p>Дозвіл не потрібен. Використовуйте <code>LANG.current</code>, щоб обрати потрібний рядок з власних об&#39;єктів за локалями (див. нижче). Це <strong>не</strong> дає доступу до ключів перекладів або JSON-файлів застосунку.</p>
+<p>Щоб визначити мову <strong>тексту повідомлення</strong> (не локаль UI), використовуйте <a href="./api-language.html"><code>language.detect</code></a> — повертає ISO-коди з fastText lid.176 (~176 мов) і не залежить від <code>LANG</code>.</p>
 <pre><code class="language-js">const labels = {
   en: &#39;Connected&#39;,
   ru: &#39;Подключено&#39;,

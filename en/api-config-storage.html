@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
@@ -105,7 +106,7 @@ if (other.success) {
 <p>Opens URL in the system default browser. No special permission.</p>
 <h2><code>api.restart()</code></h2>
 <p>Restarts this addon&#39;s worker process.</p>
-<p>Does not apply when the addon was <strong>stopped after repeated crashes</strong> — the user must restart it from addon settings (↻). See <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
+<p>Does not apply when the addon was <strong>stopped after repeated crashes</strong> — the user must restart it from addon settings (↻), or restart the app. See <a href="./lifecycle.html#crash-loop-protection">Lifecycle — Crash loop protection</a>.</p>
 <h2><code>storage</code></h2>
 <p>Private JSON file at <code>{data.path}/storage_data.json</code>. <strong>No permission required.</strong> Not shown in settings UI.</p>
 <table>

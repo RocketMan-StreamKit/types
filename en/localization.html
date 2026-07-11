@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
@@ -75,6 +76,7 @@
 </tr>
 </tbody></table>
 <p>No permission is required. Use <code>LANG.current</code> to pick the right string from your own per-locale objects (see below). This does <strong>not</strong> give access to app translation keys or JSON files.</p>
+<p>To classify the language of <strong>message text</strong> (not the UI locale), use <a href="./api-language.html"><code>language.detect</code></a> — it returns ISO codes from fastText lid.176 (~176 languages) and is independent of <code>LANG</code>.</p>
 <pre><code class="language-js">const labels = {
   en: &#39;Connected&#39;,
   ru: &#39;Подключено&#39;,

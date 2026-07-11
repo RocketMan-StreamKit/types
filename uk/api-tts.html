@@ -45,6 +45,7 @@
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
           <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
           <li><a href="types-platform.html">Платформені аддони</a></li>
           <li><a href="types-overlay.html">Оверлеї</a></li>
@@ -73,6 +74,7 @@
 <li>Використовує <strong>ту саму</strong> конфігурацію TTS, що й вбудовані налаштування «Text to speech» (движок, голоси, перемикач, гучність).</li>
 <li>Звук відтворюється в <strong>головному вікні</strong> (той самий шлях, що у внутрішнього <code>speakWithTTS</code>).</li>
 <li><strong>Мова:</strong> передайте <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) або опустіть — fastText визначає uk/ru/en автоматично (fallback на англійську).</li>
+<li>Для <strong>повного</strong> набору мов (~176 ISO-кодів) окремо використовуйте <a href="./api-language.html"><code>language.detect</code></a> (дозвіл TTS не потрібен). Сам TTS як і раніше використовує лише <code>en</code> / <code>ru</code> / <code>uk</code>.</li>
 <li><strong>Гучність:</strong> <code>options.volumeMultiplier</code> масштабує відтворення відносно гучності TTS користувача (<code>0</code> = тиша, <code>1</code> = повна гучність користувача). Значення вище <code>1</code> обмежуються до <code>1</code> — аддон не може зробити озвучення гучнішим за налаштування користувача.</li>
 <li><strong>Черга:</strong> TTS-менеджер основного процесу серіалізує паралельні виклики <code>speak</code> (від аддонів і від застосунку).</li>
 </ul>
