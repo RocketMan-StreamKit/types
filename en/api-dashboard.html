@@ -85,6 +85,16 @@
     amount: [10, &#39;USD&#39;],
     message: { en: &#39;Thanks!&#39;, ru: &#39;Спасибо!&#39; },
     from: &#39;user-1&#39;,
+    // Optional addon attaches (after registerAttaches)
+    attach: [
+      {
+        type: &#39;clip&#39;,
+        value: { en: &#39;Funny moment&#39;, ru: &#39;Забавный момент&#39;, uk: &#39;Кумедний момент&#39; },
+        id: &#39;clip-1&#39;,
+        playable: true,
+        playing: false,
+      },
+    ],
   },
   { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
   { trigger: { type: &#39;donation&#39;, key: &#39;USD&#39;, value: 10 } }, // optional overlay trigger
@@ -92,6 +102,69 @@
 </code></pre>
 <p><code>message</code> accepts plain <code>string</code>, <code>{ en, ru?, uk? }</code>, or app <code>LangData</code> tuple.</p>
 <p>Multiple triggers: <code>{ triggers: [...] }</code>.</p>
+<h3>Attach types — <code>registerAttaches</code></h3>
+<p><strong>Requires:</strong> <code>DASHBOARD_EVENTS</code></p>
+<p>Register attach types at load time. <code>type</code> must be unique and must not use system ids (<code>overlay</code>, <code>sound</code>, <code>timer</code>, <code>hotkey</code>, <code>coop-sync</code>).</p>
+<pre><code class="language-js">await dashboard.registerAttaches([
+  { type: &#39;clip&#39;, label: { en: &#39;Clip&#39;, ru: &#39;Клип&#39;, uk: &#39;Кліп&#39; } },
+]);
+</code></pre>
+<p>Pass matching <code>attach</code> entries in <code>addRecord</code>, or update an existing row:</p>
+<pre><code class="language-js">await dashboard.updateRecordAttaches(&#39;record-id&#39;, [
+  {
+    type: &#39;clip&#39;,
+    value: { en: &#39;Funny moment&#39;, ru: &#39;Забавный момент&#39; },
+    id: &#39;clip-1&#39;,
+    playable: true,
+    playing: true,
+  },
+], { mode: &#39;merge&#39; }); // or &#39;replace&#39; to drop this addon&#39;s attaches first
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td>Registered attach type</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>Display text (<code>string</code> or <code>{ en, ru?, uk? }</code>)</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Play-button identifier (not required to be unique); falls back to string <code>value</code> / <code>value.en</code></td>
+</tr>
+<tr>
+<td><code>playable</code></td>
+<td>When <code>true</code>, shows a play/stop button</td>
+</tr>
+<tr>
+<td><code>playing</code></td>
+<td>When <code>true</code>, the button shows the stop state</td>
+</tr>
+</tbody></table>
+<h3>Attach play — <code>onAttachPlay</code></h3>
+<p><strong>Requires:</strong> <code>DASHBOARD_EVENTS</code></p>
+<pre><code class="language-js">dashboard.onAttachPlay(async ({ id, type, action, record }) =&gt; {
+  // action: &#39;play&#39; | &#39;stop&#39;
+  await dashboard.updateRecordAttaches(record.id, [
+    {
+      type,
+      value: { en: &#39;Funny moment&#39;, ru: &#39;Забавный момент&#39; },
+      id,
+      playable: true,
+      playing: action === &#39;play&#39;,
+    },
+  ]);
+});
+dashboard.offAttachPlay();
+</code></pre>
+<p>The payload includes attach <code>id</code>, <code>type</code>, <code>action</code>, the full stored <code>record</code>, plus <code>recordId</code> / timestamps.</p>
 <h2>Chat — <code>addChatMessage</code></h2>
 <p><strong>Requires:</strong> <code>DASHBOARD_CHAT</code></p>
 <pre><code class="language-js">await dashboard.addChatMessage(

@@ -20,7 +20,7 @@
 | `WEB_CONTENT` | Обслуговування `manifest.web` і `web_contents` за `/addon_static/{id}/` |
 | `STATUS` | Рядок стану: `status.Update`, `status.OnClick` |
 | `NOTIFY` | Сповіщення в title bar: `notify.Send` |
-| `DASHBOARD_EVENTS` | Віджет останніх подій: `dashboard.addRecord`, `registerTriggers`, … |
+| `DASHBOARD_EVENTS` | Віджет останніх подій: `dashboard.addRecord`, `registerTriggers`, `registerAttaches`, … |
 | `DASHBOARD_CHAT` | Вивід і ціль відправки у вікні чату: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_SEND` | Вихідна відправка через інші аддони: `dashboard.sendChatMessage` |
 | `DASHBOARD_CHAT_INCOMING` | Підписка на рядки чату: `onChatMessage` / `offChatMessage` |

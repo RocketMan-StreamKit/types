@@ -20,7 +20,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `WEB_CONTENT` | Serve `manifest.web` and `web_contents` at `/addon_static/{id}/` |
 | `STATUS` | Status bar: `status.Update`, `status.OnClick` |
 | `NOTIFY` | Title-bar notifications: `notify.Send` |
-| `DASHBOARD_EVENTS` | Latest-events widget: `dashboard.addRecord`, `registerTriggers`, … |
+| `DASHBOARD_EVENTS` | Latest-events widget: `dashboard.addRecord`, `registerTriggers`, `registerAttaches`, … |
 | `DASHBOARD_CHAT` | Chat window output and send target: `addChatMessage`, `onChatSend`, … |
 | `DASHBOARD_CHAT_SEND` | Dispatch outgoing chat text through other addons: `dashboard.sendChatMessage` |
 | `DASHBOARD_CHAT_INCOMING` | Subscribe to chat lines: `onChatMessage` / `offChatMessage` |

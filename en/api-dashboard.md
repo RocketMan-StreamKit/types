@@ -41,6 +41,16 @@ await dashboard.addRecord(
     amount: [10, 'USD'],
     message: { en: 'Thanks!', ru: 'Спасибо!' },
     from: 'user-1',
+    // Optional addon attaches (after registerAttaches)
+    attach: [
+      {
+        type: 'clip',
+        value: { en: 'Funny moment', ru: 'Забавный момент', uk: 'Кумедний момент' },
+        id: 'clip-1',
+        playable: true,
+        playing: false,
+      },
+    ],
   },
   { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
   { trigger: { type: 'donation', key: 'USD', value: 10 } }, // optional overlay trigger
@@ -50,6 +60,62 @@ await dashboard.addRecord(
 `message` accepts plain `string`, `{ en, ru?, uk? }`, or app `LangData` tuple.
 
 Multiple triggers: `{ triggers: [...] }`.
+
+### Attach types — `registerAttaches`
+
+**Requires:** `DASHBOARD_EVENTS`
+
+Register attach types at load time. `type` must be unique and must not use system ids (`overlay`, `sound`, `timer`, `hotkey`, `coop-sync`).
+
+```js
+await dashboard.registerAttaches([
+  { type: 'clip', label: { en: 'Clip', ru: 'Клип', uk: 'Кліп' } },
+]);
+```
+
+Pass matching `attach` entries in `addRecord`, or update an existing row:
+
+```js
+await dashboard.updateRecordAttaches('record-id', [
+  {
+    type: 'clip',
+    value: { en: 'Funny moment', ru: 'Забавный момент' },
+    id: 'clip-1',
+    playable: true,
+    playing: true,
+  },
+], { mode: 'merge' }); // or 'replace' to drop this addon's attaches first
+```
+
+| Field | Description |
+| --- | --- |
+| `type` | Registered attach type |
+| `value` | Display text (`string` or `{ en, ru?, uk? }`) |
+| `id` | Play-button identifier (not required to be unique); falls back to string `value` / `value.en` |
+| `playable` | When `true`, shows a play/stop button |
+| `playing` | When `true`, the button shows the stop state |
+
+### Attach play — `onAttachPlay`
+
+**Requires:** `DASHBOARD_EVENTS`
+
+```js
+dashboard.onAttachPlay(async ({ id, type, action, record }) => {
+  // action: 'play' | 'stop'
+  await dashboard.updateRecordAttaches(record.id, [
+    {
+      type,
+      value: { en: 'Funny moment', ru: 'Забавный момент' },
+      id,
+      playable: true,
+      playing: action === 'play',
+    },
+  ]);
+});
+dashboard.offAttachPlay();
+```
+
+The payload includes attach `id`, `type`, `action`, the full stored `record`, plus `recordId` / timestamps.
 
 ## Chat — `addChatMessage`
 

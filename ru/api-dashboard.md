@@ -41,6 +41,16 @@ await dashboard.addRecord(
     amount: [10, 'USD'],
     message: { en: 'Thanks!', ru: 'Спасибо!' },
     from: 'user-1',
+    // Опциональные аттачи аддона (после registerAttaches)
+    attach: [
+      {
+        type: 'clip',
+        value: { en: 'Funny moment', ru: 'Забавный момент', uk: 'Кумедний момент' },
+        id: 'clip-1',
+        playable: true,
+        playing: false,
+      },
+    ],
   },
   { id: 'user-1', name: 'Viewer', platform: 'myplatform' },
   { trigger: { type: 'donation', key: 'USD', value: 10 } }, // опциональный триггер оверлея
@@ -50,6 +60,62 @@ await dashboard.addRecord(
 `message` принимает простую `string`, `{ en, ru?, uk? }` или кортеж `LangData` приложения.
 
 Несколько триггеров: `{ triggers: [...] }`.
+
+### Типы аттачей — `registerAttaches`
+
+**Требуется:** `DASHBOARD_EVENTS`
+
+Регистрируйте типы аттачей при загрузке. `type` должен быть уникальным и не совпадать с системными (`overlay`, `sound`, `timer`, `hotkey`, `coop-sync`).
+
+```js
+await dashboard.registerAttaches([
+  { type: 'clip', label: { en: 'Clip', ru: 'Клип', uk: 'Кліп' } },
+]);
+```
+
+Передавайте `attach` в `addRecord` или обновляйте существующую запись:
+
+```js
+await dashboard.updateRecordAttaches('record-id', [
+  {
+    type: 'clip',
+    value: { en: 'Funny moment', ru: 'Забавный момент' },
+    id: 'clip-1',
+    playable: true,
+    playing: true,
+  },
+], { mode: 'merge' }); // или 'replace', чтобы сначала сбросить аттачи этого аддона
+```
+
+| Поле | Описание |
+| --- | --- |
+| `type` | Зарегистрированный тип аттача |
+| `value` | Отображаемый текст (`string` или `{ en, ru?, uk? }`) |
+| `id` | Идентификатор для кнопки проигрывания (не обязан быть уникальным); иначе берётся строковый `value` / `value.en` |
+| `playable` | `true` — показать кнопку play/stop |
+| `playing` | `true` — кнопка в состоянии stop |
+
+### Проигрывание аттача — `onAttachPlay`
+
+**Требуется:** `DASHBOARD_EVENTS`
+
+```js
+dashboard.onAttachPlay(async ({ id, type, action, record }) => {
+  // action: 'play' | 'stop'
+  await dashboard.updateRecordAttaches(record.id, [
+    {
+      type,
+      value: { en: 'Funny moment', ru: 'Забавный момент' },
+      id,
+      playable: true,
+      playing: action === 'play',
+    },
+  ]);
+});
+dashboard.offAttachPlay();
+```
+
+В payload: `id`, `type`, `action`, полная запись `record`, а также `recordId` / timestamps.
 
 ## Чат — `addChatMessage`
 
