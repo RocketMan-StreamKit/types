@@ -85,6 +85,16 @@
     amount: [10, &#39;USD&#39;],
     message: { en: &#39;Thanks!&#39;, ru: &#39;Спасибо!&#39; },
     from: &#39;user-1&#39;,
+    // Опційні аттачі аддона (після registerAttaches)
+    attach: [
+      {
+        type: &#39;clip&#39;,
+        value: { en: &#39;Funny moment&#39;, ru: &#39;Забавный момент&#39;, uk: &#39;Кумедний момент&#39; },
+        id: &#39;clip-1&#39;,
+        playable: true,
+        playing: false,
+      },
+    ],
   },
   { id: &#39;user-1&#39;, name: &#39;Viewer&#39;, platform: &#39;myplatform&#39; },
   { trigger: { type: &#39;donation&#39;, key: &#39;USD&#39;, value: 10 } }, // optional overlay trigger
@@ -92,6 +102,69 @@
 </code></pre>
 <p><code>message</code> приймає звичайний <code>string</code>, <code>{ en, ru?, uk? }</code> або кортеж app <code>LangData</code>.</p>
 <p>Кілька тригерів: <code>{ triggers: [...] }</code>.</p>
+<h3>Типи аттачів — <code>registerAttaches</code></h3>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_EVENTS</code></p>
+<p>Реєструйте типи аттачів під час завантаження. <code>type</code> має бути унікальним і не збігатися із системними (<code>overlay</code>, <code>sound</code>, <code>timer</code>, <code>hotkey</code>, <code>coop-sync</code>).</p>
+<pre><code class="language-js">await dashboard.registerAttaches([
+  { type: &#39;clip&#39;, label: { en: &#39;Clip&#39;, ru: &#39;Клип&#39;, uk: &#39;Кліп&#39; } },
+]);
+</code></pre>
+<p>Передавайте <code>attach</code> у <code>addRecord</code> або оновлюйте наявний запис:</p>
+<pre><code class="language-js">await dashboard.updateRecordAttaches(&#39;record-id&#39;, [
+  {
+    type: &#39;clip&#39;,
+    value: { en: &#39;Funny moment&#39;, uk: &#39;Кумедний момент&#39; },
+    id: &#39;clip-1&#39;,
+    playable: true,
+    playing: true,
+  },
+], { mode: &#39;merge&#39; }); // або &#39;replace&#39;, щоб спочатку скинути аттачі цього аддона
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td>Зареєстрований тип аттача</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>Текст для відображення (<code>string</code> або <code>{ en, ru?, uk? }</code>)</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Ідентифікатор для кнопки відтворення (не обов’язково унікальний); інакше береться рядковий <code>value</code> / <code>value.en</code></td>
+</tr>
+<tr>
+<td><code>playable</code></td>
+<td><code>true</code> — показати кнопку play/stop</td>
+</tr>
+<tr>
+<td><code>playing</code></td>
+<td><code>true</code> — кнопка у стані stop</td>
+</tr>
+</tbody></table>
+<h3>Відтворення аттача — <code>onAttachPlay</code></h3>
+<p><strong>Потрібно:</strong> <code>DASHBOARD_EVENTS</code></p>
+<pre><code class="language-js">dashboard.onAttachPlay(async ({ id, type, action, record }) =&gt; {
+  // action: &#39;play&#39; | &#39;stop&#39;
+  await dashboard.updateRecordAttaches(record.id, [
+    {
+      type,
+      value: { en: &#39;Funny moment&#39;, uk: &#39;Кумедний момент&#39; },
+      id,
+      playable: true,
+      playing: action === &#39;play&#39;,
+    },
+  ]);
+});
+dashboard.offAttachPlay();
+</code></pre>
+<p>У payload: <code>id</code>, <code>type</code>, <code>action</code>, повний запис <code>record</code>, а також <code>recordId</code> / timestamps.</p>
 <h2>Чат — <code>addChatMessage</code></h2>
 <p><strong>Потрібно:</strong> <code>DASHBOARD_CHAT</code></p>
 <pre><code class="language-js">await dashboard.addChatMessage(
