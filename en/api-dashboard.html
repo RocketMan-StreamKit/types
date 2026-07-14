@@ -173,6 +173,8 @@ dashboard.offAttachPlay();
     platform: &#39;myplatform&#39;,
     from: &#39;user-1&#39;,
     color: &#39;_as_user_&#39;,
+    // Optional: mark as system for other addons (no UI change)
+    system: true,
     emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
     style: {
       color: &#39;#7c4dff&#39;,
@@ -184,6 +186,7 @@ dashboard.offAttachPlay();
 );
 </code></pre>
 <p><code>content</code> accepts plain <code>string</code> or <code>{ en, ru?, uk? }</code> — not app <code>LangData</code> tuples (addons use their own localized objects).</p>
+<p>Optional <code>system: true</code> marks the message as system for addons. Other addons receive it as <code>msg.message.system</code> in <code>onChatMessage</code>. The chat window still renders a normal user line.</p>
 <p>Optional <code>color</code> sets the <strong>message text</strong> color (not the border). Accepted values:</p>
 <table>
 <thead>
@@ -291,7 +294,7 @@ await dashboard.sendChatMessage(&#39;Multi&#39;, [&#39;twitch&#39;, &#39;kick&#3
 <p>Returns <code>{ success: true }</code> when at least one target accepts the message, or <code>{ success: false, message }</code> when the text is empty, no valid targets are registered, or every target fails.</p>
 <p><strong>Incoming lines:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
 <pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
-  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+  console.log(msg.message.content, msg.message.system, msg.user?.name, msg.sourceAddonId);
 });
 dashboard.offChatMessage();
 </code></pre>

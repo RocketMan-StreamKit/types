@@ -128,6 +128,8 @@ await dashboard.addChatMessage(
     platform: 'myplatform',
     from: 'user-1',
     color: '_as_user_',
+    // Опционально: пометить как системное для других аддонов (без смены UI)
+    system: true,
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -140,6 +142,8 @@ await dashboard.addChatMessage(
 ```
 
 `content` принимает простую `string` или `{ en, ru?, uk? }` — не кортежи `LangData` приложения (аддоны используют свои объекты локализации).
+
+Опциональный `system: true` помечает сообщение как системное для аддонов. Другие аддоны получают его как `msg.message.system` в `onChatMessage`. Окно чата по-прежнему показывает обычную пользовательскую строку.
 
 Опциональный `color` задаёт цвет **текста сообщения** (не рамки). Допустимые значения:
 
@@ -231,7 +235,7 @@ await dashboard.sendChatMessage('Multi', ['twitch', 'kick']);
 
 ```js
 dashboard.onChatMessage(msg => {
-  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+  console.log(msg.message.content, msg.message.system, msg.user?.name, msg.sourceAddonId);
 });
 dashboard.offChatMessage();
 ```

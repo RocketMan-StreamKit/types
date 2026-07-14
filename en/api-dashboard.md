@@ -128,6 +128,8 @@ await dashboard.addChatMessage(
     platform: 'myplatform',
     from: 'user-1',
     color: '_as_user_',
+    // Optional: mark as system for other addons (no UI change)
+    system: true,
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -140,6 +142,8 @@ await dashboard.addChatMessage(
 ```
 
 `content` accepts plain `string` or `{ en, ru?, uk? }` — not app `LangData` tuples (addons use their own localized objects).
+
+Optional `system: true` marks the message as system for addons. Other addons receive it as `msg.message.system` in `onChatMessage`. The chat window still renders a normal user line.
 
 Optional `color` sets the **message text** color (not the border). Accepted values:
 
@@ -231,7 +235,7 @@ Returns `{ success: true }` when at least one target accepts the message, or `{ 
 
 ```js
 dashboard.onChatMessage(msg => {
-  console.log(msg.message.content, msg.user?.name, msg.sourceAddonId);
+  console.log(msg.message.content, msg.message.system, msg.user?.name, msg.sourceAddonId);
 });
 dashboard.offChatMessage();
 ```
