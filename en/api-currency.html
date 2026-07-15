@@ -66,6 +66,36 @@ if (res.success) {
 }
 </code></pre>
 <p>Returns <code>{ success: true, currency }</code> where <code>currency</code> is a <code>CurrencyCode</code> (for example <code>USD</code>, <code>EUR</code>, <code>RUB</code>).</p>
+<h2><code>currency.getList()</code></h2>
+<p>Returns every known currency as an array of <code>{ key, name }</code> objects (English display names). Order matches the Main settings picker: primary currencies first (<code>USD</code>, <code>EUR</code>, <code>UAH</code>, <code>RUB</code>, <code>BYN</code>, <code>PLN</code>), then alphabetical.</p>
+<pre><code class="language-js">const res = await currency.getList();
+if (res.success) {
+  console.log(res.currencies[0]); // { key: &#39;USD&#39;, name: &#39;United States Dollar&#39; }
+  for (const { key, name } of res.currencies) {
+    console.log(key, name);
+  }
+}
+</code></pre>
+<p>Returns <code>{ success: true, currencies }</code> where each entry has:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>key</code></td>
+<td><code>string</code></td>
+<td>Currency code (e.g. <code>USD</code>, <code>EUR</code>)</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>English display name</td>
+</tr>
+</tbody></table>
 <h2><code>currency.convert(amount, from, to)</code></h2>
 <p>Converts a numeric amount between two currency codes.</p>
 <pre><code class="language-js">const res = await currency.convert(100, &#39;USD&#39;, &#39;EUR&#39;);

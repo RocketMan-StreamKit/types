@@ -66,6 +66,36 @@ if (res.success) {
 }
 </code></pre>
 <p>Повертає <code>{ success: true, currency }</code>, де <code>currency</code> — <code>CurrencyCode</code> (наприклад <code>USD</code>, <code>EUR</code>, <code>RUB</code>).</p>
+<h2><code>currency.getList()</code></h2>
+<p>Повертає всі відомі валюти масивом об&#39;єктів <code>{ key, name }</code> (англійські назви). Порядок збігається з вибором в основних налаштуваннях: спочатку основні валюти (<code>USD</code>, <code>EUR</code>, <code>UAH</code>, <code>RUB</code>, <code>BYN</code>, <code>PLN</code>), потім за алфавітом.</p>
+<pre><code class="language-js">const res = await currency.getList();
+if (res.success) {
+  console.log(res.currencies[0]); // { key: &#39;USD&#39;, name: &#39;United States Dollar&#39; }
+  for (const { key, name } of res.currencies) {
+    console.log(key, name);
+  }
+}
+</code></pre>
+<p>Повертає <code>{ success: true, currencies }</code>, де в кожного запису:</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Тип</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>key</code></td>
+<td><code>string</code></td>
+<td>Код валюти (наприклад <code>USD</code>, <code>EUR</code>)</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Англійська відображувана назва</td>
+</tr>
+</tbody></table>
 <h2><code>currency.convert(amount, from, to)</code></h2>
 <p>Конвертує числову суму між двома валютами.</p>
 <pre><code class="language-js">const res = await currency.convert(100, &#39;USD&#39;, &#39;EUR&#39;);
