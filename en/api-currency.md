@@ -17,6 +17,27 @@ if (res.success) {
 
 Returns `{ success: true, currency }` where `currency` is a `CurrencyCode` (for example `USD`, `EUR`, `RUB`).
 
+## `currency.getList()`
+
+Returns every known currency as an array of `{ key, name }` objects (English display names). Order matches the Main settings picker: primary currencies first (`USD`, `EUR`, `UAH`, `RUB`, `BYN`, `PLN`), then alphabetical.
+
+```js
+const res = await currency.getList();
+if (res.success) {
+  console.log(res.currencies[0]); // { key: 'USD', name: 'United States Dollar' }
+  for (const { key, name } of res.currencies) {
+    console.log(key, name);
+  }
+}
+```
+
+Returns `{ success: true, currencies }` where each entry has:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `key` | `string` | Currency code (e.g. `USD`, `EUR`) |
+| `name` | `string` | English display name |
+
 ## `currency.convert(amount, from, to)`
 
 Converts a numeric amount between two currency codes.

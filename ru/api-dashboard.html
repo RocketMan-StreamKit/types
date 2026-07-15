@@ -269,6 +269,7 @@ await dashboard.registerChatEmotes({
   emotes: [{ word: &#39;hello&#39;, url: &#39;https://example.com/hello.png&#39; }],
 });
 </code></pre>
+<p>При сохранении сообщения StreamKit+ ищет в тексте зарегистрированные эмоуты платформы и дописывает совпадения в <code>message.emotes</code> (записи от отправителя имеют приоритет при конфликте). Они остаются в сохранённом сообщении и в payload <code>onChatMessage</code> даже после удаления аддона, который их зарегистрировал.</p>
 <p>API чтения (требуют <code>DASHBOARD_CHAT</code> или <code>DASHBOARD_CHAT_INCOMING</code>):</p>
 <ul>
 <li><code>listChatBadges()</code></li>

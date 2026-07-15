@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.35.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.36.
 
 ## Web documentation
 

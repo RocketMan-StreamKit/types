@@ -199,6 +199,8 @@ await dashboard.registerChatEmotes({
 });
 ```
 
+When a chat message is saved, StreamKit+ scans its text for registered emotes on that platform and merges matches into `message.emotes` (entries already passed by the sender win on collisions). Those emotes stay on the stored message and in `onChatMessage` payloads even after the registering addon is removed.
+
 Read APIs (require `DASHBOARD_CHAT` or `DASHBOARD_CHAT_INCOMING`):
 
 - `listChatBadges()`

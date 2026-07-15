@@ -17,6 +17,27 @@ if (res.success) {
 
 Возвращает `{ success: true, currency }`, где `currency` — `CurrencyCode` (например `USD`, `EUR`, `UAH`).
 
+## `currency.getList()`
+
+Возвращает все известные валюты массивом объектов `{ key, name }` (английские названия). Порядок совпадает с выбором в основных настройках: сначала основные валюты (`USD`, `EUR`, `UAH`, `RUB`, `BYN`, `PLN`), затем по алфавиту.
+
+```js
+const res = await currency.getList();
+if (res.success) {
+  console.log(res.currencies[0]); // { key: 'USD', name: 'United States Dollar' }
+  for (const { key, name } of res.currencies) {
+    console.log(key, name);
+  }
+}
+```
+
+Возвращает `{ success: true, currencies }`, где у каждой записи:
+
+| Поле | Тип | Описание |
+| --- | --- | --- |
+| `key` | `string` | Код валюты (например `USD`, `EUR`) |
+| `name` | `string` | Английское отображаемое название |
+
 ## `currency.convert(amount, from, to)`
 
 Конвертирует числовую сумму между двумя валютами.
