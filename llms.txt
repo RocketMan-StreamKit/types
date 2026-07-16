@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.39.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.40.
 
 ## Web documentation
 
@@ -21,7 +21,7 @@
 - [OAuth and secrets](https://rocketman-streamkit.github.io/types/en/oauth-and-secrets.html): Token exchange via outbound HTTP (no built-in auth server API)
 - [API overview](https://rocketman-streamkit.github.io/types/en/api-overview.html): All globals at a glance
 - [events](https://rocketman-streamkit.github.io/types/en/api-events.html): Event bus and HTTP handler binding
-- [network](https://rocketman-streamkit.github.io/types/en/api-network.html): HTTP client, endpoints, WebSocket, SignalR, Socket.IO
+- [network](https://rocketman-streamkit.github.io/types/en/api-network.html): HTTP client, endpoints, WebSocket, SSE, SignalR, Socket.IO
 - [api.config & storage](https://rocketman-streamkit.github.io/types/en/api-config-storage.html): Params, app config, private file storage
 - [File access](https://rocketman-streamkit.github.io/types/en/api-file-access.html): User-approved read/write to specific paths (`files` API)
 - [Text-to-speech (`tts`)](https://rocketman-streamkit.github.io/types/en/api-tts.html): Play messages via the user's TTS engine (`TTS` permission)

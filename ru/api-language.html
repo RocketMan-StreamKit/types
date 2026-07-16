@@ -61,9 +61,10 @@
 <h2>Как это работает</h2>
 <ul>
 <li>Используется fastText <a href="https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz">lid.176.ftz</a> (скачивается при первом использовании в user data приложения).</li>
-<li>Возвращает ISO-639-1 (<code>language</code>) и, если доступно, ISO-639-3 (<code>alpha3</code>) плюс английское имя <code>name</code>.</li>
-<li>Если модель недоступна — запасной вариант по кириллице (<code>uk</code> при наличии і/ї/є/ґ, иначе <code>ru</code>). Другие письменности без загруженной модели не классифицируются.</li>
-<li>Пустой текст / только пробелы — <code>{ success: false }</code>.</li>
+<li><strong>Уверенно:</strong> вероятность топ-метки ≥ <code>0.4</code> и отрыв от 2-го места ≥ <code>0.25</code> → <code>{ success: true, language, alpha3?, name? }</code>.</li>
+<li><strong>Неуверенно:</strong> иначе → <code>{ success: false, message, possibles }</code> с ранжированными кандидатами (без одного <code>language</code>). Решение о переводе — за аддоном.</li>
+<li>Пустой текст / только пробелы → <code>{ success: false, message: &#39;Text is empty&#39; }</code> (без <code>possibles</code>).</li>
+<li>Если модель недоступна → <code>{ success: false, message, possibles: [] }</code>.</li>
 </ul>
 <h2><code>language.detect(text)</code></h2>
 <table>
@@ -83,16 +84,22 @@
 <pre><code class="language-js">const res = await language.detect(&#39;Bonjour le monde!&#39;);
 if (res.success) {
   console.log(res.language); // &#39;fr&#39;
-  console.log(res.alpha3);   // &#39;fra&#39; (если есть)
-  console.log(res.name);     // &#39;French&#39; (если есть)
+  console.log(res.alpha3);   // &#39;fra&#39; (когда есть)
+  console.log(res.name);     // &#39;French&#39; (когда есть)
 }
 
-const ja = await language.detect(&#39;こんにちは&#39;);
-// { success: true, language: &#39;ja&#39;, alpha3: &#39;jpn&#39;, name: &#39;Japanese&#39; }
+const uncertain = await language.detect(&#39;test message&#39;);
+if (!uncertain.success) {
+  console.log(uncertain.message);
+  // &#39;Language is difficult to determine&#39;
+  console.log(uncertain.possibles);
+  // [{ language: &#39;hi&#39;, probability: 0.07 }, { language: &#39;az&#39;, probability: 0.05 }, …]
+}
 
 const empty = await language.detect(&#39;   &#39;);
 // { success: false, message: &#39;Text is empty&#39; }
 </code></pre>
+<h3>Поля при успехе</h3>
 <table>
 <thead>
 <tr>
@@ -102,22 +109,39 @@ const empty = await language.detect(&#39;   &#39;);
 </thead>
 <tbody><tr>
 <td><code>language</code></td>
-<td>Двухбуквенный ISO-639-1 (например <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
+<td>ISO-639-1 двухбуквенный код (например <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
 </tr>
 <tr>
 <td><code>alpha3</code></td>
-<td>Трёхбуквенный ISO-639-3, если модель его вернула</td>
+<td>ISO-639-3 трёхбуквенный код, если модель его даёт</td>
 </tr>
 <tr>
 <td><code>name</code></td>
-<td>Английское имя языка из модели, если доступно</td>
+<td>Английское имя языка, если доступно</td>
 </tr>
 </tbody></table>
-<p>Частые значения <code>message</code> при <code>success: false</code>:</p>
+<h3>Поля при ошибке</h3>
 <table>
 <thead>
 <tr>
-<th>Message</th>
+<th>Поле</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>message</code></td>
+<td>Человекочитаемая причина</td>
+</tr>
+<tr>
+<td><code>possibles</code></td>
+<td>Опциональный ранжированный список <code>{ language, probability }[]</code> (сначала наиболее вероятные, до 5). Есть, когда модель отработала, но не уверена; может быть <code>[]</code> при сбое модели; отсутствует для пустого текста</td>
+</tr>
+</tbody></table>
+<p>Типичные значения <code>message</code> при <code>success: false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Сообщение</th>
 <th>Причина</th>
 </tr>
 </thead>
@@ -126,35 +150,31 @@ const empty = await language.detect(&#39;   &#39;);
 <td>Пустой <code>text</code> или только пробелы</td>
 </tr>
 <tr>
-<td><code>Language could not be detected</code></td>
-<td>Модель недоступна / неуверена и нет кириллической подсказки</td>
+<td><code>Language is difficult to determine</code></td>
+<td>Низкая уверенность, близкие топ-языки или модель недоступна</td>
 </tr>
 </tbody></table>
-<h2>Пример: маршрутизация чата по языку</h2>
+<h2>Пример: переводить только при уверенном результате</h2>
 <pre><code class="language-js">events.On(&#39;onChatMessage&#39;, async payload =&gt; {
   const text = payload.body?.message || &#39;&#39;;
   const res = await language.detect(text);
   if (!res.success) {
+    // Опционально: разобрать res.possibles и решить вручную
+    // например if (res.possibles?.[0]?.probability &gt; 0.3) …
     return;
   }
 
-  if (res.language === &#39;uk&#39;) {
-    // украинский
-  } else if (res.language === &#39;ru&#39;) {
-    // русский
-  } else if (res.language === &#39;en&#39;) {
-    // английский
-  } else {
-    console.log(&#39;Другой язык:&#39;, res.language, res.name);
+  if (res.language === &#39;uk&#39; || res.language === &#39;ru&#39;) {
+    // перевести…
   }
 });
 </code></pre>
 <h2>Связь с TTS</h2>
 <ul>
-<li><code>tts.speak</code> по-прежнему автоопределяет только <code>en</code> / <code>ru</code> / <code>uk</code> (fallback на английский), если <code>options.language</code> не указан.</li>
+<li><code>tts.speak</code> по-прежнему автоопределяет только <code>en</code> / <code>ru</code> / <code>uk</code> (запасной английский / кириллическая подсказка), если <code>options.language</code> не задан.</li>
 <li>Используйте <code>language.detect</code>, когда нужен расширенный набор языков; при озвучке передайте явный <code>options.language</code> в <code>tts.speak</code>, если сами сопоставляете результат с поддерживаемым голосом TTS.</li>
 </ul>
-<p>См. также <a href="./api-tts.html">Озвучка текста</a>, <a href="./localization.html">Локализация</a> и <a href="./api-overview.html">Обзор API</a>.</p>
+<p>См. также <a href="./api-tts.html">Text-to-speech</a>, <a href="./localization.html">Localization</a> и <a href="./api-overview.html">API overview</a>.</p>
 
     </main>
   </div>

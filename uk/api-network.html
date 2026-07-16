@@ -154,6 +154,44 @@ ws.Close();
 ws.Destroy();
 </code></pre>
 <p><code>Send</code> приймає рядок або JSON-серіалізований об&#39;єкт. Максимум 5 одночасних з&#39;єднань.</p>
+<h2>Вихідний Server-Sent Events — <code>network.sse</code></h2>
+<p><strong>Потрібно:</strong> <code>NETWORK_SSE</code></p>
+<pre><code class="language-js">const sse = await network.sse.connect(&#39;https://example.com/events&#39;, {
+  headers: { Authorization: &#39;Bearer token&#39; },
+  lastEventId: &#39;42&#39;,
+  autoReconnect: true,
+  reconnectInterval: 3000,
+});
+
+sse.On(&#39;open&#39;, () =&gt; console.log(&#39;stream open&#39;));
+sse.On(&#39;message&#39;, ({ data, event, id }) =&gt; console.log(event, data, id));
+sse.On(&#39;error&#39;, err =&gt; console.error(err));
+sse.On(&#39;close&#39;, () =&gt; console.log(&#39;stream closed&#39;));
+
+sse.Close();
+sse.Destroy();
+</code></pre>
+<p>Корисне навантаження <code>message</code>: <code>{ data: string, event: string, id?: string }</code> (<code>event</code> дорівнює <code>&quot;message&quot;</code>, якщо поле SSE <code>event:</code> пропущено). Опційний <code>lastEventId</code> надсилається як заголовок <code>Last-Event-ID</code> (також оновлюється з отриманих полів <code>id:</code> при перепідключенні).</p>
+<table>
+<thead>
+<tr>
+<th>Опція</th>
+<th>За замовчуванням</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>autoReconnect</code></td>
+<td><code>false</code></td>
+<td>При <code>true</code> перепідключається після кінця потоку або мережевої помилки (як браузерний EventSource). <code>close</code> спрацьовує лише після <code>Close()</code> / <code>Destroy()</code>.</td>
+</tr>
+<tr>
+<td><code>reconnectInterval</code></td>
+<td><code>3000</code></td>
+<td>Початкова затримка перепідключення в мс (обмеження 50–60000). Перевизначається полями SSE <code>retry:</code> з сервера.</td>
+</tr>
+</tbody></table>
+<p>Максимум 5 одночасних з&#39;єднань; перенаправлення не слідуються.</p>
 <h2>Вихідний SignalR — <code>network.signalr</code></h2>
 <p><strong>Потрібно:</strong> <code>NETWORK_SIGNALR</code></p>
 <p>Глобали <code>LogLevel</code> і <code>HttpTransportType</code> з <code>@microsoft/signalr</code> доступні в пісочниці.</p>
