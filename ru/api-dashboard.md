@@ -212,8 +212,15 @@ API чтения (требуют `DASHBOARD_CHAT` или `DASHBOARD_CHAT_INCOMIN
 **Приём из поля ввода (стать целью отправки):** `DASHBOARD_CHAT`
 
 ```js
-await dashboard.onChatSend(async ({ text }) => {
-  // отправка текста в API вашей платформы
+await dashboard.onChatSend(async ({ text, system }) => {
+  // `system` — назначение сообщения (не оформление в UI):
+  // - не указан / false — от имени стримера (окно чата никогда не ставит system)
+  // - true — системное/автоматическое (например ответ бота через аккаунт бота)
+  if (system) {
+    // отправить от бота / автоматического аккаунта
+  } else {
+    // отправить от стримера
+  }
 });
 dashboard.offChatSend();
 ```
@@ -222,6 +229,8 @@ dashboard.offChatSend();
 
 Второй аргумент можно не указывать — сообщение уйдёт через **все** зарегистрированные подписчики `onChatSend`. Массив строк — только выбранные id аддонов.
 
+Третий аргумент `{ system?: boolean }` задаёт назначение сообщения для обработчиков `onChatSend`. По умолчанию `false` (от стримера). `system: true` — для автоматических/бот-сообщений. Поле ввода окна чата никогда не передаёт `system`.
+
 ```js
 // Через все аддоны, подписанные на onChatSend
 await dashboard.sendChatMessage('Hello everyone!');
@@ -229,6 +238,11 @@ await dashboard.sendChatMessage('Hello everyone!');
 // Через конкретные аддоны
 await dashboard.sendChatMessage('Hi Twitch!', ['twitch']);
 await dashboard.sendChatMessage('Multi', ['twitch', 'kick']);
+
+// Системная / автоматическая отправка (например аккаунт бота)
+await dashboard.sendChatMessage('Thanks for the follow!', ['twitch'], {
+  system: true,
+});
 ```
 
 Возвращает `{ success: true }`, если хотя бы одна цель приняла сообщение, или `{ success: false, message }`, если текст пустой, нет валидных целей или все цели завершились ошибкой.

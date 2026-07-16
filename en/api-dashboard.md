@@ -212,8 +212,15 @@ Read APIs (require `DASHBOARD_CHAT` or `DASHBOARD_CHAT_INCOMING`):
 **Receive composer sends (be a send target):** `DASHBOARD_CHAT`
 
 ```js
-await dashboard.onChatSend(async ({ text }) => {
-  // send text to your platform API
+await dashboard.onChatSend(async ({ text, system }) => {
+  // Treat `system` by message purpose (not UI styling):
+  // - omitted / false — streamer-authored (chat window input never sets system)
+  // - true — system/automatic (e.g. bot reply via a bot account)
+  if (system) {
+    // send as bot / automated account
+  } else {
+    // send as the streamer
+  }
 });
 dashboard.offChatSend();
 ```
@@ -222,6 +229,8 @@ dashboard.offChatSend();
 
 Omit the second argument to send through **all** registered chat-send subscribers. Pass a string array to target specific addon ids.
 
+Optional third argument `{ system?: boolean }` marks the send purpose for `onChatSend` handlers. Defaults to `false` (streamer). Use `system: true` for automatic/bot messages. The chat window composer never sets `system`.
+
 ```js
 // Through every addon that called onChatSend
 await dashboard.sendChatMessage('Hello everyone!');
@@ -229,6 +238,11 @@ await dashboard.sendChatMessage('Hello everyone!');
 // Through specific addons only
 await dashboard.sendChatMessage('Hi Twitch!', ['twitch']);
 await dashboard.sendChatMessage('Multi', ['twitch', 'kick']);
+
+// System / automatic send (e.g. bot account)
+await dashboard.sendChatMessage('Thanks for the follow!', ['twitch'], {
+  system: true,
+});
 ```
 
 Returns `{ success: true }` when at least one target accepts the message, or `{ success: false, message }` when the text is empty, no valid targets are registered, or every target fails.

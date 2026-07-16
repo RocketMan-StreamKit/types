@@ -278,19 +278,32 @@ await dashboard.registerChatEmotes({
 </ul>
 <h2>Chat send / incoming</h2>
 <p><strong>Receive composer sends (be a send target):</strong> <code>DASHBOARD_CHAT</code></p>
-<pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
-  // send text to your platform API
+<pre><code class="language-js">await dashboard.onChatSend(async ({ text, system }) =&gt; {
+  // Treat `system` by message purpose (not UI styling):
+  // - omitted / false — streamer-authored (chat window input never sets system)
+  // - true — system/automatic (e.g. bot reply via a bot account)
+  if (system) {
+    // send as bot / automated account
+  } else {
+    // send as the streamer
+  }
 });
 dashboard.offChatSend();
 </code></pre>
 <p><strong>Dispatch outgoing text (same path as the chat window):</strong> <code>DASHBOARD_CHAT_SEND</code></p>
 <p>Omit the second argument to send through <strong>all</strong> registered chat-send subscribers. Pass a string array to target specific addon ids.</p>
+<p>Optional third argument <code>{ system?: boolean }</code> marks the send purpose for <code>onChatSend</code> handlers. Defaults to <code>false</code> (streamer). Use <code>system: true</code> for automatic/bot messages. The chat window composer never sets <code>system</code>.</p>
 <pre><code class="language-js">// Through every addon that called onChatSend
 await dashboard.sendChatMessage(&#39;Hello everyone!&#39;);
 
 // Through specific addons only
 await dashboard.sendChatMessage(&#39;Hi Twitch!&#39;, [&#39;twitch&#39;]);
 await dashboard.sendChatMessage(&#39;Multi&#39;, [&#39;twitch&#39;, &#39;kick&#39;]);
+
+// System / automatic send (e.g. bot account)
+await dashboard.sendChatMessage(&#39;Thanks for the follow!&#39;, [&#39;twitch&#39;], {
+  system: true,
+});
 </code></pre>
 <p>Returns <code>{ success: true }</code> when at least one target accepts the message, or <code>{ success: false, message }</code> when the text is empty, no valid targets are registered, or every target fails.</p>
 <p><strong>Incoming lines:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
