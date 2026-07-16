@@ -278,19 +278,32 @@ await dashboard.registerChatEmotes({
 </ul>
 <h2>Отправка / входящий чат</h2>
 <p><strong>Приём из поля ввода (стать целью отправки):</strong> <code>DASHBOARD_CHAT</code></p>
-<pre><code class="language-js">await dashboard.onChatSend(async ({ text }) =&gt; {
-  // отправка текста в API вашей платформы
+<pre><code class="language-js">await dashboard.onChatSend(async ({ text, system }) =&gt; {
+  // `system` — назначение сообщения (не оформление в UI):
+  // - не указан / false — от имени стримера (окно чата никогда не ставит system)
+  // - true — системное/автоматическое (например ответ бота через аккаунт бота)
+  if (system) {
+    // отправить от бота / автоматического аккаунта
+  } else {
+    // отправить от стримера
+  }
 });
 dashboard.offChatSend();
 </code></pre>
 <p><strong>Исходящая отправка (тот же путь, что у окна чата):</strong> <code>DASHBOARD_CHAT_SEND</code></p>
 <p>Второй аргумент можно не указывать — сообщение уйдёт через <strong>все</strong> зарегистрированные подписчики <code>onChatSend</code>. Массив строк — только выбранные id аддонов.</p>
+<p>Третий аргумент <code>{ system?: boolean }</code> задаёт назначение сообщения для обработчиков <code>onChatSend</code>. По умолчанию <code>false</code> (от стримера). <code>system: true</code> — для автоматических/бот-сообщений. Поле ввода окна чата никогда не передаёт <code>system</code>.</p>
 <pre><code class="language-js">// Через все аддоны, подписанные на onChatSend
 await dashboard.sendChatMessage(&#39;Hello everyone!&#39;);
 
 // Через конкретные аддоны
 await dashboard.sendChatMessage(&#39;Hi Twitch!&#39;, [&#39;twitch&#39;]);
 await dashboard.sendChatMessage(&#39;Multi&#39;, [&#39;twitch&#39;, &#39;kick&#39;]);
+
+// Системная / автоматическая отправка (например аккаунт бота)
+await dashboard.sendChatMessage(&#39;Thanks for the follow!&#39;, [&#39;twitch&#39;], {
+  system: true,
+});
 </code></pre>
 <p>Возвращает <code>{ success: true }</code>, если хотя бы одна цель приняла сообщение, или <code>{ success: false, message }</code>, если текст пустой, нет валидных целей или все цели завершились ошибкой.</p>
 <p><strong>Входящие строки:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
