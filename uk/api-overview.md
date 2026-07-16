@@ -11,7 +11,7 @@
 | `permissions` | `list`, `has(permission)` |
 | `data` | Метадані екземпляра: `id`, `name`, `permissions`, `path`, `token`, … |
 | `events` | `On(name, handler)` — прив'язка HTTP/Socket.IO callback |
-| `network` | HTTP-клієнт, вхідні маршрути, WebSocket, SignalR, Socket.IO |
+| `network` | HTTP-клієнт, вхідні маршрути, WebSocket, SSE, SignalR, Socket.IO |
 | `api` | `openUrl`, `restart`, `getProcessStats`, `config.*` |
 | `addons` | `request`, `onRequest`, `offRequest`, `getInfo` — RPC між аддонами та метадані встановлення |
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |

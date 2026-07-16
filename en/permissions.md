@@ -16,6 +16,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `NETWORK_REQUEST` | Outbound HTTP: `network.request.get/post/put/delete/postForm` |
 | `NETWORK_WEBSOCKET` | Outbound WebSocket: `network.websocket.connect` |
 | `NETWORK_SIGNALR` | Outbound SignalR: `network.signalr.CreateSignalRConnection` |
+| `NETWORK_SSE` | Outbound Server-Sent Events: `network.sse.connect` |
 | `WEB_END_POINTS` | Inbound HTTP routes: `network.endpoints.create` |
 | `SOCKET_END_POINTS` | Socket.IO namespaces: `network.socketEndpoints` |
 | `WEB_CONTENT` | Serve `manifest.web` and `web_contents` at `/addon_static/{id}/` |

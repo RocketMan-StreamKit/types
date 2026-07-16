@@ -61,9 +61,10 @@
 <h2>Як це працює</h2>
 <ul>
 <li>Використовується fastText <a href="https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz">lid.176.ftz</a> (завантажується при першому використанні в user data застосунку).</li>
-<li>Повертає ISO-639-1 (<code>language</code>) і, якщо доступно, ISO-639-3 (<code>alpha3</code>) плюс англійську назву <code>name</code>.</li>
-<li>Якщо модель недоступна — запасний варіант за кирилицею (<code>uk</code> за наявності і/ї/є/ґ, інакше <code>ru</code>). Інші письменності без завантаженої моделі не класифікуються.</li>
-<li>Порожній текст / лише пробіли — <code>{ success: false }</code>.</li>
+<li><strong>Впевнено:</strong> ймовірність топ-мітки ≥ <code>0.4</code> і відрив від 2-го місця ≥ <code>0.25</code> → <code>{ success: true, language, alpha3?, name? }</code>.</li>
+<li><strong>Невпевнено:</strong> інакше → <code>{ success: false, message, possibles }</code> з ранжованими кандидатами (без одного <code>language</code>). Рішення про переклад — за аддоном.</li>
+<li>Порожній текст / лише пробіли → <code>{ success: false, message: &#39;Text is empty&#39; }</code> (без <code>possibles</code>).</li>
+<li>Якщо модель недоступна → <code>{ success: false, message, possibles: [] }</code>.</li>
 </ul>
 <h2><code>language.detect(text)</code></h2>
 <table>
@@ -83,16 +84,22 @@
 <pre><code class="language-js">const res = await language.detect(&#39;Bonjour le monde!&#39;);
 if (res.success) {
   console.log(res.language); // &#39;fr&#39;
-  console.log(res.alpha3);   // &#39;fra&#39; (якщо є)
-  console.log(res.name);     // &#39;French&#39; (якщо є)
+  console.log(res.alpha3);   // &#39;fra&#39; (коли є)
+  console.log(res.name);     // &#39;French&#39; (коли є)
 }
 
-const ja = await language.detect(&#39;こんにちは&#39;);
-// { success: true, language: &#39;ja&#39;, alpha3: &#39;jpn&#39;, name: &#39;Japanese&#39; }
+const uncertain = await language.detect(&#39;test message&#39;);
+if (!uncertain.success) {
+  console.log(uncertain.message);
+  // &#39;Language is difficult to determine&#39;
+  console.log(uncertain.possibles);
+  // [{ language: &#39;hi&#39;, probability: 0.07 }, { language: &#39;az&#39;, probability: 0.05 }, …]
+}
 
 const empty = await language.detect(&#39;   &#39;);
 // { success: false, message: &#39;Text is empty&#39; }
 </code></pre>
+<h3>Поля при успіху</h3>
 <table>
 <thead>
 <tr>
@@ -102,22 +109,39 @@ const empty = await language.detect(&#39;   &#39;);
 </thead>
 <tbody><tr>
 <td><code>language</code></td>
-<td>Дволітерний ISO-639-1 (наприклад <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
+<td>ISO-639-1 дволітерний код (наприклад <code>en</code>, <code>ru</code>, <code>uk</code>, <code>de</code>, <code>ja</code>)</td>
 </tr>
 <tr>
 <td><code>alpha3</code></td>
-<td>Трилітерний ISO-639-3, якщо модель його повернула</td>
+<td>ISO-639-3 трилітерний код, якщо модель його дає</td>
 </tr>
 <tr>
 <td><code>name</code></td>
-<td>Англійська назва мови з моделі, якщо доступна</td>
+<td>Англійська назва мови, якщо доступна</td>
 </tr>
 </tbody></table>
-<p>Поширені значення <code>message</code> при <code>success: false</code>:</p>
+<h3>Поля при помилці</h3>
 <table>
 <thead>
 <tr>
-<th>Message</th>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>message</code></td>
+<td>Людинозрозуміла причина</td>
+</tr>
+<tr>
+<td><code>possibles</code></td>
+<td>Опційний ранжований список <code>{ language, probability }[]</code> (спочатку найімовірніші, до 5). Є, коли модель відпрацювала, але не впевнена; може бути <code>[]</code> при збої моделі; відсутній для порожнього тексту</td>
+</tr>
+</tbody></table>
+<p>Типові значення <code>message</code> при <code>success: false</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Повідомлення</th>
 <th>Причина</th>
 </tr>
 </thead>
@@ -126,35 +150,31 @@ const empty = await language.detect(&#39;   &#39;);
 <td>Порожній <code>text</code> або лише пробіли</td>
 </tr>
 <tr>
-<td><code>Language could not be detected</code></td>
-<td>Модель недоступна / невпевнена і немає кириличної підказки</td>
+<td><code>Language is difficult to determine</code></td>
+<td>Низька впевненість, близькі топ-мови або модель недоступна</td>
 </tr>
 </tbody></table>
-<h2>Приклад: маршрутизація чату за мовою</h2>
+<h2>Приклад: перекладати лише при впевненому результаті</h2>
 <pre><code class="language-js">events.On(&#39;onChatMessage&#39;, async payload =&gt; {
   const text = payload.body?.message || &#39;&#39;;
   const res = await language.detect(text);
   if (!res.success) {
+    // Опційно: розібрати res.possibles і вирішити вручну
+    // наприклад if (res.possibles?.[0]?.probability &gt; 0.3) …
     return;
   }
 
-  if (res.language === &#39;uk&#39;) {
-    // українська
-  } else if (res.language === &#39;ru&#39;) {
-    // російська
-  } else if (res.language === &#39;en&#39;) {
-    // англійська
-  } else {
-    console.log(&#39;Інша мова:&#39;, res.language, res.name);
+  if (res.language === &#39;uk&#39; || res.language === &#39;ru&#39;) {
+    // перекласти…
   }
 });
 </code></pre>
 <h2>Звʼязок із TTS</h2>
 <ul>
-<li><code>tts.speak</code> як і раніше автовизначає лише <code>en</code> / <code>ru</code> / <code>uk</code> (fallback на англійську), якщо <code>options.language</code> не вказано.</li>
+<li><code>tts.speak</code> як і раніше автовизначає лише <code>en</code> / <code>ru</code> / <code>uk</code> (запасна англійська / кирилична підказка), якщо <code>options.language</code> не задано.</li>
 <li>Використовуйте <code>language.detect</code>, коли потрібен розширений набір мов; під час озвучення передайте явний <code>options.language</code> у <code>tts.speak</code>, якщо самі зіставляєте результат із підтримуваним голосом TTS.</li>
 </ul>
-<p>Див. також <a href="./api-tts.html">Озвучення тексту</a>, <a href="./localization.html">Локалізація</a> та <a href="./api-overview.html">Огляд API</a>.</p>
+<p>Див. також <a href="./api-tts.html">Text-to-speech</a>, <a href="./localization.html">Localization</a> і <a href="./api-overview.html">API overview</a>.</p>
 
     </main>
   </div>

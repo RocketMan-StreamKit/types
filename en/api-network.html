@@ -154,6 +154,44 @@ ws.Close();
 ws.Destroy();
 </code></pre>
 <p><code>Send</code> accepts string or JSON-serializable object. Max 5 concurrent connections.</p>
+<h2>Outbound Server-Sent Events — <code>network.sse</code></h2>
+<p><strong>Requires:</strong> <code>NETWORK_SSE</code></p>
+<pre><code class="language-js">const sse = await network.sse.connect(&#39;https://example.com/events&#39;, {
+  headers: { Authorization: &#39;Bearer token&#39; },
+  lastEventId: &#39;42&#39;,
+  autoReconnect: true,
+  reconnectInterval: 3000,
+});
+
+sse.On(&#39;open&#39;, () =&gt; console.log(&#39;stream open&#39;));
+sse.On(&#39;message&#39;, ({ data, event, id }) =&gt; console.log(event, data, id));
+sse.On(&#39;error&#39;, err =&gt; console.error(err));
+sse.On(&#39;close&#39;, () =&gt; console.log(&#39;stream closed&#39;));
+
+sse.Close();
+sse.Destroy();
+</code></pre>
+<p><code>message</code> payload: <code>{ data: string, event: string, id?: string }</code> (<code>event</code> is <code>&quot;message&quot;</code> when the SSE <code>event:</code> field is omitted). Optional <code>lastEventId</code> is sent as the <code>Last-Event-ID</code> header (also updated from received <code>id:</code> fields when reconnecting).</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>autoReconnect</code></td>
+<td><code>false</code></td>
+<td>When <code>true</code>, reconnect after stream end or network error (like browser EventSource). <code>close</code> fires only after <code>Close()</code> / <code>Destroy()</code>.</td>
+</tr>
+<tr>
+<td><code>reconnectInterval</code></td>
+<td><code>3000</code></td>
+<td>Initial reconnect delay in ms (clamped 50–60000). Overridden by SSE <code>retry:</code> fields from the server.</td>
+</tr>
+</tbody></table>
+<p>Max 5 concurrent connections; redirects not followed.</p>
 <h2>Outbound SignalR — <code>network.signalr</code></h2>
 <p><strong>Requires:</strong> <code>NETWORK_SIGNALR</code></p>
 <p>Globals <code>LogLevel</code> and <code>HttpTransportType</code> from <code>@microsoft/signalr</code> are available in the sandbox.</p>

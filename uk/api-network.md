@@ -90,6 +90,36 @@ ws.Destroy();
 
 `Send` приймає рядок або JSON-серіалізований об'єкт. Максимум 5 одночасних з'єднань.
 
+## Вихідний Server-Sent Events — `network.sse`
+
+**Потрібно:** `NETWORK_SSE`
+
+```js
+const sse = await network.sse.connect('https://example.com/events', {
+  headers: { Authorization: 'Bearer token' },
+  lastEventId: '42',
+  autoReconnect: true,
+  reconnectInterval: 3000,
+});
+
+sse.On('open', () => console.log('stream open'));
+sse.On('message', ({ data, event, id }) => console.log(event, data, id));
+sse.On('error', err => console.error(err));
+sse.On('close', () => console.log('stream closed'));
+
+sse.Close();
+sse.Destroy();
+```
+
+Корисне навантаження `message`: `{ data: string, event: string, id?: string }` (`event` дорівнює `"message"`, якщо поле SSE `event:` пропущено). Опційний `lastEventId` надсилається як заголовок `Last-Event-ID` (також оновлюється з отриманих полів `id:` при перепідключенні).
+
+| Опція | За замовчуванням | Опис |
+| --- | --- | --- |
+| `autoReconnect` | `false` | При `true` перепідключається після кінця потоку або мережевої помилки (як браузерний EventSource). `close` спрацьовує лише після `Close()` / `Destroy()`. |
+| `reconnectInterval` | `3000` | Початкова затримка перепідключення в мс (обмеження 50–60000). Перевизначається полями SSE `retry:` з сервера. |
+
+Максимум 5 одночасних з'єднань; перенаправлення не слідуються.
+
 ## Вихідний SignalR — `network.signalr`
 
 **Потрібно:** `NETWORK_SIGNALR`

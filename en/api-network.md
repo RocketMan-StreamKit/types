@@ -90,6 +90,36 @@ ws.Destroy();
 
 `Send` accepts string or JSON-serializable object. Max 5 concurrent connections.
 
+## Outbound Server-Sent Events — `network.sse`
+
+**Requires:** `NETWORK_SSE`
+
+```js
+const sse = await network.sse.connect('https://example.com/events', {
+  headers: { Authorization: 'Bearer token' },
+  lastEventId: '42',
+  autoReconnect: true,
+  reconnectInterval: 3000,
+});
+
+sse.On('open', () => console.log('stream open'));
+sse.On('message', ({ data, event, id }) => console.log(event, data, id));
+sse.On('error', err => console.error(err));
+sse.On('close', () => console.log('stream closed'));
+
+sse.Close();
+sse.Destroy();
+```
+
+`message` payload: `{ data: string, event: string, id?: string }` (`event` is `"message"` when the SSE `event:` field is omitted). Optional `lastEventId` is sent as the `Last-Event-ID` header (also updated from received `id:` fields when reconnecting).
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `autoReconnect` | `false` | When `true`, reconnect after stream end or network error (like browser EventSource). `close` fires only after `Close()` / `Destroy()`. |
+| `reconnectInterval` | `3000` | Initial reconnect delay in ms (clamped 50–60000). Overridden by SSE `retry:` fields from the server. |
+
+Max 5 concurrent connections; redirects not followed.
+
 ## Outbound SignalR — `network.signalr`
 
 **Requires:** `NETWORK_SIGNALR`

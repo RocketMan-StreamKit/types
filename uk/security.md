@@ -2,12 +2,13 @@
 
 ## Вихідний мережевий трафік
 
-URL для вихідного HTTP (`network.request`), WebSocket (`network.websocket`) і SignalR (`network.signalr`) проходять валідацію:
+URL для вихідного HTTP (`network.request`), WebSocket (`network.websocket`), Server-Sent Events (`network.sse`) і SignalR (`network.signalr`) проходять валідацію:
 
 - DNS-запит з кешем **5 хвилин**
 - Заблоковано: `localhost`, `127.0.0.1`, `::1`, приватні діапазони RFC1918 (`192.168.*`, `10.*`, `172.16–172.31.*`)
 - HTTP: максимум **5** одночасних запитів, таймаут **10 с**, перенаправлення **не** слідуються
 - WebSocket: максимум **5** одночасних з'єднань, лише `ws://` / `wss://`, той самий blocklist хостів
+- SSE: максимум **5** одночасних з'єднань, лише `http://` / `https://`, `text/event-stream`, перенаправлення **не** слідуються, опційний `autoReconnect` (враховує SSE `retry:`), той самий blocklist хостів
 - SignalR: максимум **5** одночасних запущених з'єднань, лише `http://` / `https://`, той самий blocklist; `httpClient` / кастомні транспорти відкидаються
 
 **Немає** окремого sandbox API для привілейованого auth server. Обмін OAuth-токенів використовує звичайний `network.request.post` на публічний HTTPS URL, який ви налаштовуєте (див. [OAuth і секрети](./oauth-and-secrets.md)).

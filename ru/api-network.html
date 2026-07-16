@@ -154,6 +154,44 @@ ws.Close();
 ws.Destroy();
 </code></pre>
 <p><code>Send</code> принимает строку или JSON-сериализуемый объект. Максимум 5 одновременных соединений.</p>
+<h2>Исходящий Server-Sent Events — <code>network.sse</code></h2>
+<p><strong>Требуется:</strong> <code>NETWORK_SSE</code></p>
+<pre><code class="language-js">const sse = await network.sse.connect(&#39;https://example.com/events&#39;, {
+  headers: { Authorization: &#39;Bearer token&#39; },
+  lastEventId: &#39;42&#39;,
+  autoReconnect: true,
+  reconnectInterval: 3000,
+});
+
+sse.On(&#39;open&#39;, () =&gt; console.log(&#39;stream open&#39;));
+sse.On(&#39;message&#39;, ({ data, event, id }) =&gt; console.log(event, data, id));
+sse.On(&#39;error&#39;, err =&gt; console.error(err));
+sse.On(&#39;close&#39;, () =&gt; console.log(&#39;stream closed&#39;));
+
+sse.Close();
+sse.Destroy();
+</code></pre>
+<p>Полезная нагрузка <code>message</code>: <code>{ data: string, event: string, id?: string }</code> (<code>event</code> равен <code>&quot;message&quot;</code>, если поле SSE <code>event:</code> опущено). Опциональный <code>lastEventId</code> отправляется как заголовок <code>Last-Event-ID</code> (также обновляется из полученных полей <code>id:</code> при переподключении).</p>
+<table>
+<thead>
+<tr>
+<th>Опция</th>
+<th>По умолчанию</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>autoReconnect</code></td>
+<td><code>false</code></td>
+<td>При <code>true</code> переподключается после конца потока или сетевой ошибки (как браузерный EventSource). <code>close</code> срабатывает только после <code>Close()</code> / <code>Destroy()</code>.</td>
+</tr>
+<tr>
+<td><code>reconnectInterval</code></td>
+<td><code>3000</code></td>
+<td>Начальная задержка переподключения в мс (ограничение 50–60000). Переопределяется полями SSE <code>retry:</code> с сервера.</td>
+</tr>
+</tbody></table>
+<p>Максимум 5 одновременных соединений; редиректы не следуются.</p>
 <h2>Исходящий SignalR — <code>network.signalr</code></h2>
 <p><strong>Требуется:</strong> <code>NETWORK_SIGNALR</code></p>
 <p>Глобалы <code>LogLevel</code> и <code>HttpTransportType</code> из <code>@microsoft/signalr</code> доступны в песочнице.</p>

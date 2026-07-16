@@ -7,9 +7,10 @@ Unlike TTS auto-detect (which maps results to `en` / `ru` / `uk` only), this API
 ## How it works
 
 - Uses fastText [lid.176.ftz](https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz) (downloaded on first use into app user data).
-- Returns ISO-639-1 (`language`) and, when available, ISO-639-3 (`alpha3`) plus an English reference `name`.
-- When the model is unavailable, falls back to a Cyrillic script hint (`uk` when і/ї/є/ґ are present, otherwise `ru`). Other scripts without a loaded model cannot be classified.
-- Empty / whitespace-only text fails with `{ success: false }`.
+- **Certain:** top-label probability ≥ `0.4` and gap to 2nd place ≥ `0.25` → `{ success: true, language, alpha3?, name? }`.
+- **Uncertain:** otherwise → `{ success: false, message, possibles }` with ranked candidates (no single `language`). The addon decides whether to translate.
+- Empty / whitespace-only text → `{ success: false, message: 'Text is empty' }` (no `possibles`).
+- If the model is unavailable → `{ success: false, message, possibles: [] }`.
 
 ## `language.detect(text)`
 
@@ -25,12 +26,19 @@ if (res.success) {
   console.log(res.name);     // 'French' (when provided)
 }
 
-const ja = await language.detect('こんにちは');
-// { success: true, language: 'ja', alpha3: 'jpn', name: 'Japanese' }
+const uncertain = await language.detect('test message');
+if (!uncertain.success) {
+  console.log(uncertain.message);
+  // 'Language is difficult to determine'
+  console.log(uncertain.possibles);
+  // [{ language: 'hi', probability: 0.07 }, { language: 'az', probability: 0.05 }, …]
+}
 
 const empty = await language.detect('   ');
 // { success: false, message: 'Text is empty' }
 ```
+
+### Success fields
 
 | Field | Description |
 | --- | --- |
@@ -38,38 +46,41 @@ const empty = await language.detect('   ');
 | `alpha3` | ISO-639-3 three-letter code when the model provides it |
 | `name` | English reference name from the model when available |
 
+### Failure fields
+
+| Field | Description |
+| --- | --- |
+| `message` | Human-readable reason |
+| `possibles` | Optional ranked list `{ language, probability }[]` (highest first, up to 5). Present when the model ran but was unsure; may be `[]` if the model failed; omitted for empty text |
+
 Common `message` values when `success` is `false`:
 
 | Message | Cause |
 | --- | --- |
 | `Text is empty` | Blank or whitespace-only `text` |
-| `Language could not be detected` | Model unavailable / uncertain and no Cyrillic script hint |
+| `Language is difficult to determine` | Low confidence, top languages too close, or model unavailable |
 
-## Example: route chat by language
+## Example: translate only when certain
 
 ```js
 events.On('onChatMessage', async payload => {
   const text = payload.body?.message || '';
   const res = await language.detect(text);
   if (!res.success) {
+    // Optional: inspect res.possibles and decide manually
+    // e.g. if (res.possibles?.[0]?.probability > 0.3) …
     return;
   }
 
-  if (res.language === 'uk') {
-    // handle Ukrainian
-  } else if (res.language === 'ru') {
-    // handle Russian
-  } else if (res.language === 'en') {
-    // handle English
-  } else {
-    console.log('Other language:', res.language, res.name);
+  if (res.language === 'uk' || res.language === 'ru') {
+    // translate…
   }
 });
 ```
 
 ## Relation to TTS
 
-- `tts.speak` still auto-detects only `en` / `ru` / `uk` (English fallback) when `options.language` is omitted.
+- `tts.speak` still auto-detects only `en` / `ru` / `uk` (English / Cyrillic script fallback) when `options.language` is omitted.
 - Use `language.detect` when you need the broader language set; pass an explicit `options.language` to `tts.speak` if you map the result yourself to a supported TTS voice.
 
 See also [Text-to-speech](./api-tts.md), [Localization](./localization.md), and [API overview](./api-overview.md).

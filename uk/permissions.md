@@ -16,6 +16,7 @@
 | `NETWORK_REQUEST` | Вихідний HTTP: `network.request.get/post/put/delete/postForm` |
 | `NETWORK_WEBSOCKET` | Вихідний WebSocket: `network.websocket.connect` |
 | `NETWORK_SIGNALR` | Вихідний SignalR: `network.signalr.CreateSignalRConnection` |
+| `NETWORK_SSE` | Вихідний Server-Sent Events: `network.sse.connect` |
 | `WEB_END_POINTS` | Вхідні HTTP-маршрути: `network.endpoints.create` |
 | `SOCKET_END_POINTS` | Простори імен Socket.IO: `network.socketEndpoints` |
 | `WEB_CONTENT` | Обслуговування `manifest.web` і `web_contents` за `/addon_static/{id}/` |

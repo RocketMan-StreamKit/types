@@ -23,7 +23,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | --- | --- |
 | [API overview](./api-overview.md) | All globals at a glance |
 | [events](./api-events.md) | Event bus and HTTP handler binding |
-| [network](./api-network.md) | HTTP client, endpoints, WebSocket, SignalR, Socket.IO |
+| [network](./api-network.md) | HTTP client, endpoints, WebSocket, SSE, SignalR, Socket.IO |
 | [api.config & storage](./api-config-storage.md) | Params, app config, private file storage |
 | [File access](./api-file-access.md) | User-approved read/write to specific paths (`files` API) |
 | [Text-to-speech (`tts`)](./api-tts.md) | Play messages via the user's TTS engine (`TTS` permission) |
