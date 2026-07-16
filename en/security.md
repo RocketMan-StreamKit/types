@@ -2,12 +2,13 @@
 
 ## Network egress
 
-Outbound HTTP (`network.request`) and WebSocket (`network.websocket`) URLs are validated:
+Outbound HTTP (`network.request`), WebSocket (`network.websocket`), and SignalR (`network.signalr`) URLs are validated:
 
 - DNS lookup with **5 minute** cache
 - Blocked: `localhost`, `127.0.0.1`, `::1`, RFC1918 private ranges (`192.168.*`, `10.*`, `172.16–172.31.*`)
 - HTTP: max **5** concurrent requests, **10 s** timeout, redirects **not** followed
 - WebSocket: max **5** concurrent connections, `ws://` / `wss://` only, same host blocklist
+- SignalR: max **5** concurrent started connections, `http://` / `https://` only, same host blocklist; `httpClient` / custom transports are stripped
 
 There is **no** dedicated sandbox API for a privileged auth server. OAuth token exchange uses normal `network.request.post` to a public HTTPS URL you configure (see [OAuth and secrets](./oauth-and-secrets.md)).
 

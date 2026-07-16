@@ -15,6 +15,7 @@
 | `ADDON_CONFIG_READ` | `api.config.getAddonParams(otherAddonId)` — чтение params другого аддона (чувствительно; выделяется в UI) |
 | `NETWORK_REQUEST` | Исходящий HTTP: `network.request.get/post/put/delete/postForm` |
 | `NETWORK_WEBSOCKET` | Исходящий WebSocket: `network.websocket.connect` |
+| `NETWORK_SIGNALR` | Исходящий SignalR: `network.signalr.CreateSignalRConnection` |
 | `WEB_END_POINTS` | Входящие HTTP-маршруты: `network.endpoints.create` |
 | `SOCKET_END_POINTS` | Пространства имён Socket.IO: `network.socketEndpoints` |
 | `WEB_CONTENT` | Раздача `manifest.web` и `web_contents` по `/addon_static/{id}/` |

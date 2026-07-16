@@ -57,12 +57,13 @@
     <main class="content">
       <h1>Безопасность</h1>
 <h2>Исходящая сеть</h2>
-<p>URL исходящего HTTP (<code>network.request</code>) и WebSocket (<code>network.websocket</code>) проходят проверку:</p>
+<p>URL исходящего HTTP (<code>network.request</code>), WebSocket (<code>network.websocket</code>) и SignalR (<code>network.signalr</code>) проходят проверку:</p>
 <ul>
 <li>DNS-запрос с кэшем <strong>5 минут</strong></li>
 <li>Заблокированы: <code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>, частные диапазоны RFC1918 (<code>192.168.*</code>, <code>10.*</code>, <code>172.16–172.31.*</code>)</li>
 <li>HTTP: максимум <strong>5</strong> одновременных запросов, таймаут <strong>10 с</strong>, редиректы <strong>не</strong> выполняются</li>
 <li>WebSocket: максимум <strong>5</strong> одновременных соединений, только <code>ws://</code> / <code>wss://</code>, тот же чёрный список хостов</li>
+<li>SignalR: максимум <strong>5</strong> одновременных запущенных соединений, только <code>http://</code> / <code>https://</code>, тот же чёрный список; <code>httpClient</code> / кастомные транспорты отбрасываются</li>
 </ul>
 <p><strong>Нет</strong> отдельного API песочницы для привилегированного auth-сервера. Обмен OAuth-токенами — обычный <code>network.request.post</code> на публичный HTTPS URL, который вы настраиваете (см. <a href="./oauth-and-secrets.html">OAuth и секреты</a>).</p>
 <h2>Входящий HTTP</h2>

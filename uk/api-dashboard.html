@@ -173,8 +173,10 @@ dashboard.offAttachPlay();
     platform: &#39;myplatform&#39;,
     from: &#39;user-1&#39;,
     color: &#39;_as_user_&#39;,
-    // Опційно: позначити як системне для інших аддонів (без зміни UI)
+    // Опційно: позначити як системне для інших аддонів (індикатор у чаті)
     system: true,
+    // Опційно: виділити як згадку стрімера у вікні чату
+    mention: true,
     emotes: [{ word: &#39;Kappa&#39;, url: &#39;https://example.com/kappa.png&#39; }],
     style: {
       color: &#39;#7c4dff&#39;,
@@ -186,7 +188,8 @@ dashboard.offAttachPlay();
 );
 </code></pre>
 <p><code>content</code> приймає звичайний <code>string</code> або <code>{ en, ru?, uk? }</code> — не кортежі <code>LangData</code> застосунку (аддони використовують власні об&#39;єкти локалізації).</p>
-<p>Опційний <code>system: true</code> позначає повідомлення як системне для аддонів. Інші аддони отримують його як <code>msg.message.system</code> у <code>onChatMessage</code>. Вікно чату й надалі показує звичайний рядок користувача.</p>
+<p>Опційний <code>system: true</code> позначає повідомлення як системне для аддонів. Інші аддони отримують його як <code>msg.message.system</code> у <code>onChatMessage</code>. Вікно чату й надалі показує звичайний рядок користувача та індикатор системного повідомлення після іконки платформи.</p>
+<p>Опційний <code>mention: true</code> позначає повідомлення як згадку стрімера. Інші аддони отримують його як <code>msg.message.mention</code> у <code>onChatMessage</code>. Вікно чату виділяє рядок бурштиновим акцентом.</p>
 <p>Опційний <code>color</code> задає колір <strong>тексту повідомлення</strong> (не рамки). Допустимі значення:</p>
 <table>
 <thead>
@@ -308,7 +311,7 @@ await dashboard.sendChatMessage(&#39;Thanks for the follow!&#39;, [&#39;twitch&#
 <p>Повертає <code>{ success: true }</code>, якщо хоча б одна ціль прийняла повідомлення, або <code>{ success: false, message }</code>, якщо текст порожній, немає валідних цілей або всі цілі завершились помилкою.</p>
 <p><strong>Вхідні рядки:</strong> <code>DASHBOARD_CHAT_INCOMING</code></p>
 <pre><code class="language-js">dashboard.onChatMessage(msg =&gt; {
-  console.log(msg.message.content, msg.message.system, msg.user?.name, msg.sourceAddonId);
+  console.log(msg.message.content, msg.message.system, msg.message.mention, msg.user?.name, msg.sourceAddonId);
 });
 dashboard.offChatMessage();
 </code></pre>

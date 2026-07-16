@@ -57,12 +57,13 @@
     <main class="content">
       <h1>Security</h1>
 <h2>Network egress</h2>
-<p>Outbound HTTP (<code>network.request</code>) and WebSocket (<code>network.websocket</code>) URLs are validated:</p>
+<p>Outbound HTTP (<code>network.request</code>), WebSocket (<code>network.websocket</code>), and SignalR (<code>network.signalr</code>) URLs are validated:</p>
 <ul>
 <li>DNS lookup with <strong>5 minute</strong> cache</li>
 <li>Blocked: <code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>, RFC1918 private ranges (<code>192.168.*</code>, <code>10.*</code>, <code>172.16–172.31.*</code>)</li>
 <li>HTTP: max <strong>5</strong> concurrent requests, <strong>10 s</strong> timeout, redirects <strong>not</strong> followed</li>
 <li>WebSocket: max <strong>5</strong> concurrent connections, <code>ws://</code> / <code>wss://</code> only, same host blocklist</li>
+<li>SignalR: max <strong>5</strong> concurrent started connections, <code>http://</code> / <code>https://</code> only, same host blocklist; <code>httpClient</code> / custom transports are stripped</li>
 </ul>
 <p>There is <strong>no</strong> dedicated sandbox API for a privileged auth server. OAuth token exchange uses normal <code>network.request.post</code> to a public HTTPS URL you configure (see <a href="./oauth-and-secrets.html">OAuth and secrets</a>).</p>
 <h2>Inbound HTTP</h2>

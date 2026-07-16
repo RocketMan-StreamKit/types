@@ -23,7 +23,7 @@
 | --- | --- |
 | [Огляд API](./api-overview.md) | Усі глобальні об'єкти |
 | [events](./api-events.md) | Шина подій і прив'язка HTTP-обробників |
-| [network](./api-network.md) | HTTP-клієнт, ендпоінти, WebSocket, Socket.IO |
+| [network](./api-network.md) | HTTP-клієнт, ендпоінти, WebSocket, SignalR, Socket.IO |
 | [api.config і storage](./api-config-storage.md) | Параметри, конфіг застосунку, файлове сховище |
 | [Доступ до файлів](./api-file-access.md) | Читання/запис за схваленими користувачем шляхами (`files` API) |
 | [Озвучення тексту (`tts`)](./api-tts.md) | Озвучення через TTS-движок користувача (дозвіл `TTS`) |

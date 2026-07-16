@@ -89,3 +89,28 @@ ws.Destroy();
 ```
 
 `Send` accepts string or JSON-serializable object. Max 5 concurrent connections.
+
+## Outbound SignalR — `network.signalr`
+
+**Requires:** `NETWORK_SIGNALR`
+
+Globals `LogLevel` and `HttpTransportType` from `@microsoft/signalr` are available in the sandbox.
+
+```js
+const connection = (
+  await network.signalr.CreateSignalRConnection(
+    'https://example.com/hub?access_token=TOKEN',
+    { transport: HttpTransportType.WebSockets }
+  )
+)
+  .withAutomaticReconnect()
+  .configureLogging(LogLevel.Information)
+  .build();
+
+connection.on('DonationCreated', donation => console.log(donation));
+await connection.start();
+await connection.invoke('SomeMethod', arg);
+await connection.stop();
+```
+
+`CreateSignalRConnection` validates the URL (`http://` / `https://` only, same host blocklist as HTTP) and returns a `HubConnectionBuilder` with `withUrl` already applied. Calling `withUrl` again or changing `connection.baseUrl` is blocked. Max 5 concurrent started connections. Custom `httpClient` and custom transport objects are not allowed.

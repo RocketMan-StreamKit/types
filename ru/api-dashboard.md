@@ -128,8 +128,10 @@ await dashboard.addChatMessage(
     platform: 'myplatform',
     from: 'user-1',
     color: '_as_user_',
-    // Опционально: пометить как системное для других аддонов (без смены UI)
+    // Опционально: пометить как системное для других аддонов (индикатор в чате)
     system: true,
+    // Опционально: выделить как упоминание стримера в окне чата
+    mention: true,
     emotes: [{ word: 'Kappa', url: 'https://example.com/kappa.png' }],
     style: {
       color: '#7c4dff',
@@ -143,7 +145,9 @@ await dashboard.addChatMessage(
 
 `content` принимает простую `string` или `{ en, ru?, uk? }` — не кортежи `LangData` приложения (аддоны используют свои объекты локализации).
 
-Опциональный `system: true` помечает сообщение как системное для аддонов. Другие аддоны получают его как `msg.message.system` в `onChatMessage`. Окно чата по-прежнему показывает обычную пользовательскую строку.
+Опциональный `system: true` помечает сообщение как системное для аддонов. Другие аддоны получают его как `msg.message.system` в `onChatMessage`. Окно чата по-прежнему показывает обычную пользовательскую строку и индикатор системного сообщения после иконки платформы.
+
+Опциональный `mention: true` помечает сообщение как упоминание стримера. Другие аддоны получают его как `msg.message.mention` в `onChatMessage`. Окно чата выделяет строку янтарным акцентом.
 
 Опциональный `color` задаёт цвет **текста сообщения** (не рамки). Допустимые значения:
 
@@ -251,7 +255,7 @@ await dashboard.sendChatMessage('Thanks for the follow!', ['twitch'], {
 
 ```js
 dashboard.onChatMessage(msg => {
-  console.log(msg.message.content, msg.message.system, msg.user?.name, msg.sourceAddonId);
+  console.log(msg.message.content, msg.message.system, msg.message.mention, msg.user?.name, msg.sourceAddonId);
 });
 dashboard.offChatMessage();
 ```

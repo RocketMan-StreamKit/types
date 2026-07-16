@@ -89,3 +89,28 @@ ws.Destroy();
 ```
 
 `Send` приймає рядок або JSON-серіалізований об'єкт. Максимум 5 одночасних з'єднань.
+
+## Вихідний SignalR — `network.signalr`
+
+**Потрібно:** `NETWORK_SIGNALR`
+
+Глобали `LogLevel` і `HttpTransportType` з `@microsoft/signalr` доступні в пісочниці.
+
+```js
+const connection = (
+  await network.signalr.CreateSignalRConnection(
+    'https://example.com/hub?access_token=TOKEN',
+    { transport: HttpTransportType.WebSockets }
+  )
+)
+  .withAutomaticReconnect()
+  .configureLogging(LogLevel.Information)
+  .build();
+
+connection.on('DonationCreated', donation => console.log(donation));
+await connection.start();
+await connection.invoke('SomeMethod', arg);
+await connection.stop();
+```
+
+`CreateSignalRConnection` перевіряє URL (лише `http://` / `https://`, той самий blocklist хостів, що й HTTP) і повертає `HubConnectionBuilder` з уже викликаним `withUrl`. Повторний `withUrl` і зміна `connection.baseUrl` заборонені. Максимум 5 одночасних запущених з'єднань. Кастомні `httpClient` і об'єкти транспорту не дозволені.

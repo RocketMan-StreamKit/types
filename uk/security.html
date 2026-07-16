@@ -57,12 +57,13 @@
     <main class="content">
       <h1>Безпека</h1>
 <h2>Вихідний мережевий трафік</h2>
-<p>URL для вихідного HTTP (<code>network.request</code>) і WebSocket (<code>network.websocket</code>) проходять валідацію:</p>
+<p>URL для вихідного HTTP (<code>network.request</code>), WebSocket (<code>network.websocket</code>) і SignalR (<code>network.signalr</code>) проходять валідацію:</p>
 <ul>
 <li>DNS-запит з кешем <strong>5 хвилин</strong></li>
 <li>Заблоковано: <code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>, приватні діапазони RFC1918 (<code>192.168.*</code>, <code>10.*</code>, <code>172.16–172.31.*</code>)</li>
 <li>HTTP: максимум <strong>5</strong> одночасних запитів, таймаут <strong>10 с</strong>, перенаправлення <strong>не</strong> слідуються</li>
 <li>WebSocket: максимум <strong>5</strong> одночасних з&#39;єднань, лише <code>ws://</code> / <code>wss://</code>, той самий blocklist хостів</li>
+<li>SignalR: максимум <strong>5</strong> одночасних запущених з&#39;єднань, лише <code>http://</code> / <code>https://</code>, той самий blocklist; <code>httpClient</code> / кастомні транспорти відкидаються</li>
 </ul>
 <p><strong>Немає</strong> окремого sandbox API для привілейованого auth server. Обмін OAuth-токенів використовує звичайний <code>network.request.post</code> на публічний HTTPS URL, який ви налаштовуєте (див. <a href="./oauth-and-secrets.html">OAuth і секрети</a>).</p>
 <h2>Вхідний HTTP</h2>
