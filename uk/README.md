@@ -27,6 +27,7 @@
 | [api.config і storage](./api-config-storage.md) | Параметри, конфіг застосунку, файлове сховище |
 | [Доступ до файлів](./api-file-access.md) | Читання/запис за схваленими користувачем шляхами (`files` API) |
 | [Озвучення тексту (`tts`)](./api-tts.md) | Озвучення через TTS-движок користувача (дозвіл `TTS`) |
+| [LLM Access (`llm`)](./api-llm.md) | Запити до нейромереж через профілі користувача (дозвіл `LLM`) |
 | [Завантаження yt-dlp (`ytdlp`)](./api-ytdlp.md) | Завантаження медіа через вбудований yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | [addons (RPC)](./api-addons-rpc.md) | Запити між аддонами |
 | [dashboard](./api-dashboard.md) | Віджет подій, чат, тригери оверлею |

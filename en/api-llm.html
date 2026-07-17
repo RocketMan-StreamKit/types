@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Access (`llm`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html" class="is-active">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>LLM Access (<code>llm</code>)</h1>
+<p><strong>Requires:</strong> <code>LLM</code></p>
+<p>Sends text or multi-turn dialog requests through the user&#39;s configured LLM profiles (Ollama, Gemini, Groq, Cerebras, Puter, and other providers). API keys stay in the main process and are never exposed to addons.</p>
+<h2>Setup</h2>
+<ol>
+<li>Add <code>&quot;LLM&quot;</code> to <code>permissions</code> in <code>manifest.json</code> (the user approves it at install time).</li>
+<li>Check at runtime with <code>permissions.has(AddonsPermission.LLM)</code>.</li>
+<li>Optionally call <code>llm.getSettings()</code> / <code>llm.listProfiles()</code> before <code>llm.chat</code>.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;LLM&quot;]
+}
+</code></pre>
+<h2>How it works</h2>
+<ul>
+<li>Uses the <strong>same</strong> profiles and routing as <strong>Settings → LLM Access</strong>.</li>
+<li><code>defaultProfile</code> may be <code>auto</code> (host picks among enabled free-capable profiles) or a specific profile id.</li>
+<li><code>options.profile</code> is honored only when the user enabled <strong>Allow addons to choose a profile</strong>.</li>
+<li><code>freeOnly</code> (global or per-request) skips paid profiles / paid-looking models.</li>
+<li>On rate limits (HTTP 429 / Retry-After), the host cools down that profile and may fall back to another.</li>
+</ul>
+<h2><code>llm.listProfiles()</code></h2>
+<p>Returns public profile metadata (no API keys), including soft quota snapshots when tracked.</p>
+<pre><code class="language-js">const { success, profiles, message } = await llm.listProfiles();
+// profiles[].id, name, provider, model, params, enabled, isPaid,
+// hasApiKey, contextWindow?, quota?
+</code></pre>
+<h2><code>llm.getSettings()</code></h2>
+<pre><code class="language-js">const {
+  success,
+  enabled,
+  defaultProfile,
+  allowAddonProfileSelect,
+  freeOnly,
+  message,
+} = await llm.getSettings();
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>enabled</code></td>
+<td>Master switch; when <code>false</code>, <code>chat</code> fails</td>
+</tr>
+<tr>
+<td><code>defaultProfile</code></td>
+<td><code>&#39;auto&#39;</code> or a profile id</td>
+</tr>
+<tr>
+<td><code>allowAddonProfileSelect</code></td>
+<td>Whether <code>options.profile</code> overrides are allowed</td>
+</tr>
+<tr>
+<td><code>freeOnly</code></td>
+<td>Prefer / restrict to free profiles</td>
+</tr>
+</tbody></table>
+<h2><code>llm.chat(input, options?)</code></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>input</code></td>
+<td>yes</td>
+<td>Plain string <strong>or</strong> <code>{ role, content }[]</code> (<code>system</code> / <code>user</code> / <code>assistant</code>)</td>
+</tr>
+<tr>
+<td><code>options.profile</code></td>
+<td>no</td>
+<td>Profile id or <code>&#39;auto&#39;</code> (needs <code>allowAddonProfileSelect</code> when overriding default)</td>
+</tr>
+<tr>
+<td><code>options.temperature</code></td>
+<td>no</td>
+<td>Override profile default</td>
+</tr>
+<tr>
+<td><code>options.topP</code></td>
+<td>no</td>
+<td>Override</td>
+</tr>
+<tr>
+<td><code>options.maxTokens</code></td>
+<td>no</td>
+<td>Override</td>
+</tr>
+<tr>
+<td><code>options.frequencyPenalty</code></td>
+<td>no</td>
+<td>Override</td>
+</tr>
+<tr>
+<td><code>options.presencePenalty</code></td>
+<td>no</td>
+<td>Override</td>
+</tr>
+<tr>
+<td><code>options.stop</code></td>
+<td>no</td>
+<td>Stop sequences</td>
+</tr>
+<tr>
+<td><code>options.freeOnly</code></td>
+<td>no</td>
+<td>Force free-only for this call</td>
+</tr>
+<tr>
+<td><code>options.timeoutMs</code></td>
+<td>no</td>
+<td>Request timeout</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">await llm.chat(&#39;Summarize this donation message&#39;);
+
+await llm.chat(
+  [
+    { role: &#39;system&#39;, content: &#39;Reply briefly.&#39; },
+    { role: &#39;user&#39;, content: &#39;Hello&#39; },
+  ],
+  { profile: &#39;auto&#39;, temperature: 0.4, maxTokens: 256 }
+);
+</code></pre>
+<p>Returns:</p>
+<pre><code class="language-js">{
+  success: boolean,
+  content?: string,
+  profileId?: string,
+  provider?: string,
+  model?: string,
+  usage?: { promptTokens?, completionTokens?, totalTokens? },
+  message?: string,
+  triedProfiles?: string[],
+}
+</code></pre>
+<h2>Example</h2>
+<pre><code class="language-js">if (!permissions.has(AddonsPermission.LLM)) {
+  console.warn(&#39;LLM not granted&#39;);
+  return;
+}
+
+const { enabled } = await llm.getSettings();
+if (!enabled) return;
+
+const res = await llm.chat(&#39;Write a short thank-you for a donation&#39;);
+if (res.success) {
+  console.log(res.content);
+}
+</code></pre>
+<p>See also <a href="./permissions.html">Permissions</a> and <a href="./api-overview.html">API overview</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

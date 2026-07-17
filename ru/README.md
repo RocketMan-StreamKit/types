@@ -27,6 +27,7 @@
 | [api.config и storage](./api-config-storage.md) | Параметры, конфиг приложения, файловое хранилище |
 | [Доступ к файлам](./api-file-access.md) | Чтение/запись по одобренным пользователем путям (`files` API) |
 | [Озвучка текста (`tts`)](./api-tts.md) | Озвучка через TTS-движок пользователя (разрешение `TTS`) |
+| [LLM Access (`llm`)](./api-llm.md) | Запросы к нейросетям через профили пользователя (разрешение `LLM`) |
 | [Загрузки yt-dlp (`ytdlp`)](./api-ytdlp.md) | Загрузка медиа через встроенный yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | [addons (RPC)](./api-addons-rpc.md) | Запросы между аддонами |
 | [dashboard](./api-dashboard.md) | Виджет событий, чат, триггеры оверлея |

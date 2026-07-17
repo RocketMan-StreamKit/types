@@ -29,6 +29,7 @@ Check at runtime with `permissions.has(AddonsPermission.NAME)`. Denied access lo
 | `DASHBOARD_EVENTS_INCOMING` | Subscribe to event records: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Scoped file/folder API: `files.requestAccess`, `readFile`, `writeFile`, … (user approves each path; see [File access](./api-file-access.md)) |
 | `TTS` | Text-to-speech: `tts.speak`, `tts.getEngine` (uses user TTS settings; see [TTS](./api-tts.md)) |
+| `LLM` | LLM Access: `llm.chat`, `llm.listProfiles`, `llm.getSettings` (uses user LLM profiles; see [LLM Access](./api-llm.md)) |
 
 ## Example
 

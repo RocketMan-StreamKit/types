@@ -22,6 +22,7 @@
 | `license` | Статус лицензии и MD5-отпечаток ключа устройства (без разрешения) |
 | `notify` | Центр уведомлений в заголовке |
 | `tts` | Озвучка текста (разрешение `TTS`) |
+| `llm` | LLM Access — запросы к нейросетям (разрешение `LLM`) |
 | `ytdlp` | Загрузка медиа через встроенный yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | `storage` | Приватный JSON-файл в папке установки |
 | `ui.auth` | URL редиректа успеха/ошибки OAuth |
@@ -46,5 +47,6 @@
 - [Определение языка (`language`)](./api-language.md)
 - [Лицензия](./api-license.md)
 - [Озвучка текста (`tts`)](./api-tts.md)
+- [LLM Access (`llm`)](./api-llm.md)
 - [Загрузки yt-dlp (`ytdlp`)](./api-ytdlp.md)
 - [Утилиты](./api-utilities.md)

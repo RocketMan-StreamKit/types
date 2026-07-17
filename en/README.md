@@ -27,6 +27,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [api.config & storage](./api-config-storage.md) | Params, app config, private file storage |
 | [File access](./api-file-access.md) | User-approved read/write to specific paths (`files` API) |
 | [Text-to-speech (`tts`)](./api-tts.md) | Play messages via the user's TTS engine (`TTS` permission) |
+| [LLM Access (`llm`)](./api-llm.md) | Chat completions via user LLM profiles (`LLM` permission) |
 | [yt-dlp downloads (`ytdlp`)](./api-ytdlp.md) | Download media via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |

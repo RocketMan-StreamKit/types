@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Платформені аддони — StreamKit+ Addon Docs</title>
+  <title>LLM Access (`llm`) — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -40,7 +40,7 @@
           <li><a href="api-config-storage.html">api.config і storage</a></li>
           <li><a href="api-file-access.html">Доступ до файлів</a></li>
           <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
-          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-llm.html" class="is-active">LLM Access (`llm`)</a></li>
           <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
@@ -48,7 +48,7 @@
           <li><a href="api-currency.html">Валюта</a></li>
           <li><a href="api-language.html">Визначення мови (`language`)</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
-          <li><a href="types-platform.html" class="is-active">Платформені аддони</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
           <li><a href="types-overlay.html">Оверлеї</a></li>
           <li><a href="types-widget.html">Віджети</a></li>
           <li><a href="types-application.html">Застосунки</a></li>
@@ -56,41 +56,53 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>Платформені аддони</h1>
-<p>Платформені інтеграції з&#39;єднують зовнішні стримінгові або донат-сервіси з StreamKit+.</p>
-<h2>Manifest</h2>
-<table>
-<thead>
-<tr>
-<th>Поле</th>
-<th>Значення</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>type</code></td>
-<td><code>platform.streaming</code> або <code>platform.donation</code></td>
-</tr>
-<tr>
-<td><code>permissions</code></td>
-<td>Зазвичай <code>NETWORK_REQUEST</code>, <code>WEB_END_POINTS</code>, дозволи dashboard тощо</td>
-</tr>
-</tbody></table>
-<p>Обидва типи використовують той самий потік встановлення/увімкнення в <strong>Settings → Addons</strong> (згруповані за <code>type</code>).</p>
-<h2>Типові обов&#39;язки worker</h2>
-<ul>
-<li>OAuth або авторизація API key (зберігайте токени в <code>api.config.updateParams</code>)</li>
-<li>Вихідні API-виклики та WebSocket-з&#39;єднання</li>
-<li><code>dashboard.registerPlatform</code>, <code>upsertUser</code>, <code>addRecord</code>, <code>addChatMessage</code></li>
-<li><code>status.Update</code> і <code>notify.Send</code> для зворотного зв&#39;язку про з&#39;єднання</li>
-<li><code>viewers.Update</code> для онлайну глядачів (без додаткового дозволу; див. <a href="./api-status-notify-ui.html#viewers">status, notify, ui</a>)</li>
-<li><code>tts.speak</code>, коли аддон має озвучувати сповіщення (потрібен <code>TTS</code>; див. <a href="./api-tts.html">Озвучення тексту</a>)</li>
-<li><code>dashboard.registerTriggers</code>, коли потрібні реакції оверлею</li>
-<li>Вхідні webhook через <code>network.endpoints.create</code></li>
-</ul>
-<h2>Співпраця між аддонами</h2>
-<p>Використовуйте <code>addons.request</code> / <code>addons.onRequest</code> і необов&#39;язковий <code>depends_on</code>, коли один платформений аддон надає дані, потрібні іншим.</p>
+      <h1>LLM Access (<code>llm</code>)</h1>
+<p><strong>Потрібно:</strong> <code>LLM</code></p>
+<p>Надсилає текстові або діалогові запити через профілі LLM користувача (Ollama, Gemini, Groq, Cerebras, Puter тощо). API-ключі залишаються в основному процесі і ніколи не передаються аддонам.</p>
 <h2>Налаштування</h2>
-<p>Оголошуйте поля для користувача через <code>GenerateConfig</code>. Приховуйте секрети (токени), пропускаючи <code>editor</code> для відповідних ключів.</p>
+<ol>
+<li>Додайте <code>&quot;LLM&quot;</code> до <code>permissions</code> у <code>manifest.json</code> (користувач підтверджує під час встановлення).</li>
+<li>Перевірте в рантаймі через <code>permissions.has(AddonsPermission.LLM)</code>.</li>
+<li>За потреби викличте <code>llm.getSettings()</code> / <code>llm.listProfiles()</code> перед <code>llm.chat</code>.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;LLM&quot;]
+}
+</code></pre>
+<h2>Як це працює</h2>
+<ul>
+<li>Використовуються <strong>ті самі</strong> профілі та маршрутизація, що в <strong>Налаштування → LLM Access</strong>.</li>
+<li><code>defaultProfile</code> може бути <code>auto</code> або конкретним id профілю.</li>
+<li><code>options.profile</code> враховується лише якщо увімкнено дозвіл аддонам обирати профіль.</li>
+<li><code>freeOnly</code> пропускає платні профілі / схожі на платні моделі.</li>
+<li>При rate limit (HTTP 429 / Retry-After) профіль йде в cooldown, можливий fallback.</li>
+</ul>
+<h2><code>llm.listProfiles()</code></h2>
+<pre><code class="language-js">const { success, profiles, message } = await llm.listProfiles();
+</code></pre>
+<h2><code>llm.getSettings()</code></h2>
+<pre><code class="language-js">const {
+  success,
+  enabled,
+  defaultProfile,
+  allowAddonProfileSelect,
+  freeOnly,
+  message,
+} = await llm.getSettings();
+</code></pre>
+<h2><code>llm.chat(input, options?)</code></h2>
+<p><code>input</code> — рядок або масив <code>{ role, content }</code>. Опції: <code>profile</code>, <code>temperature</code>, <code>topP</code>, <code>maxTokens</code>, <code>freeOnly</code>, <code>timeoutMs</code> тощо.</p>
+<pre><code class="language-js">await llm.chat(&#39;Hello&#39;);
+await llm.chat(
+  [
+    { role: &#39;system&#39;, content: &#39;Reply briefly.&#39; },
+    { role: &#39;user&#39;, content: &#39;Hi&#39; },
+  ],
+  { profile: &#39;auto&#39;, temperature: 0.4 }
+);
+</code></pre>
+<p>Див. також <a href="./permissions.html">Permissions</a> та <a href="./api-overview.html">API overview</a>.</p>
 
     </main>
   </div>

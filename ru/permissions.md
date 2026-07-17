@@ -29,6 +29,7 @@
 | `DASHBOARD_EVENTS_INCOMING` | Подписка на записи событий: `onRecord` / `offRecord` |
 | `FILE_ACCESS` | Доступ к файлам и папкам: `files.requestAccess`, `readFile`, `writeFile`, … (пользователь одобряет каждый путь; см. [Доступ к файлам](./api-file-access.md)) |
 | `TTS` | Озвучка текста: `tts.speak`, `tts.getEngine` (использует настройки TTS пользователя; см. [TTS](./api-tts.md)) |
+| `LLM` | LLM Access: `llm.chat`, `llm.listProfiles`, `llm.getSettings` (профили LLM пользователя; см. [LLM Access](./api-llm.md)) |
 
 ## Пример
 

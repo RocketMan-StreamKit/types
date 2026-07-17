@@ -22,6 +22,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `license` | License status and MD5 device key fingerprint (no permission) |
 | `notify` | Title-bar notification center |
 | `tts` | Text-to-speech playback (`TTS` permission) |
+| `llm` | LLM Access chat completions (`LLM` permission) |
 | `ytdlp` | Media downloads via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | `storage` | Private JSON file in install folder |
 | `ui.auth` | OAuth success/fail redirect URLs |
@@ -46,5 +47,6 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 - [Language detection (`language`)](./api-language.md)
 - [License](./api-license.md)
 - [Text-to-speech (`tts`)](./api-tts.md)
+- [LLM Access (`llm`)](./api-llm.md)
 - [yt-dlp downloads (`ytdlp`)](./api-ytdlp.md)
 - [Utilities](./api-utilities.md)
