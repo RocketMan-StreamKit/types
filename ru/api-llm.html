@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Аддоны оверлея — StreamKit+ Addon Docs</title>
+  <title>LLM Access (`llm`) — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -40,7 +40,7 @@
           <li><a href="api-config-storage.html">api.config и storage</a></li>
           <li><a href="api-file-access.html">Доступ к файлам</a></li>
           <li><a href="api-tts.html">Озвучка текста (`tts`)</a></li>
-          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-llm.html" class="is-active">LLM Access (`llm`)</a></li>
           <li><a href="api-ytdlp.html">Загрузки yt-dlp (`ytdlp`)</a></li>
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
@@ -49,64 +49,60 @@
           <li><a href="api-language.html">Определение языка (`language`)</a></li>
           <li><a href="api-utilities.html">Утилиты</a></li>
           <li><a href="types-platform.html">Платформенные аддоны</a></li>
-          <li><a href="types-overlay.html" class="is-active">Оверлеи</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
           <li><a href="types-widget.html">Виджеты</a></li>
           <li><a href="types-application.html">Приложения</a></li>
           <li><a href="types-game.html">Игровые интеграции</a></li>
         </ul>
       </nav>
     <main class="content">
-      <h1>Аддоны оверлея</h1>
-<p>Оверлеи — кратковременные эффекты, запускаемые правилами, таймерами или событиями дашборда.</p>
-<h2>Манифест</h2>
-<table>
-<thead>
-<tr>
-<th>Поле</th>
-<th>Значение</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>type</code></td>
-<td><code>overlay</code> или <code>overlay.info</code></td>
-</tr>
-<tr>
-<td><code>web_type</code></td>
-<td><code>overlay</code> (когда задан <code>web</code>)</td>
-</tr>
-</tbody></table>
-<p>Панели <code>overlay.info</code> показываются после или во время основного эффекта, когда у родительского оверлея включён <code>showInfo</code>.</p>
-<h2>Варианты</h2>
-<h3>Простой медиа-оверлей (без воркера)</h3>
-<p><code>manifest.overlay</code> с путями <code>audio</code> / <code>video</code>. Без <code>index.js</code>, без разрешений. Воспроизведение через встроенный iframe простого плеера.</p>
-<p>Настройки: громкость, цикл, скрытие в конце, длительность (могут ограничиваться в манифесте).</p>
-<h3>Статический веб-оверлей (без воркера)</h3>
-<p><code>web</code> + <code>web_type: &quot;overlay&quot;</code>, без <code>index.js</code>. Требует <code>WEB_CONTENT</code> и файлы из <code>web_contents</code>.</p>
-<p>Статический URL: <code>/addon_static/{id}/</code></p>
-<p>Параметры рантайма (громкость, длительность) можно читать из:</p>
-<pre><code>GET /overlay/settings/{overlayId}?token=
+      <h1>LLM Access (<code>llm</code>)</h1>
+<p><strong>Требуется:</strong> <code>LLM</code></p>
+<p>Отправляет текстовые или диалоговые запросы через профили LLM пользователя (Ollama, Gemini, Groq, Cerebras, Puter и др.). API-ключи остаются в основном процессе и никогда не передаются аддонам.</p>
+<h2>Настройка</h2>
+<ol>
+<li>Добавьте <code>&quot;LLM&quot;</code> в <code>permissions</code> в <code>manifest.json</code> (пользователь подтверждает при установке).</li>
+<li>Проверьте в рантайме через <code>permissions.has(AddonsPermission.LLM)</code>.</li>
+<li>При необходимости вызовите <code>llm.getSettings()</code> / <code>llm.listProfiles()</code> перед <code>llm.chat</code>.</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;my-addon&quot;,
+  &quot;permissions&quot;: [&quot;LLM&quot;]
+}
 </code></pre>
-<h3>Полный аддон оверлея (с воркером)</h3>
-<p><code>type: &quot;overlay&quot;</code>, воркер <code>index.js</code>, <code>WEB_CONTENT</code> для кастомного HTML-эффекта.</p>
-<p>Аддоны платформ с <code>DASHBOARD_EVENTS</code> могут регистрировать триггеры оверлея через <code>dashboard.registerTriggers()</code> и передавать <code>trigger</code> в <code>addRecord()</code>.</p>
-<h2>Разрешения</h2>
-<table>
-<thead>
-<tr>
-<th>Паттерн</th>
-<th>Разрешения</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Только статический HTML</td>
-<td><code>WEB_CONTENT</code></td>
-</tr>
-<tr>
-<td>Воркер + HTTP для страницы</td>
-<td><code>WEB_CONTENT</code>, <code>WEB_END_POINTS</code>, часто <code>SOCKET_END_POINTS</code></td>
-</tr>
-</tbody></table>
-<p>Проверяйте <code>data.token</code> на эндпоинтах, предназначенных только для веб-страницы оверлея.</p>
+<h2>Как это работает</h2>
+<ul>
+<li>Используются <strong>те же</strong> профили и маршрутизация, что в <strong>Настройки → LLM Access</strong>.</li>
+<li><code>defaultProfile</code> может быть <code>auto</code> или конкретным id профиля.</li>
+<li><code>options.profile</code> учитывается только если включено <strong>Разрешить аддонам выбирать профиль</strong>.</li>
+<li><code>freeOnly</code> пропускает платные профили / похожие на платные модели.</li>
+<li>При rate limit (HTTP 429 / Retry-After) профиль уходит в cooldown, возможен fallback.</li>
+</ul>
+<h2><code>llm.listProfiles()</code></h2>
+<pre><code class="language-js">const { success, profiles, message } = await llm.listProfiles();
+</code></pre>
+<h2><code>llm.getSettings()</code></h2>
+<pre><code class="language-js">const {
+  success,
+  enabled,
+  defaultProfile,
+  allowAddonProfileSelect,
+  freeOnly,
+  message,
+} = await llm.getSettings();
+</code></pre>
+<h2><code>llm.chat(input, options?)</code></h2>
+<p><code>input</code> — строка или массив <code>{ role, content }</code>. Опции: <code>profile</code>, <code>temperature</code>, <code>topP</code>, <code>maxTokens</code>, <code>freeOnly</code>, <code>timeoutMs</code> и др.</p>
+<pre><code class="language-js">await llm.chat(&#39;Hello&#39;);
+await llm.chat(
+  [
+    { role: &#39;system&#39;, content: &#39;Reply briefly.&#39; },
+    { role: &#39;user&#39;, content: &#39;Hi&#39; },
+  ],
+  { profile: &#39;auto&#39;, temperature: 0.4 }
+);
+</code></pre>
+<p>См. также <a href="./permissions.html">Permissions</a> и <a href="./api-overview.html">API overview</a>.</p>
 
     </main>
   </div>
