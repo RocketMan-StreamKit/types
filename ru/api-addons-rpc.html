@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>addons (RPC) — StreamKit+ Addon Docs</title>
+  <title>addons (RPC и события) — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -56,10 +56,10 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>addons (RPC)</h1>
-<p>Обмен между аддонами, отдельно от <code>events</code> (HTTP). Главный процесс маршрутизирует запросы между <strong>включёнными</strong> воркерами.</p>
+      <h1>addons (RPC и события)</h1>
+<p>Обмен между аддонами, отдельно от <code>events</code> (HTTP). Главный процесс маршрутизирует запросы и подписки на события между воркерами.</p>
 <h2><code>addons.request(targetAddonId, method, params?)</code></h2>
-<p>Вызывает обработчик, зарегистрированный в другом аддоне.</p>
+<p>Вызывает обработчик, зарегистрированный в другом <strong>включённом и запущенном</strong> аддоне.</p>
 <pre><code class="language-js">const res = await addons.request(&#39;other_addon&#39;, &#39;getChannelId&#39;, { platform: &#39;example&#39; });
 if (res.success) {
   console.log(res.result);
@@ -76,6 +76,22 @@ if (res.success) {
 <p>Обработчик получает <code>{ fromAddonId, params }</code> и возвращает payload ответа.</p>
 <h2><code>addons.offRequest(method)</code></h2>
 <p>Удаляет ранее зарегистрированный обработчик.</p>
+<h2><code>addons.emit(event, data?)</code></h2>
+<p>Публикует событие всем аддонам, подписанным на это событие у <strong>текущего</strong> аддона. Доставка fire-and-forget (обработчики не отвечают эмиттеру).</p>
+<pre><code class="language-js">await addons.emit(&#39;streamOnline&#39;, { title: &#39;Live now&#39; });
+</code></pre>
+<p>Возвращает <code>{ success: true, delivered }</code> (<code>delivered</code> — число запущенных подписчиков, которым ушло событие) или <code>{ success: false, message? }</code>.</p>
+<h2><code>addons.subscribe(sourceAddonId, event, handler)</code></h2>
+<p>Подписка на события другого <strong>установленного</strong> аддона. Источник может быть выключен или ещё не запущен; события приходят, когда он эмитит в рабочем состоянии.</p>
+<pre><code class="language-js">const sub = await addons.subscribe(&#39;twitch&#39;, &#39;streamOnline&#39;, ({ fromAddonId, data }) =&gt; {
+  console.log(&#39;Event from&#39;, fromAddonId, data);
+});
+if (sub.success) {
+  // later: sub.Destroy();
+}
+</code></pre>
+<p>Обработчик получает <code>{ fromAddonId, data }</code>. Возвращает <code>{ success: true, id, Destroy }</code> или <code>{ success: false, message? }</code>.</p>
+<p>Вызовите <code>Destroy()</code>, чтобы отписаться. Допускается несколько подписок на одну пару source+event.</p>
 <h2><code>addons.getInfo(addonIds?)</code></h2>
 <p>Читает манифест и статус включения установленных аддонов. <strong>Дополнительное разрешение не требуется.</strong></p>
 <p>Без <code>addonIds</code> возвращаются все установленные аддоны. Передайте массив id, чтобы запросить конкретные аддоны. Неизвестные id включаются с <code>missing: true</code> и <code>enabled: false</code>.</p>
@@ -88,9 +104,26 @@ if (all.success) {
 
 const pair = await addons.getInfo([&#39;twitch&#39;, &#39;other_addon&#39;]);
 </code></pre>
-<p>Каждая запись: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> — разобранный <code>manifest.json</code> или <code>null</code>, если файлы отсутствуют.</p>
+<p>Каждая запись: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> — разобранный <code>manifest.json</code> или <code>null</code>, если файлов нет.</p>
 <h2>Зависимости в манифесте</h2>
-<p>Используйте <code>depends_on: [&quot;other_addon&quot;]</code> в <code>manifest.json</code>, когда вашему аддону нужно, чтобы другой аддон был установлен и включён до активации.</p>
+<p>Используйте <code>depends_on: [&quot;other_addon&quot;]</code> в <code>manifest.json</code>, если аддону нужно, чтобы другой аддон был установлен и включён до активации.</p>
+<h2>Когда использовать RPC, а когда события</h2>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Запросить данные / действие у другого аддона и дождаться ответа</td>
+<td><code>request</code> / <code>onRequest</code></td>
+</tr>
+<tr>
+<td>Пушить обновления, чтобы другие не поллили</td>
+<td><code>emit</code> / <code>subscribe</code></td>
+</tr>
+</tbody></table>
 
     </main>
   </div>

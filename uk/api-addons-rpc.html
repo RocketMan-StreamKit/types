@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>addons (RPC) — StreamKit+ Addon Docs</title>
+  <title>addons (RPC і події) — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -56,10 +56,10 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>addons (RPC)</h1>
-<p>Комунікація між аддонами, окремо від <code>events</code> (HTTP). Main process маршрутизує запити між <strong>увімкненими</strong> worker.</p>
+      <h1>addons (RPC і події)</h1>
+<p>Обмін між аддонами, окремо від <code>events</code> (HTTP). Головний процес маршрутизує запити та підписки на події між воркерами.</p>
 <h2><code>addons.request(targetAddonId, method, params?)</code></h2>
-<p>Викликає обробник, зареєстрований в іншому аддоні.</p>
+<p>Викликає обробник, зареєстрований в іншому <strong>увімкненому та запущеному</strong> аддоні.</p>
 <pre><code class="language-js">const res = await addons.request(&#39;other_addon&#39;, &#39;getChannelId&#39;, { platform: &#39;example&#39; });
 if (res.success) {
   console.log(res.result);
@@ -67,7 +67,7 @@ if (res.success) {
 </code></pre>
 <p>Повертає <code>{ success: true, result? }</code> або <code>{ success: false, message? }</code>.</p>
 <h2><code>addons.onRequest(method, handler)</code></h2>
-<p>Надає метод іншим аддонам.</p>
+<p>Експонує метод для інших аддонів.</p>
 <pre><code class="language-js">addons.onRequest(&#39;getChannelId&#39;, async ({ fromAddonId, params }) =&gt; {
   console.log(&#39;Request from&#39;, fromAddonId);
   return { channelId: &#39;12345&#39; };
@@ -76,9 +76,25 @@ if (res.success) {
 <p>Обробник отримує <code>{ fromAddonId, params }</code> і повертає payload відповіді.</p>
 <h2><code>addons.offRequest(method)</code></h2>
 <p>Видаляє раніше зареєстрований обробник.</p>
+<h2><code>addons.emit(event, data?)</code></h2>
+<p>Публікує подію всім аддонам, підписаним на цю подію у <strong>поточного</strong> аддона. Доставка fire-and-forget (обробники не відповідають емітеру).</p>
+<pre><code class="language-js">await addons.emit(&#39;streamOnline&#39;, { title: &#39;Live now&#39; });
+</code></pre>
+<p>Повертає <code>{ success: true, delivered }</code> (<code>delivered</code> — кількість запущених підписників, яким пішла подія) або <code>{ success: false, message? }</code>.</p>
+<h2><code>addons.subscribe(sourceAddonId, event, handler)</code></h2>
+<p>Підписка на події іншого <strong>встановленого</strong> аддона. Джерело може бути вимкнене або ще не запущене; події надходять, коли воно емітить у робочому стані.</p>
+<pre><code class="language-js">const sub = await addons.subscribe(&#39;twitch&#39;, &#39;streamOnline&#39;, ({ fromAddonId, data }) =&gt; {
+  console.log(&#39;Event from&#39;, fromAddonId, data);
+});
+if (sub.success) {
+  // later: sub.Destroy();
+}
+</code></pre>
+<p>Обробник отримує <code>{ fromAddonId, data }</code>. Повертає <code>{ success: true, id, Destroy }</code> або <code>{ success: false, message? }</code>.</p>
+<p>Викличте <code>Destroy()</code>, щоб відписатися. Допускається кілька підписок на одну пару source+event.</p>
 <h2><code>addons.getInfo(addonIds?)</code></h2>
 <p>Читає маніфест і статус увімкнення встановлених аддонів. <strong>Додатковий дозвіл не потрібен.</strong></p>
-<p>Без <code>addonIds</code> повертаються всі встановлені аддони. Передайте масив id, щоб запитати конкретні аддони. Невідомі id включаються з <code>missing: true</code> та <code>enabled: false</code>.</p>
+<p>Без <code>addonIds</code> повертаються всі встановлені аддони. Передайте масив id, щоб запросити конкретні аддони. Невідомі id включаються з <code>missing: true</code> і <code>enabled: false</code>.</p>
 <pre><code class="language-js">const all = await addons.getInfo();
 if (all.success) {
   for (const addon of all.addons) {
@@ -88,9 +104,26 @@ if (all.success) {
 
 const pair = await addons.getInfo([&#39;twitch&#39;, &#39;other_addon&#39;]);
 </code></pre>
-<p>Кожен запис: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> — розібраний <code>manifest.json</code> або <code>null</code>, якщо файли відсутні.</p>
+<p>Кожен запис: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> — розібраний <code>manifest.json</code> або <code>null</code>, якщо файлів немає.</p>
 <h2>Залежності в маніфесті</h2>
-<p>Використовуйте <code>depends_on: [&quot;other_addon&quot;]</code> в <code>manifest.json</code>, коли ваш аддон потребує, щоб інший аддон був встановлений і увімкнений перед активацією.</p>
+<p>Використовуйте <code>depends_on: [&quot;other_addon&quot;]</code> у <code>manifest.json</code>, якщо аддону потрібно, щоб інший аддон був встановлений і увімкнений до активації.</p>
+<h2>Коли використовувати RPC, а коли події</h2>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Запросити дані / дію в іншого аддона і дочекатися відповіді</td>
+<td><code>request</code> / <code>onRequest</code></td>
+</tr>
+<tr>
+<td>Пушити оновлення, щоб інші не поліли</td>
+<td><code>emit</code> / <code>subscribe</code></td>
+</tr>
+</tbody></table>
 
     </main>
   </div>

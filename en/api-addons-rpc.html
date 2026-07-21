@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>addons (RPC) — StreamKit+ Addon Docs</title>
+  <title>addons (RPC & events) — StreamKit+ Addon Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -56,10 +56,10 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>addons (RPC)</h1>
-<p>Addon-to-addon communication separate from <code>events</code> (HTTP). Main process routes requests between <strong>enabled</strong> workers.</p>
+      <h1>addons (RPC &amp; events)</h1>
+<p>Addon-to-addon communication separate from <code>events</code> (HTTP). Main process routes requests and event subscriptions between workers.</p>
 <h2><code>addons.request(targetAddonId, method, params?)</code></h2>
-<p>Call a handler registered in another addon.</p>
+<p>Call a handler registered in another <strong>enabled, running</strong> addon.</p>
 <pre><code class="language-js">const res = await addons.request(&#39;other_addon&#39;, &#39;getChannelId&#39;, { platform: &#39;example&#39; });
 if (res.success) {
   console.log(res.result);
@@ -76,6 +76,22 @@ if (res.success) {
 <p>Handler receives <code>{ fromAddonId, params }</code> and returns the response payload.</p>
 <h2><code>addons.offRequest(method)</code></h2>
 <p>Remove a previously registered handler.</p>
+<h2><code>addons.emit(event, data?)</code></h2>
+<p>Publish an event to every addon currently subscribed to this event on <strong>this</strong> addon. Delivery is fire-and-forget (handlers do not reply).</p>
+<pre><code class="language-js">await addons.emit(&#39;streamOnline&#39;, { title: &#39;Live now&#39; });
+</code></pre>
+<p>Returns <code>{ success: true, delivered }</code> (<code>delivered</code> is how many running subscribers were notified) or <code>{ success: false, message? }</code>.</p>
+<h2><code>addons.subscribe(sourceAddonId, event, handler)</code></h2>
+<p>Subscribe to events from another <strong>installed</strong> addon. The source may be disabled or not running yet; events are delivered when it emits while running.</p>
+<pre><code class="language-js">const sub = await addons.subscribe(&#39;twitch&#39;, &#39;streamOnline&#39;, ({ fromAddonId, data }) =&gt; {
+  console.log(&#39;Event from&#39;, fromAddonId, data);
+});
+if (sub.success) {
+  // later: sub.Destroy();
+}
+</code></pre>
+<p>Handler receives <code>{ fromAddonId, data }</code>. Returns <code>{ success: true, id, Destroy }</code> or <code>{ success: false, message? }</code>.</p>
+<p>Call <code>Destroy()</code> to unsubscribe. Multiple subscriptions to the same source+event are allowed.</p>
 <h2><code>addons.getInfo(addonIds?)</code></h2>
 <p>Read manifest and enabled status for installed addons. <strong>No extra permission.</strong></p>
 <p>Omit <code>addonIds</code> to return every installed addon. Pass an array of ids to query specific addons. Unknown ids are included with <code>missing: true</code> and <code>enabled: false</code>.</p>
@@ -91,6 +107,23 @@ const pair = await addons.getInfo([&#39;twitch&#39;, &#39;other_addon&#39;]);
 <p>Each entry: <code>{ id, enabled, manifest, missing }</code>. <code>manifest</code> is the parsed <code>manifest.json</code> or <code>null</code> when files are missing.</p>
 <h2>Manifest dependencies</h2>
 <p>Use <code>depends_on: [&quot;other_addon&quot;]</code> in <code>manifest.json</code> when your addon requires another addon to be installed and enabled before activation.</p>
+<h2>When to use RPC vs events</h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ask another addon for data / action and wait for a result</td>
+<td><code>request</code> / <code>onRequest</code></td>
+</tr>
+<tr>
+<td>Push updates so others do not poll</td>
+<td><code>emit</code> / <code>subscribe</code></td>
+</tr>
+</tbody></table>
 
     </main>
   </div>

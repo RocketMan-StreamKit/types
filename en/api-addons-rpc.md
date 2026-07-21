@@ -1,10 +1,10 @@
-# addons (RPC)
+# addons (RPC & events)
 
-Addon-to-addon communication separate from `events` (HTTP). Main process routes requests between **enabled** workers.
+Addon-to-addon communication separate from `events` (HTTP). Main process routes requests and event subscriptions between workers.
 
 ## `addons.request(targetAddonId, method, params?)`
 
-Call a handler registered in another addon.
+Call a handler registered in another **enabled, running** addon.
 
 ```js
 const res = await addons.request('other_addon', 'getChannelId', { platform: 'example' });
@@ -32,6 +32,33 @@ Handler receives `{ fromAddonId, params }` and returns the response payload.
 
 Remove a previously registered handler.
 
+## `addons.emit(event, data?)`
+
+Publish an event to every addon currently subscribed to this event on **this** addon. Delivery is fire-and-forget (handlers do not reply).
+
+```js
+await addons.emit('streamOnline', { title: 'Live now' });
+```
+
+Returns `{ success: true, delivered }` (`delivered` is how many running subscribers were notified) or `{ success: false, message? }`.
+
+## `addons.subscribe(sourceAddonId, event, handler)`
+
+Subscribe to events from another **installed** addon. The source may be disabled or not running yet; events are delivered when it emits while running.
+
+```js
+const sub = await addons.subscribe('twitch', 'streamOnline', ({ fromAddonId, data }) => {
+  console.log('Event from', fromAddonId, data);
+});
+if (sub.success) {
+  // later: sub.Destroy();
+}
+```
+
+Handler receives `{ fromAddonId, data }`. Returns `{ success: true, id, Destroy }` or `{ success: false, message? }`.
+
+Call `Destroy()` to unsubscribe. Multiple subscriptions to the same source+event are allowed.
+
 ## `addons.getInfo(addonIds?)`
 
 Read manifest and enabled status for installed addons. **No extra permission.**
@@ -54,3 +81,10 @@ Each entry: `{ id, enabled, manifest, missing }`. `manifest` is the parsed `mani
 ## Manifest dependencies
 
 Use `depends_on: ["other_addon"]` in `manifest.json` when your addon requires another addon to be installed and enabled before activation.
+
+## When to use RPC vs events
+
+| Need | API |
+| --- | --- |
+| Ask another addon for data / action and wait for a result | `request` / `onRequest` |
+| Push updates so others do not poll | `emit` / `subscribe` |

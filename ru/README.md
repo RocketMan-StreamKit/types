@@ -29,7 +29,7 @@
 | [Озвучка текста (`tts`)](./api-tts.md) | Озвучка через TTS-движок пользователя (разрешение `TTS`) |
 | [LLM Access (`llm`)](./api-llm.md) | Запросы к нейросетям через профили пользователя (разрешение `LLM`) |
 | [Загрузки yt-dlp (`ytdlp`)](./api-ytdlp.md) | Загрузка медиа через встроенный yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
-| [addons (RPC)](./api-addons-rpc.md) | Запросы между аддонами |
+| [addons (RPC)](./api-addons-rpc.md) | Запросы и события между аддонами |
 | [dashboard](./api-dashboard.md) | Виджет событий, чат, триггеры оверлея |
 | [status, notify, ui](./api-status-notify-ui.md) | Строка состояния, онлайн зрителей, уведомления, страницы OAuth |
 | [Валюта](./api-currency.md) | Основная валюта пользователя и конвертация сумм |

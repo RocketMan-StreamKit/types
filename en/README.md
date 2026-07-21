@@ -29,7 +29,7 @@ Integration addons extend StreamKit+ from an isolated worker process. Addon code
 | [Text-to-speech (`tts`)](./api-tts.md) | Play messages via the user's TTS engine (`TTS` permission) |
 | [LLM Access (`llm`)](./api-llm.md) | Chat completions via user LLM profiles (`LLM` permission) |
 | [yt-dlp downloads (`ytdlp`)](./api-ytdlp.md) | Download media via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
-| [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests |
+| [addons (RPC)](./api-addons-rpc.md) | Addon-to-addon requests and events |
 | [dashboard](./api-dashboard.md) | Events widget, chat, overlay triggers |
 | [status, notify, ui](./api-status-notify-ui.md) | Status bar, viewer count, notifications, OAuth result pages |
 | [Currency](./api-currency.md) | User's primary currency and amount conversion |

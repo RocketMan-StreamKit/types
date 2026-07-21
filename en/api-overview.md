@@ -14,7 +14,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `events` | `On(name, handler)` — bind HTTP/Socket.IO callbacks |
 | `network` | HTTP client, inbound routes, WebSocket, SSE, SignalR, Socket.IO |
 | `api` | `openUrl`, `restart`, `getProcessStats`, `config.*` |
-| `addons` | `request`, `onRequest`, `offRequest`, `getInfo` — addon-to-addon RPC and install metadata |
+| `addons` | `request`, `onRequest`, `offRequest`, `emit`, `subscribe`, `getInfo` — addon-to-addon RPC, events, and install metadata |
 | `dashboard` | Events widget, chat, platforms, overlay triggers |
 | `status` | Main window status bar |
 | `viewers` | Live viewer count in the main window status bar (no permission) |

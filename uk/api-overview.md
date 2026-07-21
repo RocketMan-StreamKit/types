@@ -14,7 +14,7 @@
 | `events` | `On(name, handler)` — прив'язка HTTP/Socket.IO callback |
 | `network` | HTTP-клієнт, вхідні маршрути, WebSocket, SSE, SignalR, Socket.IO |
 | `api` | `openUrl`, `restart`, `getProcessStats`, `config.*` |
-| `addons` | `request`, `onRequest`, `offRequest`, `getInfo` — RPC між аддонами та метадані встановлення |
+| `addons` | `request`, `onRequest`, `offRequest`, `emit`, `subscribe`, `getInfo` — RPC і події між аддонами, метадані встановлення |
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |
 | `status` | Рядок стану головного вікна |
 | `viewers` | Онлайн глядачів у рядку стану головного вікна (без дозволу) |

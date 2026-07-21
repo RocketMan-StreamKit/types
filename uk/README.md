@@ -29,7 +29,7 @@
 | [Озвучення тексту (`tts`)](./api-tts.md) | Озвучення через TTS-движок користувача (дозвіл `TTS`) |
 | [LLM Access (`llm`)](./api-llm.md) | Запити до нейромереж через профілі користувача (дозвіл `LLM`) |
 | [Завантаження yt-dlp (`ytdlp`)](./api-ytdlp.md) | Завантаження медіа через вбудований yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
-| [addons (RPC)](./api-addons-rpc.md) | Запити між аддонами |
+| [addons (RPC)](./api-addons-rpc.md) | Запити та події між аддонами |
 | [dashboard](./api-dashboard.md) | Віджет подій, чат, тригери оверлею |
 | [status, notify, ui](./api-status-notify-ui.md) | Рядок стану, онлайн глядачів, сповіщення, сторінки OAuth |
 | [Валюта](./api-currency.md) | Основна валюта користувача та конвертація сум |

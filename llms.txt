@@ -1,6 +1,6 @@
 # StreamKit+ Addon Developer Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.46.
+> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.0.47.
 
 ## Web documentation
 
@@ -27,7 +27,7 @@
 - [Text-to-speech (`tts`)](https://rocketman-streamkit.github.io/types/en/api-tts.html): Play messages via the user's TTS engine (`TTS` permission)
 - [LLM Access (`llm`)](https://rocketman-streamkit.github.io/types/en/api-llm.html): Chat completions via user LLM profiles (`LLM` permission)
 - [yt-dlp downloads (`ytdlp`)](https://rocketman-streamkit.github.io/types/en/api-ytdlp.html): Download media via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`)
-- [addons (RPC)](https://rocketman-streamkit.github.io/types/en/api-addons-rpc.html): Addon-to-addon requests
+- [addons (RPC)](https://rocketman-streamkit.github.io/types/en/api-addons-rpc.html): Addon-to-addon requests and events
 - [dashboard](https://rocketman-streamkit.github.io/types/en/api-dashboard.html): Events widget, chat, overlay triggers
 - [status, notify, ui](https://rocketman-streamkit.github.io/types/en/api-status-notify-ui.html): Status bar, viewer count, notifications, OAuth result pages
 - [Currency](https://rocketman-streamkit.github.io/types/en/api-currency.html): User's primary currency and amount conversion
