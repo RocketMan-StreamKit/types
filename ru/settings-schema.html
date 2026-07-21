@@ -73,7 +73,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code></td>
+<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>default</code></td>
@@ -89,7 +89,7 @@
 </tr>
 <tr>
 <td><code>items</code></td>
-<td>Для <code>array</code>: <code>&#39;text&#39;</code> или <code>&#39;number&#39;</code></td>
+<td>Для <code>array</code>: <code>&#39;text&#39;</code> или <code>&#39;number&#39;</code>. Для <code>spoiler</code> / <code>page</code>: вложенные записи схемы (тот же формат, что у аргументов <code>GenerateConfig</code>; рекурсия допускается)</td>
 </tr>
 <tr>
 <td><code>fields</code></td>
@@ -120,7 +120,41 @@
 <li><strong>object</strong> — вложенный объект с <code>fields</code></li>
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> должен совпадать с опцией, иначе берётся первая</li>
 <li><strong>button</strong> — значение не хранится; при клике вызывает <code>events.On(event, …)</code> (только для объявленных имён событий)</li>
+<li><strong>spoiler</strong> — значение не хранится; кнопка раскрывает/скрывает вложенные <code>items</code> на месте (те же записи схемы, что у <code>GenerateConfig</code>, включая строки и вложенные spoiler/page)</li>
+<li><strong>page</strong> — значение не хранится; кнопка открывает отдельный экран с <code>items</code> и кнопкой «Назад» (рекурсия допускается)</li>
 </ul>
+<p>Поля внутри <code>spoiler</code> / <code>page</code> хранятся на <strong>уровне родительских params</strong> (ключи-соседи контейнера), а не под ключом контейнера.</p>
+<h2>Пример spoiler / page</h2>
+<pre><code class="language-js">{
+  key: &#39;advanced&#39;,
+  type: &#39;spoiler&#39;,
+  editor: {
+    label: { en: &#39;Advanced&#39;, ru: &#39;Дополнительно&#39;, uk: &#39;Додатково&#39; },
+    description: { en: &#39;Optional tuning&#39;, ru: &#39;Дополнительные параметры&#39; },
+  },
+  items: [
+    {
+      key: &#39;debug&#39;,
+      type: &#39;boolean&#39;,
+      default: false,
+      editor: { label: { en: &#39;Debug logging&#39;, ru: &#39;Отладочный лог&#39; } },
+    },
+    {
+      key: &#39;network&#39;,
+      type: &#39;page&#39;,
+      editor: { label: { en: &#39;Network&#39;, ru: &#39;Сеть&#39; } },
+      items: [
+        {
+          key: &#39;timeout_ms&#39;,
+          type: &#39;number&#39;,
+          default: 5000,
+          editor: { label: { en: &#39;Timeout (ms)&#39;, ru: &#39;Таймаут (мс)&#39; } },
+        },
+      ],
+    },
+  ],
+},
+</code></pre>
 <h2>Пример</h2>
 <pre><code class="language-js">GenerateConfig([
   {

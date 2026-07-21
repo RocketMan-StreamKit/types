@@ -9,11 +9,11 @@
 | Властивість | Опис |
 | --- | --- |
 | `key` | Ключ зберігання в об'єкті params |
-| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `default` | Початкове значення |
 | `editor` | Якщо присутній — поле з'являється в UI налаштувань з міткою, валідацією тощо |
 | `options` | Для `select`: `{ value, label? }[]` |
-| `items` | Для `array`: `'text'` або `'number'` |
+| `items` | Для `array`: `'text'` або `'number'`. Для `spoiler` / `page`: вкладені записи схеми (той самий формат, що й аргументи `GenerateConfig`; рекурсія дозволена) |
 | `fields` | Для `object`: вкладені поля |
 | `event` | Для `button`: ім'я події при натисканні (обробляйте через `events.On`) |
 
@@ -42,6 +42,44 @@ GenerateConfig([
 - **object** — вкладений об'єкт з `fields`
 - **select** — `options: { value, label? }[]`; `default` має відповідати опції, інакше використовується перша опція
 - **button** — значення не зберігається; при натисканні викликає `events.On(event, …)` (обмежено оголошеними іменами подій)
+- **spoiler** — значення не зберігається; кнопка розкриває/ховає вкладені `items` на місці (ті самі записи схеми, що й у `GenerateConfig`, включно з рядками та вкладеними spoiler/page)
+- **page** — значення не зберігається; кнопка відкриває окремий екран з `items` і кнопкою «Назад» (рекурсія дозволена)
+
+Поля всередині `spoiler` / `page` зберігаються на **рівні батьківських params** (ключі-сусіди контейнера), а не під ключем контейнера.
+
+## Приклад spoiler / page
+
+```js
+{
+  key: 'advanced',
+  type: 'spoiler',
+  editor: {
+    label: { en: 'Advanced', ru: 'Дополнительно', uk: 'Додатково' },
+    description: { en: 'Optional tuning', uk: 'Додаткові параметри' },
+  },
+  items: [
+    {
+      key: 'debug',
+      type: 'boolean',
+      default: false,
+      editor: { label: { en: 'Debug logging', uk: 'Налагоджувальний лог' } },
+    },
+    {
+      key: 'network',
+      type: 'page',
+      editor: { label: { en: 'Network', uk: 'Мережа' } },
+      items: [
+        {
+          key: 'timeout_ms',
+          type: 'number',
+          default: 5000,
+          editor: { label: { en: 'Timeout (ms)', uk: 'Таймаут (мс)' } },
+        },
+      ],
+    },
+  ],
+},
+```
 
 ## Приклад
 

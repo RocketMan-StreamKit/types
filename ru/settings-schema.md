@@ -9,11 +9,11 @@
 | Свойство | Описание |
 | --- | --- |
 | `key` | Ключ хранения в объекте params |
-| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `default` | Начальное значение |
 | `editor` | Если задан — поле показывается в UI настроек с подписью, валидацией и т.д. |
 | `options` | Для `select`: `{ value, label? }[]` |
-| `items` | Для `array`: `'text'` или `'number'` |
+| `items` | Для `array`: `'text'` или `'number'`. Для `spoiler` / `page`: вложенные записи схемы (тот же формат, что у аргументов `GenerateConfig`; рекурсия допускается) |
 | `fields` | Для `object`: вложенные поля |
 | `event` | Для `button`: имя события при клике (обрабатывается через `events.On`) |
 
@@ -42,6 +42,44 @@ GenerateConfig([
 - **object** — вложенный объект с `fields`
 - **select** — `options: { value, label? }[]`; `default` должен совпадать с опцией, иначе берётся первая
 - **button** — значение не хранится; при клике вызывает `events.On(event, …)` (только для объявленных имён событий)
+- **spoiler** — значение не хранится; кнопка раскрывает/скрывает вложенные `items` на месте (те же записи схемы, что у `GenerateConfig`, включая строки и вложенные spoiler/page)
+- **page** — значение не хранится; кнопка открывает отдельный экран с `items` и кнопкой «Назад» (рекурсия допускается)
+
+Поля внутри `spoiler` / `page` хранятся на **уровне родительских params** (ключи-соседи контейнера), а не под ключом контейнера.
+
+## Пример spoiler / page
+
+```js
+{
+  key: 'advanced',
+  type: 'spoiler',
+  editor: {
+    label: { en: 'Advanced', ru: 'Дополнительно', uk: 'Додатково' },
+    description: { en: 'Optional tuning', ru: 'Дополнительные параметры' },
+  },
+  items: [
+    {
+      key: 'debug',
+      type: 'boolean',
+      default: false,
+      editor: { label: { en: 'Debug logging', ru: 'Отладочный лог' } },
+    },
+    {
+      key: 'network',
+      type: 'page',
+      editor: { label: { en: 'Network', ru: 'Сеть' } },
+      items: [
+        {
+          key: 'timeout_ms',
+          type: 'number',
+          default: 5000,
+          editor: { label: { en: 'Timeout (ms)', ru: 'Таймаут (мс)' } },
+        },
+      ],
+    },
+  ],
+},
+```
 
 ## Пример
 

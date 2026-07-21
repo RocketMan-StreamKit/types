@@ -9,12 +9,12 @@ Each field has:
 | Property | Description |
 | --- | --- |
 | `key` | Storage key in params object |
-| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info` |
+| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename), `namePattern` (regex on basename, file only) |
 | `default` | Initial value |
 | `editor` | If present, field appears in settings UI with label, validation, etc. |
 | `options` | For `select`: `{ value, label? }[]` |
-| `items` | For `array`: `'text'` or `'number'` |
+| `items` | For `array`: `'text'` or `'number'`. For `spoiler` / `page`: nested schema entries (same shape as `GenerateConfig` arguments; recursion allowed) |
 | `fields` | For `object`: nested fields |
 | `event` | For `button`: event name fired on click (handle with `events.On`) |
 
@@ -46,6 +46,44 @@ GenerateConfig([
 - **folder** — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)
 - **file** — absolute file path; read-only display, browse with `filters` / `filename` / `namePattern`, open in file manager (highlights the file when possible)
 - **info** — read-only text block for hints and warnings; `editor.description` is the body; optional `editor.infoBorder`: `blue`, `red`, or `yellow`
+- **spoiler** — no stored value; button that expands/collapses nested `items` inline (same schema entries as `GenerateConfig`, including rows and nested spoilers/pages)
+- **page** — no stored value; button that opens a nested settings view for `items` with a Back control (recursion allowed)
+
+Nested fields inside `spoiler` / `page` store values at the **parent params level** (sibling keys to the container), not under the container key.
+
+## Spoiler / page example
+
+```js
+{
+  key: 'advanced',
+  type: 'spoiler',
+  editor: {
+    label: { en: 'Advanced', ru: 'Дополнительно', uk: 'Додатково' },
+    description: { en: 'Optional tuning' },
+  },
+  items: [
+    {
+      key: 'debug',
+      type: 'boolean',
+      default: false,
+      editor: { label: { en: 'Debug logging' } },
+    },
+    {
+      key: 'network',
+      type: 'page',
+      editor: { label: { en: 'Network' } },
+      items: [
+        {
+          key: 'timeout_ms',
+          type: 'number',
+          default: 5000,
+          editor: { label: { en: 'Timeout (ms)' } },
+        },
+      ],
+    },
+  ],
+},
+```
 
 ## Info block example
 
