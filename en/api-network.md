@@ -16,6 +16,19 @@ await network.endpoints.create(path, method, callbackName);
 
 Returns `{ success: true }` or `{ success: false, message }`.
 
+### Streaming a file from `ADDON_TMP_DIR`
+
+Endpoint handlers may return `{ file: absolutePath, contentType? }` instead of JSON. The main process streams that file **only** when it lies under this addon's `ADDON_TMP_DIR` (HTTP Range supported for media seeking).
+
+```js
+events.On('onMedia', ({ query }) => {
+  if (query.token !== data.token) {
+    return { success: false, message: 'Unauthorized' };
+  }
+  return { file: `${ADDON_TMP_DIR}/clip.mp4` };
+});
+```
+
 ### Token-protected endpoint for web UI
 
 ```js

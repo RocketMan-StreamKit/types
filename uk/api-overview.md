@@ -7,6 +7,7 @@
 | Global | Призначення |
 | --- | --- |
 | `isDeveloperMode` | `true` у dev-збірках або коли користувач увімкнув Developer mode |
+| `ADDON_TMP_DIR` | Абсолютний scratch-каталог аддона в temp ОС (`…/StreamKitPlusAddons/{id}`); без згоди для шляхів всередині |
 | `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — міст до локалі UI застосунку |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Метадані екземпляра: `id`, `name`, `permissions`, `path`, `token`, … |

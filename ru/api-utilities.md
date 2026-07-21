@@ -38,6 +38,20 @@ if (isDeveloperMode) {
 }
 ```
 
+## `ADDON_TMP_DIR`
+
+Абсолютный путь к scratch-папке аддона в temp ОС:
+
+`{os.tmpdir()}/StreamKitPlusAddons/{addonId}`
+
+Создаётся автоматически при старте воркера. Если в `addonId` есть `/` (например `ORG/REPO`), получаются вложенные папки. Пути внутри **не** требуют `files.requestAccess`. Используйте с `files.*` (`FILE_ACCESS`) или `ytdlp.downloadFile`. Обработчик эндпоинта может вернуть `{ file: pathInsideTmp }`, чтобы отдать медиа в веб-UI аддона.
+
+```js
+const sep = ADDON_TMP_DIR.includes('\\') ? '\\' : '/';
+const out = `${ADDON_TMP_DIR}${sep}clip.%(ext)s`;
+await ytdlp.downloadFile(url, out, { format: 'ba/bestaudio', extractAudio: true, audioFormat: 'm4a' });
+```
+
 ## `console`
 
 `log`, `error`, `warn`, `info` — с префиксом `[Addon {id}]`.

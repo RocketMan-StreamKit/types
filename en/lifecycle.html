@@ -74,6 +74,52 @@
 <li>Developer mode toggle (requires full app/worker restart to propagate <code>isDeveloperMode</code>)</li>
 </ul>
 <p><code>storage.Read()</code> / <code>storage.Write()</code> persist across worker restarts within the same install. <code>api.config</code> params persist in app config.</p>
+<h2>Graceful stop — <code>addon:prepare-stop</code></h2>
+<p>Before StreamKit+ kills the addon worker, the main process fires the built-in event <code>addon:prepare-stop</code> and waits for the handler to finish (with a short timeout, about <strong>2.5 seconds</strong>). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.</p>
+<p><strong>When it fires</strong></p>
+<ul>
+<li>The user <strong>disables</strong> the addon in settings</li>
+<li>The addon is <strong>uninstalled</strong> (or deactivated as a dependency of an uninstall)</li>
+<li>The <strong>application is quitting</strong> (all integration workers receive prepare-stop before kill)</li>
+</ul>
+<p><strong>When it does not fire</strong></p>
+<ul>
+<li>Worker <strong>crash</strong> / disconnect (no time for a graceful handler)</li>
+<li>Sudden process kill where the main process cannot await workers</li>
+</ul>
+<p><strong>Handler contract</strong></p>
+<pre><code class="language-js">events.On(&#39;addon:prepare-stop&#39;, async () =&gt; {
+  // e.g. pause or disable remote resources (Twitch rewards, webhooks, …)
+  await cleanupRemoteState();
+  return { success: true };
+});
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Detail</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Payload</td>
+<td><code>{}</code> (empty object)</td>
+</tr>
+<tr>
+<td>Permission</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Timeout</td>
+<td>~2.5s — keep work short; unfinished work is abandoned and the worker is killed</td>
+</tr>
+<tr>
+<td>Optional</td>
+<td>Omitting the handler is fine; other addons are unaffected</td>
+</tr>
+</tbody></table>
+<p>Do <strong>not</strong> rely on this event for data that must survive forever — persist important state with <code>storage</code> / <code>api.config</code> during normal operation. Prefer <code>addon:prepare-stop</code> for best-effort remote teardown (pause rewards, close sessions, revoke short-lived hooks).</p>
+<p>See also <a href="./api-events.html#built-in-main--addon-events">events</a>.</p>
 <h2>Crash loop protection</h2>
 <p>If the worker process <strong>crashes</strong> (uncaught exception, fatal error, abrupt exit), StreamKit+ restarts it automatically — similar to a normal restart.</p>
 <p>To avoid an infinite restart loop, the app tracks <strong>consecutive crashes</strong>:</p>

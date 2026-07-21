@@ -7,7 +7,10 @@ Downloads media from supported sites using the **bundled yt-dlp binary** in the 
 ## Setup
 
 1. Add `"FILE_ACCESS"` and `"NETWORK_REQUEST"` to `permissions` in `manifest.json`.
-2. Request **manage** access to the output folder before downloading:
+2. Choose an output folder:
+   - **User folder:** request **manage** access before downloading (`files.requestAccess(folder, 'manage')`).
+   - **Addon temp folder:** write under `ADDON_TMP_DIR` — no consent dialog is required.
+3. Subscribe to progress, then call `ytdlp.downloadFile`.
 
 ```js
 const folder = 'C:\\Videos\\clips';
@@ -17,8 +20,6 @@ if (!access.success) {
   return;
 }
 ```
-
-3. Subscribe to progress, then call `ytdlp.downloadFile`.
 
 ```json
 {
@@ -32,7 +33,8 @@ if (!access.success) {
 - Downloads run in the **main process** via the bundled yt-dlp binary (`yt-dlp_linux`, `yt-dlp_macos`, `yt-dlp.exe`).
 - The output path is passed to yt-dlp `-o`. You may use **yt-dlp output template variables** in the filename (see below).
 - **Literal** (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values (for example `%(title)s`) are kept as-is, including Cyrillic characters.
-- The **parent directory** of the output path must be covered by a user-approved **manage** file-access grant (`files.requestAccess(folder, 'manage')`).
+- The **parent directory** of the output path must be covered by a user-approved **manage** file-access grant (`files.requestAccess(folder, 'manage')`), **or** lie under `ADDON_TMP_DIR`.
+- Optional conversion flags map to yt-dlp: `format` → `-f`, `extractAudio` → `-x`, `audioFormat` → `--audio-format`, `mergeOutputFormat` → `--merge-output-format`.
 - Progress is pushed to the addon worker as `ytdlp:download-progress` events while the download runs.
 - Up to **10** parallel HLS/DASH fragments can be requested with `concurrentFragments` (maps to `--concurrent-fragments`).
 
@@ -44,6 +46,10 @@ if (!access.success) {
 | `outputPath` | yes | Absolute output path; may include yt-dlp variables like `%(title)s.%(ext)s` |
 | `options.downloadId` | no | Correlates progress events; auto-generated when omitted |
 | `options.concurrentFragments` | no | Parallel fragments, `1`…`10` (default: yt-dlp default) |
+| `options.format` | no | yt-dlp `-f` selector (for example `ba/bestaudio`) |
+| `options.extractAudio` | no | When `true`, pass `-x` to extract audio |
+| `options.audioFormat` | no | `--audio-format` with `extractAudio` (for example `m4a`, `mp3`) |
+| `options.mergeOutputFormat` | no | `--merge-output-format` (for example `mp4`) |
 
 Returns:
 
@@ -129,12 +135,30 @@ events.On('ytdlp:download-progress', ({ downloadId: id, progress }) => {
 const result = await ytdlp.downloadFile(
   'https://www.twitch.tv/videos/1234567890',
   `${outputDir}\\%(uploader)s - %(title)s.%(ext)s`,
-  { downloadId, concurrentFragments: 4 }
+  {
+    downloadId,
+    concurrentFragments: 4,
+    format: 'bv*[height<=720]+ba/b[height<=720]',
+    mergeOutputFormat: 'mp4',
+  }
 );
 
 if (!result.success) {
   console.warn(result.error, result.message);
 }
+```
+
+### Audio-only into `ADDON_TMP_DIR`
+
+```js
+const sep = ADDON_TMP_DIR.includes('\\') ? '\\' : '/';
+const outputPath = `${ADDON_TMP_DIR}${sep}track.%(ext)s`;
+
+const result = await ytdlp.downloadFile(url, outputPath, {
+  format: 'ba/bestaudio',
+  extractAudio: true,
+  audioFormat: 'm4a',
+});
 ```
 
 ## Output template variables

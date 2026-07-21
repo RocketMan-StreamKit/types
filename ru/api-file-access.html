@@ -58,6 +58,7 @@
     <main class="content">
       <h1>Доступ к файлам (<code>files</code> API)</h1>
 <p>Требуется право <code>FILE_ACCESS</code> в манифесте. Прямой <code>require(&#39;fs&#39;)</code> недоступен (нужен <code>ROOT</code>). Используйте глобальный объект <code>files</code>: пользователь одобряет каждый путь; main process ограничивает область.</p>
+<p><strong>Исключение:</strong> у каждого аддона есть папка в temp ОС (<code>ADDON_TMP_DIR</code>). Пути внутри неё не требуют <code>files.requestAccess</code>.</p>
 <h2>Как это работает</h2>
 <ol>
 <li>Укажите <code>&quot;FILE_ACCESS&quot;</code> в <code>manifest.json</code>.</li>

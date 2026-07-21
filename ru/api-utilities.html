@@ -103,6 +103,14 @@ setInterval(() =&gt; {
   console.log(&#39;Debug info&#39;, params);
 }
 </code></pre>
+<h2><code>ADDON_TMP_DIR</code></h2>
+<p>Абсолютный путь к scratch-папке аддона в temp ОС:</p>
+<p><code>{os.tmpdir()}/StreamKitPlusAddons/{addonId}</code></p>
+<p>Создаётся автоматически при старте воркера. Если в <code>addonId</code> есть <code>/</code> (например <code>ORG/REPO</code>), получаются вложенные папки. Пути внутри <strong>не</strong> требуют <code>files.requestAccess</code>. Используйте с <code>files.*</code> (<code>FILE_ACCESS</code>) или <code>ytdlp.downloadFile</code>. Обработчик эндпоинта может вернуть <code>{ file: pathInsideTmp }</code>, чтобы отдать медиа в веб-UI аддона.</p>
+<pre><code class="language-js">const sep = ADDON_TMP_DIR.includes(&#39;\\&#39;) ? &#39;\\&#39; : &#39;/&#39;;
+const out = `${ADDON_TMP_DIR}${sep}clip.%(ext)s`;
+await ytdlp.downloadFile(url, out, { format: &#39;ba/bestaudio&#39;, extractAudio: true, audioFormat: &#39;m4a&#39; });
+</code></pre>
 <h2><code>console</code></h2>
 <p><code>log</code>, <code>error</code>, <code>warn</code>, <code>info</code> — с префиксом <code>[Addon {id}]</code>.</p>
 <h2>Таймеры</h2>

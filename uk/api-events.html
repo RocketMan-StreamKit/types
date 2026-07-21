@@ -105,6 +105,58 @@ events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
 }
 </code></pre>
 <p>Для <code>type === &#39;event&#39;</code> значення повернення, відмінне від <code>undefined</code>, надсилається клієнту як <code>reply</code>.</p>
+<h2>Вбудовані події (головний процес → аддон)</h2>
+<p>Головний процес також може пушити іменовані події у worker через <code>events.On</code>. Це <strong>не</strong> HTTP-колбеки — реєструйте їх так само, без створення ендпоінта.</p>
+<table>
+<thead>
+<tr>
+<th>Подія</th>
+<th>Коли</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>addon:prepare-stop</code></td>
+<td>Перед убивством worker (вимкнення, видалення або вихід із застосунку)</td>
+<td><code>{}</code> — завершіть віддалений cleanup; тримайте обробник коротким (~2.5 с таймаут). Див. <a href="./lifecycle.html#%D0%BA%D0%BE%D1%80%D0%B5%D0%BA%D1%82%D0%BD%D0%B0-%D0%B7%D1%83%D0%BF%D0%B8%D0%BD%D0%BA%D0%B0--addonprepare-stop">Життєвий цикл — Коректна зупинка</a></td>
+</tr>
+<tr>
+<td><code>triggers:validate</code></td>
+<td>Перед збереженням налаштувань, якщо можуть змінитися прив’язки тригерів</td>
+<td><code>{ draft }</code> — поверніть <code>{ success: false, message }</code>, щоб заблокувати збереження</td>
+</tr>
+<tr>
+<td><code>triggers:applied-changed</code></td>
+<td>Після збереження налаштувань, якщо прив’язки тригерів цього аддона змінилися</td>
+<td><code>{ previous, current }</code></td>
+</tr>
+<tr>
+<td><code>overlayTriggerValue:{provider}:list|create|release</code></td>
+<td>UI динамічних значень тригерів</td>
+<td>Див. <a href="./api-dashboard.html">dashboard triggers</a></td>
+</tr>
+<tr>
+<td><code>gameInputTrigger</code></td>
+<td>Збіглася dashboard-подія для game input</td>
+<td><code>{ actionId, trigger, record, user }</code></td>
+</tr>
+<tr>
+<td><code>ytdlp:download-progress</code></td>
+<td>Поки виконується <code>ytdlp.downloadFile</code></td>
+<td><code>{ downloadId, progress }</code></td>
+</tr>
+<tr>
+<td><code>fileAccessGranted</code> / <code>fileAccessRevoked</code></td>
+<td>Користувач надав або відкликав доступ до файлів</td>
+<td>Див. <a href="./api-file-access.html">file access</a></td>
+</tr>
+</tbody></table>
+<h3>Приклад: коректна зупинка</h3>
+<pre><code class="language-js">events.On(&#39;addon:prepare-stop&#39;, async () =&gt; {
+  await pauseRemoteRewards();
+  return { success: true };
+});
+</code></pre>
 <h2>Життєвий цикл</h2>
 <p>Скасуйте реєстрацію через <code>subscription.Destroy()</code> або при перезапуску worker.</p>
 

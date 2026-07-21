@@ -7,6 +7,7 @@
 | Глобальный объект | Назначение |
 | --- | --- |
 | `isDeveloperMode` | `true` в dev-сборках или при включённом режиме разработчика |
+| `ADDON_TMP_DIR` | Абсолютный scratch-каталог аддона в temp ОС (`…/StreamKitPlusAddons/{id}`); без согласия для путей внутри |
 | `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — мост к локали UI приложения |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Метаданные экземпляра: `id`, `name`, `permissions`, `path`, `token`, … |

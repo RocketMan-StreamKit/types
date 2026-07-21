@@ -7,6 +7,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | Global | Purpose |
 | --- | --- |
 | `isDeveloperMode` | `true` in dev builds or when user enables Developer mode |
+| `ADDON_TMP_DIR` | Absolute per-addon scratch dir under OS temp (`…/StreamKitPlusAddons/{id}`); no consent for paths inside |
 | `LANG` | `current` (`en` / `ru` / `uk`), `onChangeLanguage(cb)` — app UI locale bridge |
 | `permissions` | `list`, `has(permission)` |
 | `data` | Instance metadata: `id`, `name`, `permissions`, `path`, `token`, … |

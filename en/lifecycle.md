@@ -20,6 +20,42 @@ The worker restarts when:
 
 `storage.Read()` / `storage.Write()` persist across worker restarts within the same install. `api.config` params persist in app config.
 
+## Graceful stop — `addon:prepare-stop`
+
+Before StreamKit+ kills the addon worker, the main process fires the built-in event `addon:prepare-stop` and waits for the handler to finish (with a short timeout, about **2.5 seconds**). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.
+
+**When it fires**
+
+- The user **disables** the addon in settings
+- The addon is **uninstalled** (or deactivated as a dependency of an uninstall)
+- The **application is quitting** (all integration workers receive prepare-stop before kill)
+
+**When it does not fire**
+
+- Worker **crash** / disconnect (no time for a graceful handler)
+- Sudden process kill where the main process cannot await workers
+
+**Handler contract**
+
+```js
+events.On('addon:prepare-stop', async () => {
+  // e.g. pause or disable remote resources (Twitch rewards, webhooks, …)
+  await cleanupRemoteState();
+  return { success: true };
+});
+```
+
+| Detail | Value |
+| --- | --- |
+| Payload | `{}` (empty object) |
+| Permission | None |
+| Timeout | ~2.5s — keep work short; unfinished work is abandoned and the worker is killed |
+| Optional | Omitting the handler is fine; other addons are unaffected |
+
+Do **not** rely on this event for data that must survive forever — persist important state with `storage` / `api.config` during normal operation. Prefer `addon:prepare-stop` for best-effort remote teardown (pause rewards, close sessions, revoke short-lived hooks).
+
+See also [events](./api-events.md#built-in-main--addon-events).
+
 ## Crash loop protection
 
 If the worker process **crashes** (uncaught exception, fatal error, abrupt exit), StreamKit+ restarts it automatically — similar to a normal restart.

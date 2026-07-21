@@ -2,6 +2,8 @@
 
 Requires manifest permission `FILE_ACCESS`. Addons **never** get direct `require('fs')` (that needs `ROOT`). Instead they use the global `files` object: the user approves each path at runtime, and the main process enforces scope.
 
+**Exception:** every addon gets a dedicated OS temp folder exposed as `ADDON_TMP_DIR` (`{tmpdir}/StreamKitPlusAddons/{addonId}`). Paths inside that folder do **not** require `files.requestAccess` consent. See [Utilities](./api-utilities.md#addon_tmp_dir).
+
 ## How it works
 
 1. Declare `"FILE_ACCESS"` in `manifest.json` (user sees it at install time).

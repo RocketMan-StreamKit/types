@@ -82,6 +82,15 @@
 </tr>
 </tbody></table>
 <p>Возвращает <code>{ success: true }</code> или <code>{ success: false, message }</code>.</p>
+<h3>Стриминг файла из <code>ADDON_TMP_DIR</code></h3>
+<p>Обработчик может вернуть <code>{ file: absolutePath, contentType? }</code> вместо JSON. Главный процесс отдаёт файл <strong>только</strong> если путь лежит внутри <code>ADDON_TMP_DIR</code> этого аддона (поддерживается HTTP Range для перемотки медиа).</p>
+<pre><code class="language-js">events.On(&#39;onMedia&#39;, ({ query }) =&gt; {
+  if (query.token !== data.token) {
+    return { success: false, message: &#39;Unauthorized&#39; };
+  }
+  return { file: `${ADDON_TMP_DIR}/clip.mp4` };
+});
+</code></pre>
 <h3>Эндпоинт с защитой токеном для веб-UI</h3>
 <pre><code class="language-js">events.On(&#39;onParams&#39;, ({ query }) =&gt; {
   if (query.token !== data.token) {

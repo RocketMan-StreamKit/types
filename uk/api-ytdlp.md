@@ -7,7 +7,10 @@
 ## Налаштування
 
 1. Додайте `"FILE_ACCESS"` і `"NETWORK_REQUEST"` до `permissions` у `manifest.json`.
-2. Запитайте доступ **manage** до папки призначення перед завантаженням:
+2. Оберіть папку призначення:
+   - **Папка користувача:** запросіть доступ **manage** (`files.requestAccess(folder, 'manage')`).
+   - **Тимчасова папка аддона:** пишіть у `ADDON_TMP_DIR` — діалог згоди не потрібен.
+3. Підпишіться на прогрес і викличте `ytdlp.downloadFile`.
 
 ```js
 const folder = 'C:\\Videos\\clips';
@@ -17,8 +20,6 @@ if (!access.success) {
   return;
 }
 ```
-
-3. Підпишіться на прогрес і викличте `ytdlp.downloadFile`.
 
 ```json
 {
@@ -32,7 +33,8 @@ if (!access.success) {
 - Завантаження виконується в **головному процесі** через вбудований yt-dlp (`yt-dlp_linux`, `yt-dlp_macos`, `yt-dlp.exe`).
 - Шлях збереження передається в yt-dlp `-o`. У імені файлу можна використовувати **змінні шаблону yt-dlp** (див. нижче).
 - **Літеральні** (не шаблонні) частини шляху очищуються від недопустимих символів. Підставлені значення (наприклад `%(title)s`) зберігаються як є, включно з кирилицею.
-- **Батьківська папка** вихідного шляху має бути покрита схваленим користувачем грантом **manage** (`files.requestAccess(folder, 'manage')`).
+- **Батьківська папка** вихідного шляху має бути покрита схваленим користувачем грантом **manage** (`files.requestAccess(folder, 'manage')`) **або** лежати всередині `ADDON_TMP_DIR`.
+- Опції конвертації: `format` → `-f`, `extractAudio` → `-x`, `audioFormat` → `--audio-format`, `mergeOutputFormat` → `--merge-output-format`.
 - Прогрес надходить у воркер аддона подією `ytdlp:download-progress`.
 - Паралельні HLS/DASH-фрагменти (`concurrentFragments`) — від `1` до `10` (`--concurrent-fragments`).
 
@@ -44,6 +46,10 @@ if (!access.success) {
 | `outputPath` | так | Абсолютний шлях; допускаються змінні на кшталт `%(title)s.%(ext)s` |
 | `options.downloadId` | ні | Зв'язок із подіями прогресу; генерується автоматично |
 | `options.concurrentFragments` | ні | Паралельні фрагменти, `1`…`10` |
+| `options.format` | ні | Селектор `-f` yt-dlp (наприклад `ba/bestaudio`) |
+| `options.extractAudio` | ні | При `true` передає `-x` (видобути аудіо) |
+| `options.audioFormat` | ні | `--audio-format` разом із `extractAudio` (наприклад `m4a`) |
+| `options.mergeOutputFormat` | ні | `--merge-output-format` (наприклад `mp4`) |
 
 Повертає:
 

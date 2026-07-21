@@ -59,6 +59,29 @@ return { redirect: ui.auth.generateSuccess() };
 
 Для `type === 'event'` ненулевое возвращаемое значение отправляется клиенту как `reply`.
 
+## Встроенные события (главный процесс → аддон)
+
+Главный процесс может также пушить именованные события в воркер через `events.On`. Это **не** HTTP-колбэки — регистрируйте их так же, без создания эндпоинта.
+
+| Событие | Когда | Payload |
+| --- | --- | --- |
+| `addon:prepare-stop` | Перед убийством воркера (отключение, удаление или выход из приложения) | `{}` — завершите удалённую очистку; держите обработчик коротким (~2.5 с таймаут). См. [Жизненный цикл — Корректная остановка](./lifecycle.md#корректная-остановка--addonprepare-stop) |
+| `triggers:validate` | Перед сохранением настроек, если могут измениться привязки триггеров | `{ draft }` — верните `{ success: false, message }`, чтобы заблокировать сохранение |
+| `triggers:applied-changed` | После сохранения настроек, если привязки триггеров этого аддона изменились | `{ previous, current }` |
+| `overlayTriggerValue:{provider}:list\|create\|release` | UI динамических значений триггеров | См. [dashboard triggers](./api-dashboard.md) |
+| `gameInputTrigger` | Совпавшее dashboard-событие для game input | `{ actionId, trigger, record, user }` |
+| `ytdlp:download-progress` | Пока выполняется `ytdlp.downloadFile` | `{ downloadId, progress }` |
+| `fileAccessGranted` / `fileAccessRevoked` | Пользователь выдал или отозвал доступ к файлам | См. [file access](./api-file-access.md) |
+
+### Пример: корректная остановка
+
+```js
+events.On('addon:prepare-stop', async () => {
+  await pauseRemoteRewards();
+  return { success: true };
+});
+```
+
 ## Жизненный цикл
 
 Отпишитесь через `subscription.Destroy()` или при перезапуске воркера.

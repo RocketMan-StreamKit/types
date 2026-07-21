@@ -38,6 +38,20 @@ if (isDeveloperMode) {
 }
 ```
 
+## `ADDON_TMP_DIR`
+
+Absolute path to this addon's scratch directory under the OS temp folder:
+
+`{os.tmpdir()}/StreamKitPlusAddons/{addonId}`
+
+Created automatically when the worker starts. If `addonId` contains `/` (for example `ORG/REPO`), nested folders are used. Paths inside this directory do **not** need `files.requestAccess` consent. Use with `files.*` (`FILE_ACCESS`) or `ytdlp.downloadFile`. Endpoint handlers can return `{ file: pathInsideTmp }` to stream media to the addon web UI.
+
+```js
+const sep = ADDON_TMP_DIR.includes('\\') ? '\\' : '/';
+const out = `${ADDON_TMP_DIR}${sep}clip.%(ext)s`;
+await ytdlp.downloadFile(url, out, { format: 'ba/bestaudio', extractAudio: true, audioFormat: 'm4a' });
+```
+
 ## `console`
 
 `log`, `error`, `warn`, `info` — prefixed with `[Addon {id}]`.

@@ -38,6 +38,20 @@ if (isDeveloperMode) {
 }
 ```
 
+## `ADDON_TMP_DIR`
+
+Абсолютний шлях до scratch-папки аддона в temp ОС:
+
+`{os.tmpdir()}/StreamKitPlusAddons/{addonId}`
+
+Створюється автоматично під час старту worker. Якщо в `addonId` є `/` (наприклад `ORG/REPO`), утворюються вкладені папки. Шляхи всередині **не** потребують `files.requestAccess`. Використовуйте з `files.*` (`FILE_ACCESS`) або `ytdlp.downloadFile`. Обробник ендпоінта може повернути `{ file: pathInsideTmp }`, щоб віддати медіа у веб-UI аддона.
+
+```js
+const sep = ADDON_TMP_DIR.includes('\\') ? '\\' : '/';
+const out = `${ADDON_TMP_DIR}${sep}clip.%(ext)s`;
+await ytdlp.downloadFile(url, out, { format: 'ba/bestaudio', extractAudio: true, audioFormat: 'm4a' });
+```
+
 ## `console`
 
 `log`, `error`, `warn`, `info` — з префіксом `[Addon {id}]`.

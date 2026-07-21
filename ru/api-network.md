@@ -16,6 +16,19 @@ await network.endpoints.create(path, method, callbackName);
 
 Возвращает `{ success: true }` или `{ success: false, message }`.
 
+### Стриминг файла из `ADDON_TMP_DIR`
+
+Обработчик может вернуть `{ file: absolutePath, contentType? }` вместо JSON. Главный процесс отдаёт файл **только** если путь лежит внутри `ADDON_TMP_DIR` этого аддона (поддерживается HTTP Range для перемотки медиа).
+
+```js
+events.On('onMedia', ({ query }) => {
+  if (query.token !== data.token) {
+    return { success: false, message: 'Unauthorized' };
+  }
+  return { file: `${ADDON_TMP_DIR}/clip.mp4` };
+});
+```
+
 ### Эндпоинт с защитой токеном для веб-UI
 
 ```js
