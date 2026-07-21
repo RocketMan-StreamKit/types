@@ -62,7 +62,12 @@
 <h2>Setup</h2>
 <ol>
 <li>Add <code>&quot;FILE_ACCESS&quot;</code> and <code>&quot;NETWORK_REQUEST&quot;</code> to <code>permissions</code> in <code>manifest.json</code>.</li>
-<li>Request <strong>manage</strong> access to the output folder before downloading:</li>
+<li>Choose an output folder:<ul>
+<li><strong>User folder:</strong> request <strong>manage</strong> access before downloading (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li><strong>Addon temp folder:</strong> write under <code>ADDON_TMP_DIR</code> — no consent dialog is required.</li>
+</ul>
+</li>
+<li>Subscribe to progress, then call <code>ytdlp.downloadFile</code>.</li>
 </ol>
 <pre><code class="language-js">const folder = &#39;C:\\Videos\\clips&#39;;
 const access = await files.requestAccess(folder, &#39;manage&#39;);
@@ -71,9 +76,6 @@ if (!access.success) {
   return;
 }
 </code></pre>
-<ol start="3">
-<li>Subscribe to progress, then call <code>ytdlp.downloadFile</code>.</li>
-</ol>
 <pre><code class="language-json">{
   &quot;id&quot;: &quot;my-addon&quot;,
   &quot;permissions&quot;: [&quot;FILE_ACCESS&quot;, &quot;NETWORK_REQUEST&quot;]
@@ -84,7 +86,8 @@ if (!access.success) {
 <li>Downloads run in the <strong>main process</strong> via the bundled yt-dlp binary (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
 <li>The output path is passed to yt-dlp <code>-o</code>. You may use <strong>yt-dlp output template variables</strong> in the filename (see below).</li>
 <li><strong>Literal</strong> (non-template) parts of the path are sanitized to remove invalid filename characters. Substituted values (for example <code>%(title)s</code>) are kept as-is, including Cyrillic characters.</li>
-<li>The <strong>parent directory</strong> of the output path must be covered by a user-approved <strong>manage</strong> file-access grant (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li>The <strong>parent directory</strong> of the output path must be covered by a user-approved <strong>manage</strong> file-access grant (<code>files.requestAccess(folder, &#39;manage&#39;)</code>), <strong>or</strong> lie under <code>ADDON_TMP_DIR</code>.</li>
+<li>Optional conversion flags map to yt-dlp: <code>format</code> → <code>-f</code>, <code>extractAudio</code> → <code>-x</code>, <code>audioFormat</code> → <code>--audio-format</code>, <code>mergeOutputFormat</code> → <code>--merge-output-format</code>.</li>
 <li>Progress is pushed to the addon worker as <code>ytdlp:download-progress</code> events while the download runs.</li>
 <li>Up to <strong>10</strong> parallel HLS/DASH fragments can be requested with <code>concurrentFragments</code> (maps to <code>--concurrent-fragments</code>).</li>
 </ul>
@@ -116,6 +119,26 @@ if (!access.success) {
 <td><code>options.concurrentFragments</code></td>
 <td>no</td>
 <td>Parallel fragments, <code>1</code>…<code>10</code> (default: yt-dlp default)</td>
+</tr>
+<tr>
+<td><code>options.format</code></td>
+<td>no</td>
+<td>yt-dlp <code>-f</code> selector (for example <code>ba/bestaudio</code>)</td>
+</tr>
+<tr>
+<td><code>options.extractAudio</code></td>
+<td>no</td>
+<td>When <code>true</code>, pass <code>-x</code> to extract audio</td>
+</tr>
+<tr>
+<td><code>options.audioFormat</code></td>
+<td>no</td>
+<td><code>--audio-format</code> with <code>extractAudio</code> (for example <code>m4a</code>, <code>mp3</code>)</td>
+</tr>
+<tr>
+<td><code>options.mergeOutputFormat</code></td>
+<td>no</td>
+<td><code>--merge-output-format</code> (for example <code>mp4</code>)</td>
 </tr>
 </tbody></table>
 <p>Returns:</p>
@@ -194,12 +217,27 @@ events.On(&#39;ytdlp:download-progress&#39;, ({ downloadId: id, progress }) =&gt
 const result = await ytdlp.downloadFile(
   &#39;https://www.twitch.tv/videos/1234567890&#39;,
   `${outputDir}\\%(uploader)s - %(title)s.%(ext)s`,
-  { downloadId, concurrentFragments: 4 }
+  {
+    downloadId,
+    concurrentFragments: 4,
+    format: &#39;bv*[height&lt;=720]+ba/b[height&lt;=720]&#39;,
+    mergeOutputFormat: &#39;mp4&#39;,
+  }
 );
 
 if (!result.success) {
   console.warn(result.error, result.message);
 }
+</code></pre>
+<h3>Audio-only into <code>ADDON_TMP_DIR</code></h3>
+<pre><code class="language-js">const sep = ADDON_TMP_DIR.includes(&#39;\\&#39;) ? &#39;\\&#39; : &#39;/&#39;;
+const outputPath = `${ADDON_TMP_DIR}${sep}track.%(ext)s`;
+
+const result = await ytdlp.downloadFile(url, outputPath, {
+  format: &#39;ba/bestaudio&#39;,
+  extractAudio: true,
+  audioFormat: &#39;m4a&#39;,
+});
 </code></pre>
 <h2>Output template variables</h2>
 <p>You can embed yt-dlp fields in <code>outputPath</code>. Common variables:</p>

@@ -74,6 +74,52 @@
 <li>Перемикається режим розробника (потрібен повний перезапуск застосунку/worker для поширення <code>isDeveloperMode</code>)</li>
 </ul>
 <p><code>storage.Read()</code> / <code>storage.Write()</code> зберігаються між перезапусками worker у межах одного встановлення. Параметри <code>api.config</code> зберігаються в конфігурації застосунку.</p>
+<h2>Коректна зупинка — <code>addon:prepare-stop</code></h2>
+<p>Перед тим як StreamKit+ уб’є worker аддона, головний процес викликає вбудовану подію <code>addon:prepare-stop</code> і чекає завершення обробника (короткий таймаут, близько <strong>2.5 секунд</strong>). Використовуйте її для віддаленого cleanup, поки ще доступні OAuth-токен і мережа.</p>
+<p><strong>Коли спрацьовує</strong></p>
+<ul>
+<li>Користувач <strong>вимикає</strong> аддон у налаштуваннях</li>
+<li>Аддон <strong>видаляють</strong> (або деактивують як залежність під час видалення іншого аддона)</li>
+<li><strong>Застосунок закривається</strong> (усі integration worker’и отримують prepare-stop перед kill)</li>
+</ul>
+<p><strong>Коли не спрацьовує</strong></p>
+<ul>
+<li><strong>Падіння</strong> / disconnect worker (немає часу на graceful-обробник)</li>
+<li>Раптове завершення процесу, коли головний процес не може дочекатися worker’ів</li>
+</ul>
+<p><strong>Контракт обробника</strong></p>
+<pre><code class="language-js">events.On(&#39;addon:prepare-stop&#39;, async () =&gt; {
+  // наприклад поставити на паузу або вимкнути віддалені ресурси (нагороди Twitch, webhooks, …)
+  await cleanupRemoteState();
+  return { success: true };
+});
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Деталь</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Payload</td>
+<td><code>{}</code> (порожній об’єкт)</td>
+</tr>
+<tr>
+<td>Право</td>
+<td>Не потрібне</td>
+</tr>
+<tr>
+<td>Таймаут</td>
+<td>~2.5 с — тримайте роботу короткою; незавершене буде перервано, worker уб’ють</td>
+</tr>
+<tr>
+<td>Опційно</td>
+<td>Обробник можна не реєструвати; на інші аддони це не впливає</td>
+</tr>
+</tbody></table>
+<p>Не покладайтеся на цю подію для даних, які мають жити вічно — важливий стан зберігайте через <code>storage</code> / <code>api.config</code> під час звичайної роботи. <code>addon:prepare-stop</code> — для best-effort teardown на боці зовнішніх сервісів (пауза нагород, закриття сесій, зняття короткоживучих хуків).</p>
+<p>Див. також <a href="./api-events.html#%D0%B2%D0%B1%D1%83%D0%B4%D0%BE%D0%B2%D0%B0%D0%BD%D1%96-%D0%BF%D0%BE%D0%B4%D1%96%D1%97-%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B8%D0%B9-%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81--%D0%B0%D0%B4%D0%B4%D0%BE%D0%BD">events</a>.</p>
 <h2>Захист від циклу падінь</h2>
 <p>Якщо процес worker <strong>падає</strong> (неперехоплений виняток, фатальна помилка, аварійне завершення), StreamKit+ перезапускає його автоматично — як при звичайному рестарті.</p>
 <p>Щоб уникнути нескінченного циклу перезапусків, застосунок відстежує <strong>послідовні падіння</strong>:</p>

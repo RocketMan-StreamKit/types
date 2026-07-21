@@ -105,6 +105,58 @@ events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
 }
 </code></pre>
 <p>For <code>type === &#39;event&#39;</code>, a non-<code>undefined</code> return value is emitted to the client as <code>reply</code>.</p>
+<h2>Built-in main → addon events</h2>
+<p>The main process can also push named events into your worker via <code>events.On</code>. These are <strong>not</strong> HTTP callbacks — you register them the same way, without creating an endpoint.</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>addon:prepare-stop</code></td>
+<td>Before the worker is killed (disable, uninstall, or app quit)</td>
+<td><code>{}</code> — finish remote cleanup; keep handlers short (~2.5s timeout). See <a href="./lifecycle.html#graceful-stop--addonprepare-stop">Lifecycle — Graceful stop</a></td>
+</tr>
+<tr>
+<td><code>triggers:validate</code></td>
+<td>Before settings save when trigger bindings may change</td>
+<td><code>{ draft }</code> — return <code>{ success: false, message }</code> to block save</td>
+</tr>
+<tr>
+<td><code>triggers:applied-changed</code></td>
+<td>After settings save when this addon’s trigger bindings changed</td>
+<td><code>{ previous, current }</code></td>
+</tr>
+<tr>
+<td><code>overlayTriggerValue:{provider}:list|create|release</code></td>
+<td>Dynamic trigger value UI</td>
+<td>See <a href="./api-dashboard.html">dashboard triggers</a></td>
+</tr>
+<tr>
+<td><code>gameInputTrigger</code></td>
+<td>Matching dashboard event for a game input rule</td>
+<td><code>{ actionId, trigger, record, user }</code></td>
+</tr>
+<tr>
+<td><code>ytdlp:download-progress</code></td>
+<td>While <code>ytdlp.downloadFile</code> runs</td>
+<td><code>{ downloadId, progress }</code></td>
+</tr>
+<tr>
+<td><code>fileAccessGranted</code> / <code>fileAccessRevoked</code></td>
+<td>User grants or revokes file access</td>
+<td>See <a href="./api-file-access.html">file access</a></td>
+</tr>
+</tbody></table>
+<h3>Example: graceful stop</h3>
+<pre><code class="language-js">events.On(&#39;addon:prepare-stop&#39;, async () =&gt; {
+  await pauseRemoteRewards();
+  return { success: true };
+});
+</code></pre>
 <h2>Lifecycle</h2>
 <p>Unregister with <code>subscription.Destroy()</code> or when the worker restarts.</p>
 

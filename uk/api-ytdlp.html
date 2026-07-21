@@ -62,7 +62,12 @@
 <h2>Налаштування</h2>
 <ol>
 <li>Додайте <code>&quot;FILE_ACCESS&quot;</code> і <code>&quot;NETWORK_REQUEST&quot;</code> до <code>permissions</code> у <code>manifest.json</code>.</li>
-<li>Запитайте доступ <strong>manage</strong> до папки призначення перед завантаженням:</li>
+<li>Оберіть папку призначення:<ul>
+<li><strong>Папка користувача:</strong> запросіть доступ <strong>manage</strong> (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li><strong>Тимчасова папка аддона:</strong> пишіть у <code>ADDON_TMP_DIR</code> — діалог згоди не потрібен.</li>
+</ul>
+</li>
+<li>Підпишіться на прогрес і викличте <code>ytdlp.downloadFile</code>.</li>
 </ol>
 <pre><code class="language-js">const folder = &#39;C:\\Videos\\clips&#39;;
 const access = await files.requestAccess(folder, &#39;manage&#39;);
@@ -71,9 +76,6 @@ if (!access.success) {
   return;
 }
 </code></pre>
-<ol start="3">
-<li>Підпишіться на прогрес і викличте <code>ytdlp.downloadFile</code>.</li>
-</ol>
 <pre><code class="language-json">{
   &quot;id&quot;: &quot;my-addon&quot;,
   &quot;permissions&quot;: [&quot;FILE_ACCESS&quot;, &quot;NETWORK_REQUEST&quot;]
@@ -84,7 +86,8 @@ if (!access.success) {
 <li>Завантаження виконується в <strong>головному процесі</strong> через вбудований yt-dlp (<code>yt-dlp_linux</code>, <code>yt-dlp_macos</code>, <code>yt-dlp.exe</code>).</li>
 <li>Шлях збереження передається в yt-dlp <code>-o</code>. У імені файлу можна використовувати <strong>змінні шаблону yt-dlp</strong> (див. нижче).</li>
 <li><strong>Літеральні</strong> (не шаблонні) частини шляху очищуються від недопустимих символів. Підставлені значення (наприклад <code>%(title)s</code>) зберігаються як є, включно з кирилицею.</li>
-<li><strong>Батьківська папка</strong> вихідного шляху має бути покрита схваленим користувачем грантом <strong>manage</strong> (<code>files.requestAccess(folder, &#39;manage&#39;)</code>).</li>
+<li><strong>Батьківська папка</strong> вихідного шляху має бути покрита схваленим користувачем грантом <strong>manage</strong> (<code>files.requestAccess(folder, &#39;manage&#39;)</code>) <strong>або</strong> лежати всередині <code>ADDON_TMP_DIR</code>.</li>
+<li>Опції конвертації: <code>format</code> → <code>-f</code>, <code>extractAudio</code> → <code>-x</code>, <code>audioFormat</code> → <code>--audio-format</code>, <code>mergeOutputFormat</code> → <code>--merge-output-format</code>.</li>
 <li>Прогрес надходить у воркер аддона подією <code>ytdlp:download-progress</code>.</li>
 <li>Паралельні HLS/DASH-фрагменти (<code>concurrentFragments</code>) — від <code>1</code> до <code>10</code> (<code>--concurrent-fragments</code>).</li>
 </ul>
@@ -116,6 +119,26 @@ if (!access.success) {
 <td><code>options.concurrentFragments</code></td>
 <td>ні</td>
 <td>Паралельні фрагменти, <code>1</code>…<code>10</code></td>
+</tr>
+<tr>
+<td><code>options.format</code></td>
+<td>ні</td>
+<td>Селектор <code>-f</code> yt-dlp (наприклад <code>ba/bestaudio</code>)</td>
+</tr>
+<tr>
+<td><code>options.extractAudio</code></td>
+<td>ні</td>
+<td>При <code>true</code> передає <code>-x</code> (видобути аудіо)</td>
+</tr>
+<tr>
+<td><code>options.audioFormat</code></td>
+<td>ні</td>
+<td><code>--audio-format</code> разом із <code>extractAudio</code> (наприклад <code>m4a</code>)</td>
+</tr>
+<tr>
+<td><code>options.mergeOutputFormat</code></td>
+<td>ні</td>
+<td><code>--merge-output-format</code> (наприклад <code>mp4</code>)</td>
 </tr>
 </tbody></table>
 <p>Повертає:</p>

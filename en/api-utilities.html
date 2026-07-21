@@ -103,6 +103,14 @@ setInterval(() =&gt; {
   console.log(&#39;Debug info&#39;, params);
 }
 </code></pre>
+<h2><code>ADDON_TMP_DIR</code></h2>
+<p>Absolute path to this addon&#39;s scratch directory under the OS temp folder:</p>
+<p><code>{os.tmpdir()}/StreamKitPlusAddons/{addonId}</code></p>
+<p>Created automatically when the worker starts. If <code>addonId</code> contains <code>/</code> (for example <code>ORG/REPO</code>), nested folders are used. Paths inside this directory do <strong>not</strong> need <code>files.requestAccess</code> consent. Use with <code>files.*</code> (<code>FILE_ACCESS</code>) or <code>ytdlp.downloadFile</code>. Endpoint handlers can return <code>{ file: pathInsideTmp }</code> to stream media to the addon web UI.</p>
+<pre><code class="language-js">const sep = ADDON_TMP_DIR.includes(&#39;\\&#39;) ? &#39;\\&#39; : &#39;/&#39;;
+const out = `${ADDON_TMP_DIR}${sep}clip.%(ext)s`;
+await ytdlp.downloadFile(url, out, { format: &#39;ba/bestaudio&#39;, extractAudio: true, audioFormat: &#39;m4a&#39; });
+</code></pre>
 <h2><code>console</code></h2>
 <p><code>log</code>, <code>error</code>, <code>warn</code>, <code>info</code> — prefixed with <code>[Addon {id}]</code>.</p>
 <h2>Timers</h2>

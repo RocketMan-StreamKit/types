@@ -58,6 +58,7 @@
     <main class="content">
       <h1>Scoped file access (<code>files</code> API)</h1>
 <p>Requires manifest permission <code>FILE_ACCESS</code>. Addons <strong>never</strong> get direct <code>require(&#39;fs&#39;)</code> (that needs <code>ROOT</code>). Instead they use the global <code>files</code> object: the user approves each path at runtime, and the main process enforces scope.</p>
+<p><strong>Exception:</strong> every addon gets a dedicated OS temp folder exposed as <code>ADDON_TMP_DIR</code> (<code>{tmpdir}/StreamKitPlusAddons/{addonId}</code>). Paths inside that folder do <strong>not</strong> require <code>files.requestAccess</code> consent. See <a href="./api-utilities.html#addon_tmp_dir">Utilities</a>.</p>
 <h2>How it works</h2>
 <ol>
 <li>Declare <code>&quot;FILE_ACCESS&quot;</code> in <code>manifest.json</code> (user sees it at install time).</li>

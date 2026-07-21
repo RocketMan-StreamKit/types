@@ -82,6 +82,15 @@
 </tr>
 </tbody></table>
 <p>Returns <code>{ success: true }</code> or <code>{ success: false, message }</code>.</p>
+<h3>Streaming a file from <code>ADDON_TMP_DIR</code></h3>
+<p>Endpoint handlers may return <code>{ file: absolutePath, contentType? }</code> instead of JSON. The main process streams that file <strong>only</strong> when it lies under this addon&#39;s <code>ADDON_TMP_DIR</code> (HTTP Range supported for media seeking).</p>
+<pre><code class="language-js">events.On(&#39;onMedia&#39;, ({ query }) =&gt; {
+  if (query.token !== data.token) {
+    return { success: false, message: &#39;Unauthorized&#39; };
+  }
+  return { file: `${ADDON_TMP_DIR}/clip.mp4` };
+});
+</code></pre>
 <h3>Token-protected endpoint for web UI</h3>
 <pre><code class="language-js">events.On(&#39;onParams&#39;, ({ query }) =&gt; {
   if (query.token !== data.token) {
