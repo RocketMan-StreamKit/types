@@ -73,7 +73,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code></td>
+<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>pathPicker</code></td>
@@ -93,7 +93,7 @@
 </tr>
 <tr>
 <td><code>items</code></td>
-<td>For <code>array</code>: <code>&#39;text&#39;</code> or <code>&#39;number&#39;</code></td>
+<td>For <code>array</code>: <code>&#39;text&#39;</code> or <code>&#39;number&#39;</code>. For <code>spoiler</code> / <code>page</code>: nested schema entries (same shape as <code>GenerateConfig</code> arguments; recursion allowed)</td>
 </tr>
 <tr>
 <td><code>fields</code></td>
@@ -127,7 +127,41 @@
 <li><strong>folder</strong> — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)</li>
 <li><strong>file</strong> — absolute file path; read-only display, browse with <code>filters</code> / <code>filename</code> / <code>namePattern</code>, open in file manager (highlights the file when possible)</li>
 <li><strong>info</strong> — read-only text block for hints and warnings; <code>editor.description</code> is the body; optional <code>editor.infoBorder</code>: <code>blue</code>, <code>red</code>, or <code>yellow</code></li>
+<li><strong>spoiler</strong> — no stored value; button that expands/collapses nested <code>items</code> inline (same schema entries as <code>GenerateConfig</code>, including rows and nested spoilers/pages)</li>
+<li><strong>page</strong> — no stored value; button that opens a nested settings view for <code>items</code> with a Back control (recursion allowed)</li>
 </ul>
+<p>Nested fields inside <code>spoiler</code> / <code>page</code> store values at the <strong>parent params level</strong> (sibling keys to the container), not under the container key.</p>
+<h2>Spoiler / page example</h2>
+<pre><code class="language-js">{
+  key: &#39;advanced&#39;,
+  type: &#39;spoiler&#39;,
+  editor: {
+    label: { en: &#39;Advanced&#39;, ru: &#39;Дополнительно&#39;, uk: &#39;Додатково&#39; },
+    description: { en: &#39;Optional tuning&#39; },
+  },
+  items: [
+    {
+      key: &#39;debug&#39;,
+      type: &#39;boolean&#39;,
+      default: false,
+      editor: { label: { en: &#39;Debug logging&#39; } },
+    },
+    {
+      key: &#39;network&#39;,
+      type: &#39;page&#39;,
+      editor: { label: { en: &#39;Network&#39; } },
+      items: [
+        {
+          key: &#39;timeout_ms&#39;,
+          type: &#39;number&#39;,
+          default: 5000,
+          editor: { label: { en: &#39;Timeout (ms)&#39; } },
+        },
+      ],
+    },
+  ],
+},
+</code></pre>
 <h2>Info block example</h2>
 <pre><code class="language-js">{
   key: &#39;mod_warning&#39;,
