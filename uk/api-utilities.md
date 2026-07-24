@@ -60,10 +60,10 @@ await ytdlp.downloadFile(url, out, { format: 'ba/bestaudio', extractAudio: true,
 
 | API | Примітки |
 | --- | --- |
-| `setTimeout(fn, delay, ...args)` | Затримка обмежена макс. 60 000 мс; помилки перехоплюються |
-| `setInterval(fn, interval, ...args)` | Інтервал обмежений 50–60 000 мс |
+| `setTimeout(fn, delay, ...args)` | Помилки перехоплюються; delay передається в Node як є |
+| `setInterval(fn, interval, ...args)` | Помилки перехоплюються; interval передається в Node як є |
 | `clearTimeout` / `clearInterval` | Стандартні |
-| `sleep(ms)` | Promise; макс. 60 000 мс |
+| `sleep(ms)` | Promise-затримка |
 
 ## `random`
 

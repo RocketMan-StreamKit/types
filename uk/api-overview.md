@@ -29,8 +29,8 @@
 | `ui.auth` | URL перенаправлення успіху/помилки OAuth |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
 | `console` | Логування з префіксом |
-| `setTimeout` / `setInterval` / `clearTimeout` / `clearInterval` | Обмежені таймери з ізоляцією помилок |
-| `sleep(ms)` | Promise-затримка (макс. 60 с) |
+| `setTimeout` / `setInterval` / `clearTimeout` / `clearInterval` | Таймери з ізоляцією помилок |
+| `sleep(ms)` | Promise-затримка |
 | `random` | `number(min, max)`, `id()` |
 | `URL`, `URLSearchParams` | Безпечні для пісочниці URL helper |
 | `GenerateConfig(schema)` | Реєстрація схеми налаштувань |

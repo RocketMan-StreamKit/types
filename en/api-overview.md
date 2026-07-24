@@ -29,8 +29,8 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `ui.auth` | OAuth success/fail redirect URLs |
 | `crypto` | `createPkce`, `verifyRsaSha256` |
 | `console` | Prefixed logging |
-| `setTimeout` / `setInterval` / `clearTimeout` / `clearInterval` | Clamped timers with error isolation |
-| `sleep(ms)` | Promise delay (max 60 s) |
+| `setTimeout` / `setInterval` / `clearTimeout` / `clearInterval` | Timers with error isolation |
+| `sleep(ms)` | Promise delay |
 | `random` | `number(min, max)`, `id()` |
 | `URL`, `URLSearchParams` | Sandbox-safe URL helpers |
 | `GenerateConfig(schema)` | Register settings schema |

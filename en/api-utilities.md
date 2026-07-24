@@ -60,10 +60,10 @@ await ytdlp.downloadFile(url, out, { format: 'ba/bestaudio', extractAudio: true,
 
 | API | Notes |
 | --- | --- |
-| `setTimeout(fn, delay, ...args)` | Delay clamped to max 60 000 ms; errors caught |
-| `setInterval(fn, interval, ...args)` | Interval clamped 50–60 000 ms |
+| `setTimeout(fn, delay, ...args)` | Errors caught; delay passed through to Node |
+| `setInterval(fn, interval, ...args)` | Errors caught; interval passed through to Node |
 | `clearTimeout` / `clearInterval` | Standard |
-| `sleep(ms)` | Promise; max 60 000 ms |
+| `sleep(ms)` | Promise delay |
 
 ## `random`
 
