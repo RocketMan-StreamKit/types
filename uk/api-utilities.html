@@ -123,11 +123,11 @@ await ytdlp.downloadFile(url, out, { format: &#39;ba/bestaudio&#39;, extractAudi
 </thead>
 <tbody><tr>
 <td><code>setTimeout(fn, delay, ...args)</code></td>
-<td>Затримка обмежена макс. 60 000 мс; помилки перехоплюються</td>
+<td>Помилки перехоплюються; delay передається в Node як є</td>
 </tr>
 <tr>
 <td><code>setInterval(fn, interval, ...args)</code></td>
-<td>Інтервал обмежений 50–60 000 мс</td>
+<td>Помилки перехоплюються; interval передається в Node як є</td>
 </tr>
 <tr>
 <td><code>clearTimeout</code> / <code>clearInterval</code></td>
@@ -135,7 +135,7 @@ await ytdlp.downloadFile(url, out, { format: &#39;ba/bestaudio&#39;, extractAudi
 </tr>
 <tr>
 <td><code>sleep(ms)</code></td>
-<td>Promise; макс. 60 000 мс</td>
+<td>Promise-затримка</td>
 </tr>
 </tbody></table>
 <h2><code>random</code></h2>
