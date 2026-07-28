@@ -48,6 +48,15 @@ App config `widgets[]` per installed widget:
 
 Direct URL works regardless of display flags.
 
+When the widget is embedded in the overlay shell, the iframe URL includes `display=app` (in-app overlay window) or `display=web` (common OBS overlay browser source). The direct Widget URL has `token` only — no `display` — so the page can detect the host:
+
+```js
+const display = new URLSearchParams(window.location.search).get('display');
+// null → opened by direct Widget URL
+// 'app' → in-app overlay window
+// 'web' → common OBS overlay link
+```
+
 Live sync: Socket.IO namespace `/overlay`, event `widget:sync` with `{ widgets: [{ widgetId, url }] }`.
 
 Snapshot: `GET /widget/snapshot?display=app|web&token=`

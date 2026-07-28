@@ -86,6 +86,12 @@
 <p>Runtime-налаштування (гучність, тривалість) можна читати з:</p>
 <pre><code>GET /overlay/settings/{overlayId}?token=
 </code></pre>
+<p>Коли оболонка оверлею програє ефект, в iframe URL додається <code>display=app</code> (вікно оверлею застосунку) або <code>display=web</code> (спільне OBS-посилання оверлею). Пряме відкриття <code>/addon_static/{id}/</code> — без <code>display</code>:</p>
+<pre><code class="language-js">const display = new URLSearchParams(window.location.search).get(&#39;display&#39;);
+// null → відкрито поза оболонкою оверлею
+// &#39;app&#39; → вікно оверлею застосунку
+// &#39;web&#39; → спільне OBS-посилання оверлею
+</code></pre>
 <h3>Повний оверлей-аддон (worker)</h3>
 <p><code>type: &quot;overlay&quot;</code>, worker <code>index.js</code>, <code>WEB_CONTENT</code> для кастомного HTML-ефекту.</p>
 <p>Платформені аддони з <code>DASHBOARD_EVENTS</code> можуть реєструвати тригери оверлею через <code>dashboard.registerTriggers()</code> і передавати <code>trigger</code> в <code>addRecord()</code>.</p>

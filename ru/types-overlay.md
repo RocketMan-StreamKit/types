@@ -31,6 +31,15 @@
 GET /overlay/settings/{overlayId}?token=
 ```
 
+Когда оболочка оверлея проигрывает эффект, в iframe URL добавляется `display=app` (окно оверлея приложения) или `display=web` (общая OBS-ссылка оверлея). Прямое открытие `/addon_static/{id}/` — без `display`:
+
+```js
+const display = new URLSearchParams(window.location.search).get('display');
+// null → открыто вне оболочки оверлея
+// 'app' → окно оверлея приложения
+// 'web' → общая OBS-ссылка оверлея
+```
+
 ### Полный аддон оверлея (с воркером)
 
 `type: "overlay"`, воркер `index.js`, `WEB_CONTENT` для кастомного HTML-эффекта.

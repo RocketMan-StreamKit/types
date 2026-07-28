@@ -77,7 +77,7 @@
 <li><strong>Мова:</strong> передайте <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) або опустіть — fastText визначає uk/ru/en автоматично (fallback на англійську).</li>
 <li>Для <strong>повного</strong> набору мов (~176 ISO-кодів) окремо використовуйте <a href="./api-language.html"><code>language.detect</code></a> (дозвіл TTS не потрібен). Сам TTS як і раніше використовує лише <code>en</code> / <code>ru</code> / <code>uk</code>.</li>
 <li><strong>Гучність:</strong> <code>options.volumeMultiplier</code> масштабує відтворення відносно гучності TTS користувача (<code>0</code> = тиша, <code>1</code> = повна гучність користувача). Значення вище <code>1</code> обмежуються до <code>1</code> — аддон не може зробити озвучення гучнішим за налаштування користувача.</li>
-<li><strong>Черга:</strong> TTS-менеджер основного процесу серіалізує паралельні виклики <code>speak</code> (від аддонів і від застосунку).</li>
+<li><strong>Черга:</strong> TTS-менеджер основного процесу серіалізує паралельні виклики синтезу <code>speak</code> / <code>prepare</code> (від аддонів і від застосунку). <code>playPrepared</code> лише відтворює вже синтезований кліп.</li>
 </ul>
 <h2><code>tts.getEngine()</code></h2>
 <p>Повертає активний движок і чи увімкнено озвучення в налаштуваннях.</p>
@@ -103,6 +103,48 @@
 <td><code>false</code>, якщо користувач вимкнув TTS глобально — <code>speak</code> поверне <code>{ success: false }</code></td>
 </tr>
 </tbody></table>
+<h2><code>tts.getVoiceInfo(language?)</code></h2>
+<p>Повертає <strong>зведення активного голосу</strong> для налаштованого движка, щоб аддони могли підлаштовувати LLM-промпти (стать / характер озвучення) під голос, обраний стрімером.</p>
+<pre><code class="language-js">const {
+  success,
+  engine,
+  enabled,
+  voiceName,
+  voiceId,
+  gender,
+  language,
+  message,
+} = await tts.getVoiceInfo(&#39;uk&#39;);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>engine</code> / <code>enabled</code></td>
+<td>Те саме значення, що в <code>getEngine()</code></td>
+</tr>
+<tr>
+<td><code>voiceName</code></td>
+<td>Людинозрозуміла назва голосу / моделі, якщо відома (<code>null</code>, якщо не задано)</td>
+</tr>
+<tr>
+<td><code>voiceId</code></td>
+<td>Id голосу ElevenLabs або ключ моделі Piper; інакше <code>null</code></td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td><code>male</code> / <code>female</code> / <code>neutral</code>, якщо движок віддає стать; інакше <code>null</code> (можна вивести з <code>voiceName</code>)</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>Мовний ключ для вибору голосу Piper / Windows; <code>null</code> для ElevenLabs (спільний голос)</td>
+</tr>
+</tbody></table>
+<p>Необов&#39;язковий <code>language</code> (<code>en</code> / <code>ru</code> / <code>uk</code>) вказує, який голос Piper / Windows описувати; якщо пропущено, хост бере мову UI застосунку (з запасним варіантом — перший налаштований голос).</p>
 <h2><code>tts.speak(text, options?)</code></h2>
 <table>
 <thead>
@@ -160,10 +202,51 @@ await tts.speak(&#39;Тихе сповіщення&#39;, { volumeMultiplier: 0.5
 <td>Немає дозволу в маніфесті (перевірка в пісочниці)</td>
 </tr>
 <tr>
+<td><code>Prepared TTS clip not found or expired</code></td>
+<td><code>playPrepared</code> / <code>discardPrepared</code> з невідомим або простроченим id</td>
+</tr>
+<tr>
 <td>Помилки ElevenLabs / Windows</td>
 <td>Квота API, голос не обрано, платформа недоступна тощо</td>
 </tr>
 </tbody></table>
+<h2><code>tts.prepare(text, options?)</code> / <code>tts.playPrepared(id, options?)</code> / <code>tts.discardPrepared(id)</code></h2>
+<p>Синтез <strong>заздалегідь</strong>, щоб затримка / LLM могли йти паралельно з API / Piper. Кліпи живуть у main-процесі <strong>10 хвилин</strong>, потім закінчуються.</p>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>prepare(text, options?)</code></td>
+<td>Лише синтез → <code>{ success, id?, message? }</code>. <code>options.language</code> як у <code>speak</code></td>
+</tr>
+<tr>
+<td><code>playPrepared(id, options?)</code></td>
+<td>Один раз відтворити і спожити <code>id</code>. Опційний <code>volumeMultiplier</code> як у <code>speak</code></td>
+</tr>
+<tr>
+<td><code>discardPrepared(id)</code></td>
+<td>Видалити без відтворення</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const delayMs = 5000;
+const delayDone = new Promise(resolve =&gt; setTimeout(resolve, delayMs));
+
+const reply = &#39;Дякую за донат!&#39;;
+const prepared = await tts.prepare(reply, { language: &#39;uk&#39; });
+
+await delayDone;
+
+if (prepared.success &amp;&amp; prepared.id) {
+  await tts.playPrepared(prepared.id);
+} else {
+  await tts.speak(reply, { language: &#39;uk&#39; });
+}
+</code></pre>
+<p><strong>Черга:</strong> <code>prepare</code> і <code>speak</code> ділять одну чергу синтезу. <code>playPrepared</code> лише запускає playback.</p>
 <h2>Приклад: озвучення при події дашборду</h2>
 <pre><code class="language-js">if (!permissions.has(AddonsPermission.TTS)) {
   console.warn(&#39;TTS не надано&#39;);

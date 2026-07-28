@@ -9,11 +9,12 @@ Each field has:
 | Property | Description |
 | --- | --- |
 | `key` | Storage key in params object |
-| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
+| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename), `namePattern` (regex on basename, file only) |
 | `default` | Initial value |
 | `editor` | If present, field appears in settings UI with label, validation, etc. |
-| `options` | For `select`: `{ value, label? }[]` |
+| `options` | For `select` / `choice`: `{ value, label?, description? }[]` |
+| `visibleWhen` | Optional `{ key, equals }` — hide the field unless `params[key] === equals` |
 | `items` | For `array`: `'text'` or `'number'`. For `spoiler` / `page`: nested schema entries (same shape as `GenerateConfig` arguments; recursion allowed) |
 | `fields` | For `object`: nested fields |
 | `event` | For `button`: event name fired on click (handle with `events.On`) |
@@ -34,7 +35,8 @@ GenerateConfig([
 
 ## Supported types
 
-- **text** — string
+- **text** — string (single-line input)
+- **textarea** — string (multiline input; same storage/validation as `text`)
 - **hidden** — string (same storage and validation as `text`); masked in the UI with a Show/Hide toggle (password field by default)
 - **color** — hex string (`#ff1744`)
 - **number** — number
@@ -42,6 +44,7 @@ GenerateConfig([
 - **array** — array of text or numbers (`items: 'text' | 'number'`)
 - **object** — nested object with `fields`
 - **select** — `options: { value, label? }[]`; `default` must match an option or the first option is used
+- **choice** — same storage as `select`, but the settings UI shows the selected label/description and a **Choose…** button that opens a modal list (each option: title, description, Select)
 - **button** — no stored value; triggers `events.On(event, …)` when clicked (gated to declared event names)
 - **folder** — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)
 - **file** — absolute file path; read-only display, browse with `filters` / `filename` / `namePattern`, open in file manager (highlights the file when possible)
@@ -50,6 +53,8 @@ GenerateConfig([
 - **page** — no stored value; button that opens a nested settings view for `items` with a Back control (recursion allowed)
 
 Nested fields inside `spoiler` / `page` store values at the **parent params level** (sibling keys to the container), not under the container key.
+
+Optional `visibleWhen: { key, equals }` hides a field in the settings UI unless the sibling params value matches (useful for custom-only fields).
 
 ## Spoiler / page example
 

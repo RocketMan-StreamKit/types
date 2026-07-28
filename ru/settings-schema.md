@@ -9,10 +9,11 @@
 | Свойство | Описание |
 | --- | --- |
 | `key` | Ключ хранения в объекте params |
-| `type` | `text`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
+| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `default` | Начальное значение |
 | `editor` | Если задан — поле показывается в UI настроек с подписью, валидацией и т.д. |
-| `options` | Для `select`: `{ value, label? }[]` |
+| `options` | Для `select` / `choice`: `{ value, label?, description? }[]` |
+| `visibleWhen` | Опционально `{ key, equals }` — скрыть поле, пока `params[key] !== equals` |
 | `items` | Для `array`: `'text'` или `'number'`. Для `spoiler` / `page`: вложенные записи схемы (тот же формат, что у аргументов `GenerateConfig`; рекурсия допускается) |
 | `fields` | Для `object`: вложенные поля |
 | `event` | Для `button`: имя события при клике (обрабатывается через `events.On`) |
@@ -33,7 +34,8 @@ GenerateConfig([
 
 ## Поддерживаемые типы
 
-- **text** — строка
+- **text** — строка (однострочный ввод)
+- **textarea** — строка (многострочный ввод; хранение и валидация как у `text`)
 - **hidden** — строка (хранение и валидация как у `text`); в UI маскируется с кнопкой «Показать/Скрыть» (по умолчанию тип password)
 - **color** — hex-строка (`#ff1744`)
 - **number** — число
@@ -41,11 +43,14 @@ GenerateConfig([
 - **array** — массив текста или чисел (`items: 'text' | 'number'`)
 - **object** — вложенный объект с `fields`
 - **select** — `options: { value, label? }[]`; `default` должен совпадать с опцией, иначе берётся первая
+- **choice** — хранение как у `select`, но UI показывает выбранный пункт и кнопку **Выбрать…** с модалкой (название, описание, кнопка выбора)
 - **button** — значение не хранится; при клике вызывает `events.On(event, …)` (только для объявленных имён событий)
 - **spoiler** — значение не хранится; кнопка раскрывает/скрывает вложенные `items` на месте (те же записи схемы, что у `GenerateConfig`, включая строки и вложенные spoiler/page)
 - **page** — значение не хранится; кнопка открывает отдельный экран с `items` и кнопкой «Назад» (рекурсия допускается)
 
 Поля внутри `spoiler` / `page` хранятся на **уровне родительских params** (ключи-соседи контейнера), а не под ключом контейнера.
+
+Опциональный `visibleWhen: { key, equals }` скрывает поле в UI, пока значение соседнего параметра не совпадёт.
 
 ## Пример spoiler / page
 

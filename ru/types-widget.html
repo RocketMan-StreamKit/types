@@ -116,6 +116,12 @@
 </tr>
 </tbody></table>
 <p>Прямой URL работает независимо от флагов отображения.</p>
+<p>При встраивании в оболочку оверлея в iframe URL добавляется <code>display=app</code> (окно оверлея приложения) или <code>display=web</code> (общая OBS-ссылка оверлея). Прямой Widget URL содержит только <code>token</code> — без <code>display</code> — страница может определить способ показа:</p>
+<pre><code class="language-js">const display = new URLSearchParams(window.location.search).get(&#39;display&#39;);
+// null → открыт по прямой ссылке виджета
+// &#39;app&#39; → окно оверлея приложения
+// &#39;web&#39; → общая OBS-ссылка оверлея
+</code></pre>
 <p>Синхронизация в реальном времени: пространство имён Socket.IO <code>/overlay</code>, событие <code>widget:sync</code> с <code>{ widgets: [{ widgetId, url }] }</code>.</p>
 <p>Снимок: <code>GET /widget/snapshot?display=app|web&amp;token=</code></p>
 <h2>UI настроек</h2>

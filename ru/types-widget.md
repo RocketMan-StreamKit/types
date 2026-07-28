@@ -48,6 +48,15 @@ if (query.token !== data.token) {
 
 Прямой URL работает независимо от флагов отображения.
 
+При встраивании в оболочку оверлея в iframe URL добавляется `display=app` (окно оверлея приложения) или `display=web` (общая OBS-ссылка оверлея). Прямой Widget URL содержит только `token` — без `display` — страница может определить способ показа:
+
+```js
+const display = new URLSearchParams(window.location.search).get('display');
+// null → открыт по прямой ссылке виджета
+// 'app' → окно оверлея приложения
+// 'web' → общая OBS-ссылка оверлея
+```
+
 Синхронизация в реальном времени: пространство имён Socket.IO `/overlay`, событие `widget:sync` с `{ widgets: [{ widgetId, url }] }`.
 
 Снимок: `GET /widget/snapshot?display=app|web&token=`

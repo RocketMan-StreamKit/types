@@ -31,6 +31,15 @@ Runtime settings (volume, duration) may be read from:
 GET /overlay/settings/{overlayId}?token=
 ```
 
+When the overlay shell plays the effect, the iframe URL includes `display=app` (in-app overlay window) or `display=web` (common OBS overlay browser source). Opening `/addon_static/{id}/` directly has no `display` param:
+
+```js
+const display = new URLSearchParams(window.location.search).get('display');
+// null → opened outside the overlay shell
+// 'app' → in-app overlay window
+// 'web' → common OBS overlay link
+```
+
 ### Full overlay addon (worker)
 
 `type: "overlay"`, worker `index.js`, `WEB_CONTENT` for custom HTML effect.

@@ -31,6 +31,15 @@ Runtime-налаштування (гучність, тривалість) мож
 GET /overlay/settings/{overlayId}?token=
 ```
 
+Коли оболонка оверлею програє ефект, в iframe URL додається `display=app` (вікно оверлею застосунку) або `display=web` (спільне OBS-посилання оверлею). Пряме відкриття `/addon_static/{id}/` — без `display`:
+
+```js
+const display = new URLSearchParams(window.location.search).get('display');
+// null → відкрито поза оболонкою оверлею
+// 'app' → вікно оверлею застосунку
+// 'web' → спільне OBS-посилання оверлею
+```
+
 ### Повний оверлей-аддон (worker)
 
 `type: "overlay"`, worker `index.js`, `WEB_CONTENT` для кастомного HTML-ефекту.

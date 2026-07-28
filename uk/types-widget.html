@@ -116,6 +116,12 @@
 </tr>
 </tbody></table>
 <p>Прямий URL працює незалежно від прапорців display.</p>
+<p>Під час вбудовування в оболонку оверлею в iframe URL додається <code>display=app</code> (вікно оверлею застосунку) або <code>display=web</code> (спільне OBS-посилання оверлею). Прямий Widget URL містить лише <code>token</code> — без <code>display</code> — сторінка може визначити спосіб показу:</p>
+<pre><code class="language-js">const display = new URLSearchParams(window.location.search).get(&#39;display&#39;);
+// null → відкрито за прямим посиланням віджета
+// &#39;app&#39; → вікно оверлею застосунку
+// &#39;web&#39; → спільне OBS-посилання оверлею
+</code></pre>
 <p>Live sync: простір імен Socket.IO <code>/overlay</code>, подія <code>widget:sync</code> з <code>{ widgets: [{ widgetId, url }] }</code>.</p>
 <p>Snapshot: <code>GET /widget/snapshot?display=app|web&amp;token=</code></p>
 <h2>UI налаштувань</h2>

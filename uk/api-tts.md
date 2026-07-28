@@ -24,7 +24,7 @@
 - **Мова:** передайте `options.language` (`en`, `ru`, `uk`) або опустіть — fastText визначає uk/ru/en автоматично (fallback на англійську).
 - Для **повного** набору мов (~176 ISO-кодів) окремо використовуйте [`language.detect`](./api-language.md) (дозвіл TTS не потрібен). Сам TTS як і раніше використовує лише `en` / `ru` / `uk`.
 - **Гучність:** `options.volumeMultiplier` масштабує відтворення відносно гучності TTS користувача (`0` = тиша, `1` = повна гучність користувача). Значення вище `1` обмежуються до `1` — аддон не може зробити озвучення гучнішим за налаштування користувача.
-- **Черга:** TTS-менеджер основного процесу серіалізує паралельні виклики `speak` (від аддонів і від застосунку).
+- **Черга:** TTS-менеджер основного процесу серіалізує паралельні виклики синтезу `speak` / `prepare` (від аддонів і від застосунку). `playPrepared` лише відтворює вже синтезований кліп.
 
 ## `tts.getEngine()`
 
@@ -42,6 +42,33 @@ const { success, engine, enabled, message } = await tts.getEngine();
 | --- | --- |
 | `engine` | Активний движок синтезу з налаштувань користувача |
 | `enabled` | `false`, якщо користувач вимкнув TTS глобально — `speak` поверне `{ success: false }` |
+
+## `tts.getVoiceInfo(language?)`
+
+Повертає **зведення активного голосу** для налаштованого движка, щоб аддони могли підлаштовувати LLM-промпти (стать / характер озвучення) під голос, обраний стрімером.
+
+```js
+const {
+  success,
+  engine,
+  enabled,
+  voiceName,
+  voiceId,
+  gender,
+  language,
+  message,
+} = await tts.getVoiceInfo('uk');
+```
+
+| Поле | Опис |
+| --- | --- |
+| `engine` / `enabled` | Те саме значення, що в `getEngine()` |
+| `voiceName` | Людинозрозуміла назва голосу / моделі, якщо відома (`null`, якщо не задано) |
+| `voiceId` | Id голосу ElevenLabs або ключ моделі Piper; інакше `null` |
+| `gender` | `male` / `female` / `neutral`, якщо движок віддає стать; інакше `null` (можна вивести з `voiceName`) |
+| `language` | Мовний ключ для вибору голосу Piper / Windows; `null` для ElevenLabs (спільний голос) |
+
+Необов'язковий `language` (`en` / `ru` / `uk`) вказує, який голос Piper / Windows описувати; якщо пропущено, хост бере мову UI застосунку (з запасним варіантом — перший налаштований голос).
 
 ## `tts.speak(text, options?)`
 
@@ -69,7 +96,36 @@ await tts.speak('Тихе сповіщення', { volumeMultiplier: 0.5 });
 | `Text is empty` | Порожній або з пробілів `text` |
 | `No TTS model configured for this language` | Движок Piper, немає моделі для визначеної мови |
 | `Permission TTS is required…` | Немає дозволу в маніфесті (перевірка в пісочниці) |
+| `Prepared TTS clip not found or expired` | `playPrepared` / `discardPrepared` з невідомим або простроченим id |
 | Помилки ElevenLabs / Windows | Квота API, голос не обрано, платформа недоступна тощо |
+
+## `tts.prepare(text, options?)` / `tts.playPrepared(id, options?)` / `tts.discardPrepared(id)`
+
+Синтез **заздалегідь**, щоб затримка / LLM могли йти паралельно з API / Piper. Кліпи живуть у main-процесі **10 хвилин**, потім закінчуються.
+
+| Метод | Опис |
+| --- | --- |
+| `prepare(text, options?)` | Лише синтез → `{ success, id?, message? }`. `options.language` як у `speak` |
+| `playPrepared(id, options?)` | Один раз відтворити і спожити `id`. Опційний `volumeMultiplier` як у `speak` |
+| `discardPrepared(id)` | Видалити без відтворення |
+
+```js
+const delayMs = 5000;
+const delayDone = new Promise(resolve => setTimeout(resolve, delayMs));
+
+const reply = 'Дякую за донат!';
+const prepared = await tts.prepare(reply, { language: 'uk' });
+
+await delayDone;
+
+if (prepared.success && prepared.id) {
+  await tts.playPrepared(prepared.id);
+} else {
+  await tts.speak(reply, { language: 'uk' });
+}
+```
+
+**Черга:** `prepare` і `speak` ділять одну чергу синтезу. `playPrepared` лише запускає playback.
 
 ## Приклад: озвучення при події дашборду
 

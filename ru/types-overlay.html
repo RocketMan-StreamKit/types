@@ -86,6 +86,12 @@
 <p>Параметры рантайма (громкость, длительность) можно читать из:</p>
 <pre><code>GET /overlay/settings/{overlayId}?token=
 </code></pre>
+<p>Когда оболочка оверлея проигрывает эффект, в iframe URL добавляется <code>display=app</code> (окно оверлея приложения) или <code>display=web</code> (общая OBS-ссылка оверлея). Прямое открытие <code>/addon_static/{id}/</code> — без <code>display</code>:</p>
+<pre><code class="language-js">const display = new URLSearchParams(window.location.search).get(&#39;display&#39;);
+// null → открыто вне оболочки оверлея
+// &#39;app&#39; → окно оверлея приложения
+// &#39;web&#39; → общая OBS-ссылка оверлея
+</code></pre>
 <h3>Полный аддон оверлея (с воркером)</h3>
 <p><code>type: &quot;overlay&quot;</code>, воркер <code>index.js</code>, <code>WEB_CONTENT</code> для кастомного HTML-эффекта.</p>
 <p>Аддоны платформ с <code>DASHBOARD_EVENTS</code> могут регистрировать триггеры оверлея через <code>dashboard.registerTriggers()</code> и передавать <code>trigger</code> в <code>addRecord()</code>.</p>

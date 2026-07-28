@@ -22,7 +22,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `language` | Detect text language via fastText lid.176 (~176 ISO codes; no permission) |
 | `license` | License status and MD5 device key fingerprint (no permission) |
 | `notify` | Title-bar notification center |
-| `tts` | Text-to-speech playback (`TTS` permission) |
+| `tts` | Text-to-speech playback and voice info (`TTS` permission) |
 | `llm` | LLM Access chat completions (`LLM` permission) |
 | `ytdlp` | Media downloads via bundled yt-dlp (`FILE_ACCESS` + `NETWORK_REQUEST`) |
 | `storage` | Private JSON file in install folder |
