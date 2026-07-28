@@ -77,7 +77,7 @@
 <li><strong>Language:</strong> pass <code>options.language</code> (<code>en</code>, <code>ru</code>, <code>uk</code>) or omit it — fastText auto-detects uk/ru/en (English fallback).</li>
 <li>For the <strong>full</strong> language set (~176 ISO codes), use <a href="./api-language.html"><code>language.detect</code></a> separately (no TTS permission). TTS itself still only uses <code>en</code> / <code>ru</code> / <code>uk</code>.</li>
 <li><strong>Volume:</strong> <code>options.volumeMultiplier</code> scales playback relative to the user&#39;s TTS volume (<code>0</code> = silent, <code>1</code> = full user volume). Values above <code>1</code> are clamped to <code>1</code> — addons cannot exceed the user&#39;s volume setting.</li>
-<li><strong>Queue:</strong> the main-process TTS manager serializes overlapping <code>speak</code> calls (from addons and from the app).</li>
+<li><strong>Queue:</strong> the main-process TTS manager serializes overlapping <code>speak</code> / <code>prepare</code> synthesis calls (from addons and from the app). <code>playPrepared</code> only plays an already-synthesized clip.</li>
 </ul>
 <h2><code>tts.getEngine()</code></h2>
 <p>Returns the active engine and whether TTS playback is enabled in settings.</p>
@@ -103,6 +103,48 @@
 <td><code>false</code> when the user disabled TTS globally — <code>speak</code> will return <code>{ success: false }</code></td>
 </tr>
 </tbody></table>
+<h2><code>tts.getVoiceInfo(language?)</code></h2>
+<p>Returns the <strong>active voice summary</strong> for the configured engine so addons can adapt LLM prompts (spoken gender / character) to the voice the streamer selected.</p>
+<pre><code class="language-js">const {
+  success,
+  engine,
+  enabled,
+  voiceName,
+  voiceId,
+  gender,
+  language,
+  message,
+} = await tts.getVoiceInfo(&#39;ru&#39;);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>engine</code> / <code>enabled</code></td>
+<td>Same meaning as <code>getEngine()</code></td>
+</tr>
+<tr>
+<td><code>voiceName</code></td>
+<td>Human-readable voice / model name when known (<code>null</code> if unset)</td>
+</tr>
+<tr>
+<td><code>voiceId</code></td>
+<td>ElevenLabs voice id, or Piper model key; otherwise <code>null</code></td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td><code>male</code> / <code>female</code> / <code>neutral</code> when the engine exposes it; otherwise <code>null</code> (infer from <code>voiceName</code> if needed)</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>Language key used for Piper / Windows voice selection; <code>null</code> for ElevenLabs (shared voice)</td>
+</tr>
+</tbody></table>
+<p>Optional <code>language</code> (<code>en</code> / <code>ru</code> / <code>uk</code>) picks which Piper / Windows per-language voice to describe; when omitted, the host uses the app UI language (falling back to the first configured voice).</p>
 <h2><code>tts.speak(text, options?)</code></h2>
 <table>
 <thead>
@@ -160,10 +202,51 @@ await tts.speak(&#39;Quiet notification&#39;, { volumeMultiplier: 0.5 });
 <td>Missing manifest permission (sandbox-side check)</td>
 </tr>
 <tr>
+<td><code>Prepared TTS clip not found or expired</code></td>
+<td><code>playPrepared</code> / <code>discardPrepared</code> with unknown or expired id</td>
+</tr>
+<tr>
 <td>ElevenLabs / Windows errors</td>
 <td>API quota, missing voice, platform unavailable, etc.</td>
 </tr>
 </tbody></table>
+<h2><code>tts.prepare(text, options?)</code> / <code>tts.playPrepared(id, options?)</code> / <code>tts.discardPrepared(id)</code></h2>
+<p>Synthesize speech <strong>ahead of playback</strong> so work (donation delay, LLM, etc.) can overlap with API / Piper synthesis. Prepared clips live in the main process for <strong>10 minutes</strong>, then expire.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>prepare(text, options?)</code></td>
+<td>Synthesize only → <code>{ success, id?, message? }</code>. <code>options.language</code> same as <code>speak</code></td>
+</tr>
+<tr>
+<td><code>playPrepared(id, options?)</code></td>
+<td>Play once and consume <code>id</code>. Optional <code>volumeMultiplier</code> like <code>speak</code></td>
+</tr>
+<tr>
+<td><code>discardPrepared(id)</code></td>
+<td>Drop without playing</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const delayMs = 5000;
+const delayDone = new Promise(resolve =&gt; setTimeout(resolve, delayMs));
+
+const reply = &#39;Thanks for the donation!&#39;;
+const prepared = await tts.prepare(reply, { language: &#39;en&#39; });
+
+await delayDone;
+
+if (prepared.success &amp;&amp; prepared.id) {
+  await tts.playPrepared(prepared.id);
+} else {
+  await tts.speak(reply, { language: &#39;en&#39; });
+}
+</code></pre>
+<p><strong>Queue notes:</strong> <code>prepare</code> and <code>speak</code> share the same synthesis queue (no overlapping Piper / API jobs). <code>playPrepared</code> only starts playback and does not re-synthesize.</p>
 <h2>Example: speak on dashboard event</h2>
 <pre><code class="language-js">if (!permissions.has(AddonsPermission.TTS)) {
   console.warn(&#39;TTS not granted&#39;);

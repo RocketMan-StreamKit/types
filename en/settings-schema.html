@@ -73,7 +73,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
+<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>pathPicker</code></td>
@@ -89,7 +89,11 @@
 </tr>
 <tr>
 <td><code>options</code></td>
-<td>For <code>select</code>: <code>{ value, label? }[]</code></td>
+<td>For <code>select</code> / <code>choice</code>: <code>{ value, label?, description? }[]</code></td>
+</tr>
+<tr>
+<td><code>visibleWhen</code></td>
+<td>Optional <code>{ key, equals }</code> — hide the field unless <code>params[key] === equals</code></td>
 </tr>
 <tr>
 <td><code>items</code></td>
@@ -115,7 +119,8 @@
 </code></pre>
 <h2>Supported types</h2>
 <ul>
-<li><strong>text</strong> — string</li>
+<li><strong>text</strong> — string (single-line input)</li>
+<li><strong>textarea</strong> — string (multiline input; same storage/validation as <code>text</code>)</li>
 <li><strong>hidden</strong> — string (same storage and validation as <code>text</code>); masked in the UI with a Show/Hide toggle (password field by default)</li>
 <li><strong>color</strong> — hex string (<code>#ff1744</code>)</li>
 <li><strong>number</strong> — number</li>
@@ -123,6 +128,7 @@
 <li><strong>array</strong> — array of text or numbers (<code>items: &#39;text&#39; | &#39;number&#39;</code>)</li>
 <li><strong>object</strong> — nested object with <code>fields</code></li>
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> must match an option or the first option is used</li>
+<li><strong>choice</strong> — same storage as <code>select</code>, but the settings UI shows the selected label/description and a <strong>Choose…</strong> button that opens a modal list (each option: title, description, Select)</li>
 <li><strong>button</strong> — no stored value; triggers <code>events.On(event, …)</code> when clicked (gated to declared event names)</li>
 <li><strong>folder</strong> — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)</li>
 <li><strong>file</strong> — absolute file path; read-only display, browse with <code>filters</code> / <code>filename</code> / <code>namePattern</code>, open in file manager (highlights the file when possible)</li>
@@ -131,6 +137,7 @@
 <li><strong>page</strong> — no stored value; button that opens a nested settings view for <code>items</code> with a Back control (recursion allowed)</li>
 </ul>
 <p>Nested fields inside <code>spoiler</code> / <code>page</code> store values at the <strong>parent params level</strong> (sibling keys to the container), not under the container key.</p>
+<p>Optional <code>visibleWhen: { key, equals }</code> hides a field in the settings UI unless the sibling params value matches (useful for custom-only fields).</p>
 <h2>Spoiler / page example</h2>
 <pre><code class="language-js">{
   key: &#39;advanced&#39;,

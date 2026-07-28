@@ -73,7 +73,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
+<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>default</code></td>
@@ -85,7 +85,11 @@
 </tr>
 <tr>
 <td><code>options</code></td>
-<td>Для <code>select</code>: <code>{ value, label? }[]</code></td>
+<td>Для <code>select</code> / <code>choice</code>: <code>{ value, label?, description? }[]</code></td>
+</tr>
+<tr>
+<td><code>visibleWhen</code></td>
+<td>Опционально <code>{ key, equals }</code> — скрыть поле, пока <code>params[key] !== equals</code></td>
 </tr>
 <tr>
 <td><code>items</code></td>
@@ -111,7 +115,8 @@
 </code></pre>
 <h2>Поддерживаемые типы</h2>
 <ul>
-<li><strong>text</strong> — строка</li>
+<li><strong>text</strong> — строка (однострочный ввод)</li>
+<li><strong>textarea</strong> — строка (многострочный ввод; хранение и валидация как у <code>text</code>)</li>
 <li><strong>hidden</strong> — строка (хранение и валидация как у <code>text</code>); в UI маскируется с кнопкой «Показать/Скрыть» (по умолчанию тип password)</li>
 <li><strong>color</strong> — hex-строка (<code>#ff1744</code>)</li>
 <li><strong>number</strong> — число</li>
@@ -119,11 +124,13 @@
 <li><strong>array</strong> — массив текста или чисел (<code>items: &#39;text&#39; | &#39;number&#39;</code>)</li>
 <li><strong>object</strong> — вложенный объект с <code>fields</code></li>
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> должен совпадать с опцией, иначе берётся первая</li>
+<li><strong>choice</strong> — хранение как у <code>select</code>, но UI показывает выбранный пункт и кнопку <strong>Выбрать…</strong> с модалкой (название, описание, кнопка выбора)</li>
 <li><strong>button</strong> — значение не хранится; при клике вызывает <code>events.On(event, …)</code> (только для объявленных имён событий)</li>
 <li><strong>spoiler</strong> — значение не хранится; кнопка раскрывает/скрывает вложенные <code>items</code> на месте (те же записи схемы, что у <code>GenerateConfig</code>, включая строки и вложенные spoiler/page)</li>
 <li><strong>page</strong> — значение не хранится; кнопка открывает отдельный экран с <code>items</code> и кнопкой «Назад» (рекурсия допускается)</li>
 </ul>
 <p>Поля внутри <code>spoiler</code> / <code>page</code> хранятся на <strong>уровне родительских params</strong> (ключи-соседи контейнера), а не под ключом контейнера.</p>
+<p>Опциональный <code>visibleWhen: { key, equals }</code> скрывает поле в UI, пока значение соседнего параметра не совпадёт.</p>
 <h2>Пример spoiler / page</h2>
 <pre><code class="language-js">{
   key: &#39;advanced&#39;,

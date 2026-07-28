@@ -86,6 +86,12 @@
 <p>Runtime settings (volume, duration) may be read from:</p>
 <pre><code>GET /overlay/settings/{overlayId}?token=
 </code></pre>
+<p>When the overlay shell plays the effect, the iframe URL includes <code>display=app</code> (in-app overlay window) or <code>display=web</code> (common OBS overlay browser source). Opening <code>/addon_static/{id}/</code> directly has no <code>display</code> param:</p>
+<pre><code class="language-js">const display = new URLSearchParams(window.location.search).get(&#39;display&#39;);
+// null → opened outside the overlay shell
+// &#39;app&#39; → in-app overlay window
+// &#39;web&#39; → common OBS overlay link
+</code></pre>
 <h3>Full overlay addon (worker)</h3>
 <p><code>type: &quot;overlay&quot;</code>, worker <code>index.js</code>, <code>WEB_CONTENT</code> for custom HTML effect.</p>
 <p>Platform addons with <code>DASHBOARD_EVENTS</code> can register overlay triggers via <code>dashboard.registerTriggers()</code> and pass <code>trigger</code> in <code>addRecord()</code>.</p>
