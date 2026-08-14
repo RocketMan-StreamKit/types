@@ -45,6 +45,7 @@
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
           <li><a href="api-currency.html">Валюта</a></li>
           <li><a href="api-language.html">Визначення мови (`language`)</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
@@ -74,6 +75,7 @@
 <li>Перемикається режим розробника (потрібен повний перезапуск застосунку/worker для поширення <code>isDeveloperMode</code>)</li>
 </ul>
 <p><code>storage.Read()</code> / <code>storage.Write()</code> зберігаються між перезапусками worker у межах одного встановлення. Параметри <code>api.config</code> зберігаються в конфігурації застосунку.</p>
+<p>Лічильники <code>alerts.started()</code> цього аддона скидаються хостом під час вимкнення, видалення, перезавантаження та зупинки після циклу падінь — інші аддони отримують <code>{ active: false }</code> через <code>alerts.onChange</code>, якщо це було останнє активне сповіщення. Див. <a href="./api-alerts.html">Сповіщення</a>.</p>
 <h2>Коректна зупинка — <code>addon:prepare-stop</code></h2>
 <p>Перед тим як StreamKit+ уб’є worker аддона, головний процес викликає вбудовану подію <code>addon:prepare-stop</code> і чекає завершення обробника (короткий таймаут, близько <strong>2.5 секунд</strong>). Використовуйте її для віддаленого cleanup, поки ще доступні OAuth-токен і мережа.</p>
 <p><strong>Коли спрацьовує</strong></p>

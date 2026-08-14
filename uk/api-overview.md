@@ -18,6 +18,7 @@
 | `dashboard` | Віджет подій, чат, платформи, тригери оверлею |
 | `status` | Рядок стану головного вікна |
 | `viewers` | Онлайн глядачів у рядку стану головного вікна (без дозволу) |
+| `alerts` | Стан показу сповіщень між аддонами: `started` / `ended` / `isActive` / `onChange` (без дозволу) |
 | `currency` | Основна валюта користувача та конвертація сум (без дозволу) |
 | `language` | Визначення мови тексту через fastText lid.176 (~176 ISO-кодів; без дозволу) |
 | `license` | Статус ліцензії та MD5-відбиток ключа пристрою (без дозволу) |
@@ -44,6 +45,7 @@
 - [addons RPC](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Сповіщення (`alerts`)](./api-alerts.md)
 - [Валюта](./api-currency.md)
 - [Визначення мови (`language`)](./api-language.md)
 - [Ліцензія](./api-license.md)

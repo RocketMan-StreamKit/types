@@ -18,6 +18,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 | `dashboard` | Events widget, chat, platforms, overlay triggers |
 | `status` | Main window status bar |
 | `viewers` | Live viewer count in the main window status bar (no permission) |
+| `alerts` | Cross-addon alert display state: `started` / `ended` / `isActive` / `onChange` (no permission) |
 | `currency` | User's primary currency and amount conversion (no permission) |
 | `language` | Detect text language via fastText lid.176 (~176 ISO codes; no permission) |
 | `license` | License status and MD5 device key fingerprint (no permission) |
@@ -44,6 +45,7 @@ All APIs are **global** in the integration worker VM. Typings ship in the npm pa
 - [addons RPC](./api-addons-rpc.md)
 - [dashboard](./api-dashboard.md)
 - [status, notify, ui](./api-status-notify-ui.md)
+- [Alerts (`alerts`)](./api-alerts.md)
 - [Currency](./api-currency.md)
 - [Language detection (`language`)](./api-language.md)
 - [License](./api-license.md)

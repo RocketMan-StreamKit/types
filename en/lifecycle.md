@@ -20,6 +20,8 @@ The worker restarts when:
 
 `storage.Read()` / `storage.Write()` persist across worker restarts within the same install. `api.config` params persist in app config.
 
+Active `alerts.started()` counts for this addon are cleared by the host on disable, uninstall, reload, and crash-stop — other addons receive `{ active: false }` via `alerts.onChange` when that clears the last in-flight alert. See [Alerts](./api-alerts.md).
+
 ## Graceful stop — `addon:prepare-stop`
 
 Before StreamKit+ kills the addon worker, the main process fires the built-in event `addon:prepare-stop` and waits for the handler to finish (with a short timeout, about **2.5 seconds**). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.

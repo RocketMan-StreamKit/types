@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сповіщення (`alerts`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html" class="is-active">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Сповіщення (<code>alerts</code>)</h1>
+<p><strong>Додатковий дозвіл не потрібен</strong></p>
+<p>Координація показу екранних сповіщень між аддонами (донати, підписки та подібні оверлеї). Аддон донатної платформи повідомляє, коли його сповіщення почалося і закінчилося; інші аддони (наприклад, музичний плеєр) можуть тимчасово призупиняти себе, поки грає хоча б одне сповіщення.</p>
+<p>Цей API <strong>не</strong> малює UI у StreamKit+. Він лише передає між worker’ами глобальний прапорець «зараз десь іде сповіщення?».</p>
+<h2>Поняття</h2>
+<table>
+<thead>
+<tr>
+<th>Термін</th>
+<th>Значення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Продюсер</td>
+<td>Аддон, який показує сповіщення — викликає <code>alerts.started()</code> / <code>alerts.ended()</code></td>
+</tr>
+<tr>
+<td>Конс’юмер</td>
+<td>Аддон, який реагує — викликає <code>alerts.isActive()</code> та/або <code>alerts.onChange(...)</code></td>
+</tr>
+<tr>
+<td>Глобально активно</td>
+<td><code>true</code>, поки іде <strong>хоча б одне</strong> сповіщення від <strong>будь-якого</strong> аддона</td>
+</tr>
+</tbody></table>
+<p>Лічильники <strong>за посиланнями на аддон</strong>: на кожен <code>started()</code> потрібен один <code>ended()</code>. Проміжні зміни (1→2 або 2→1 активних сповіщень) <strong>не</strong> сповіщають підписників — лише переходи <code>0 → 1+</code> і <code>→ 0</code>.</p>
+<h2><code>alerts.started()</code></h2>
+<p>Позначає, що <strong>цей</strong> аддон почав показувати екранне сповіщення.</p>
+<pre><code class="language-js">alerts.started();
+// … відтворення сповіщення про донат / підписку …
+alerts.ended();
+</code></pre>
+<h2><code>alerts.ended()</code></h2>
+<p>Позначає, що <strong>цей</strong> аддон закінчив одне сповіщення. Якщо активних сповіщень у аддона вже немає — виклик нічого не робить.</p>
+<pre><code class="language-js">alerts.ended();
+</code></pre>
+<h2><code>alerts.isActive()</code></h2>
+<p>Повертає, чи повідомляє зараз якийсь аддон про активне сповіщення.</p>
+<pre><code class="language-js">const res = await alerts.isActive();
+if (res.success &amp;&amp; res.active) {
+  // пауза музики, приховування HUD тощо
+}
+</code></pre>
+<p>Повертає <code>{ success: true, active: boolean }</code>.</p>
+<h2><code>alerts.onChange(cb)</code></h2>
+<p>Підписка на зміни глобального стану показу сповіщень. Повертає <code>{ Destroy }</code> для відписки.</p>
+<table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>Коли</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>{ active: true }</code></td>
+<td>Десь почалося перше сповіщення (було тихо → зараз грає)</td>
+</tr>
+<tr>
+<td><code>{ active: false }</code></td>
+<td>Закінчилося останнє сповіщення (усі аддони вільні)</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const sub = alerts.onChange(({ active }) =&gt; {
+  if (active) {
+    pauseMusic();
+  } else {
+    resumeMusic();
+  }
+});
+
+// Опційно: синхронізувати поточний стан під час завантаження
+const state = await alerts.isActive();
+if (state.success &amp;&amp; state.active) {
+  pauseMusic();
+}
+
+// пізніше
+sub.Destroy();
+</code></pre>
+<p><code>onChange</code> <strong>не</strong> викликає колбек з поточним значенням у момент підписки — для початкового стану використовуйте <code>isActive()</code>.</p>
+<h2>Очищення під час життєвого циклу</h2>
+<p>Коли аддон <strong>вимикають</strong>, <strong>видаляють</strong>, <strong>перезавантажують</strong> (<code>api.restart()</code> / перезапуск у налаштуваннях) або зупиняють після <strong>циклу падінь</strong>, StreamKit+ скидає всі активні сповіщення, приписані цьому аддону.</p>
+<p>Якщо через це глобальний прапорець переходить з активного в неактивний, усі інші запущені аддони отримують <code>{ active: false }</code> через <code>onChange</code>.</p>
+<p>Продюсеру не обов’язково викликати <code>ended()</code> у <code>addon:prepare-stop</code> для коректності (хост сам очищає лічильники), але виклик <code>ended()</code> перед зупинкою допустимий.</p>
+<h2>Повний приклад: донатний продюсер + музичний конс’юмер</h2>
+<pre><code class="language-js">// Аддон донатної / алерт-платформи
+events.On(&#39;onDonationAlert&#39;, async ({ body }) =&gt; {
+  alerts.started();
+  try {
+    await playAlertMedia(body);
+  } finally {
+    alerts.ended();
+  }
+});
+</code></pre>
+<pre><code class="language-js">// Аддон музичного плеєра
+let pausedForAlert = false;
+
+alerts.onChange(({ active }) =&gt; {
+  if (active &amp;&amp; !pausedForAlert) {
+    pausedForAlert = true;
+    pausePlayback();
+  } else if (!active &amp;&amp; pausedForAlert) {
+    pausedForAlert = false;
+    resumePlayback();
+  }
+});
+</code></pre>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
