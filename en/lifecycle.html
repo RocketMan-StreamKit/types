@@ -45,6 +45,7 @@
           <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
           <li><a href="api-dashboard.html">dashboard</a></li>
           <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
           <li><a href="api-currency.html">Currency</a></li>
           <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
@@ -74,6 +75,7 @@
 <li>Developer mode toggle (requires full app/worker restart to propagate <code>isDeveloperMode</code>)</li>
 </ul>
 <p><code>storage.Read()</code> / <code>storage.Write()</code> persist across worker restarts within the same install. <code>api.config</code> params persist in app config.</p>
+<p>Active <code>alerts.started()</code> counts for this addon are cleared by the host on disable, uninstall, reload, and crash-stop — other addons receive <code>{ active: false }</code> via <code>alerts.onChange</code> when that clears the last in-flight alert. See <a href="./api-alerts.html">Alerts</a>.</p>
 <h2>Graceful stop — <code>addon:prepare-stop</code></h2>
 <p>Before StreamKit+ kills the addon worker, the main process fires the built-in event <code>addon:prepare-stop</code> and waits for the handler to finish (with a short timeout, about <strong>2.5 seconds</strong>). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.</p>
 <p><strong>When it fires</strong></p>

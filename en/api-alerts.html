@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alerts (`alerts`) — StreamKit+ Addon Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Addon Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html" class="is-active">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Alerts (<code>alerts</code>)</h1>
+<p><strong>No permission required</strong></p>
+<p>Coordinates on-screen alert playback across addons (donations, subscriptions, and similar overlays). A donation platform addon reports when its alert starts and ends; other addons (for example a music player) can pause themselves while any alert is playing.</p>
+<p>This API does <strong>not</strong> render UI in StreamKit+. It only shares a global “is any alert playing?” flag between addon workers.</p>
+<h2>Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Producer</td>
+<td>Addon that displays an alert — calls <code>alerts.started()</code> / <code>alerts.ended()</code></td>
+</tr>
+<tr>
+<td>Consumer</td>
+<td>Addon that reacts — calls <code>alerts.isActive()</code> and/or <code>alerts.onChange(...)</code></td>
+</tr>
+<tr>
+<td>Global active</td>
+<td><code>true</code> while <strong>at least one</strong> alert is in progress from <strong>any</strong> addon</td>
+</tr>
+</tbody></table>
+<p>Counts are <strong>reference-counted per addon</strong>: call <code>ended()</code> once for each <code>started()</code>. Intermediate changes (1→2 or 2→1 active alerts) do <strong>not</strong> notify subscribers — only the edges <code>0 → 1+</code> and <code>→ 0</code> do.</p>
+<h2><code>alerts.started()</code></h2>
+<p>Marks that <strong>this</strong> addon began displaying an on-screen alert.</p>
+<pre><code class="language-js">alerts.started();
+// … play donation / sub alert …
+alerts.ended();
+</code></pre>
+<h2><code>alerts.ended()</code></h2>
+<p>Marks that <strong>this</strong> addon finished one alert. Safe to call when the count is already zero (no-op).</p>
+<pre><code class="language-js">alerts.ended();
+</code></pre>
+<h2><code>alerts.isActive()</code></h2>
+<p>Returns whether any addon currently reports an active alert.</p>
+<pre><code class="language-js">const res = await alerts.isActive();
+if (res.success &amp;&amp; res.active) {
+  // pause music, hide HUD, etc.
+}
+</code></pre>
+<p>Returns <code>{ success: true, active: boolean }</code>.</p>
+<h2><code>alerts.onChange(cb)</code></h2>
+<p>Subscribes to global alert-display state changes. Returns <code>{ Destroy }</code> to unsubscribe.</p>
+<table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>{ active: true }</code></td>
+<td>First alert started anywhere (was idle → now playing)</td>
+</tr>
+<tr>
+<td><code>{ active: false }</code></td>
+<td>Last alert finished (all addons idle)</td>
+</tr>
+</tbody></table>
+<pre><code class="language-js">const sub = alerts.onChange(({ active }) =&gt; {
+  if (active) {
+    pauseMusic();
+  } else {
+    resumeMusic();
+  }
+});
+
+// Optional: sync current state on load
+const state = await alerts.isActive();
+if (state.success &amp;&amp; state.active) {
+  pauseMusic();
+}
+
+// later
+sub.Destroy();
+</code></pre>
+<p><code>onChange</code> does <strong>not</strong> fire with the current value at subscribe time — call <code>isActive()</code> if you need the initial state.</p>
+<h2>Lifecycle cleanup</h2>
+<p>When an addon is <strong>disabled</strong>, <strong>uninstalled</strong>, <strong>reloaded</strong> (<code>api.restart()</code> / settings restart), or stopped after a <strong>crash loop</strong>, StreamKit+ clears every active alert attributed to that addon.</p>
+<p>If that clearance makes the global flag go from active → inactive, all other running addons receive <code>{ active: false }</code> through <code>onChange</code>.</p>
+<p>Producers do not need to call <code>ended()</code> during <code>addon:prepare-stop</code> for correctness (the host clears the counts), but calling <code>ended()</code> before stop is still fine.</p>
+<h2>Full example: donation producer + music consumer</h2>
+<pre><code class="language-js">// Donation / alert platform addon
+events.On(&#39;onDonationAlert&#39;, async ({ body }) =&gt; {
+  alerts.started();
+  try {
+    await playAlertMedia(body);
+  } finally {
+    alerts.ended();
+  }
+});
+</code></pre>
+<pre><code class="language-js">// Music player addon
+let pausedForAlert = false;
+
+alerts.onChange(({ active }) =&gt; {
+  if (active &amp;&amp; !pausedForAlert) {
+    pausedForAlert = true;
+    pausePlayback();
+  } else if (!active &amp;&amp; pausedForAlert) {
+    pausedForAlert = false;
+    resumePlayback();
+  }
+});
+</code></pre>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
