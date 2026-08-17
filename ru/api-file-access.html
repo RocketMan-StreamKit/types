@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
+  <script src="../assets/docs.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,9 +16,9 @@
       <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
-        <a href="../en/index.html">English</a>
-        <a href="index.html" class="is-active">Русский</a>
-        <a href="../uk/index.html">Українська</a>
+        <a href="../en/api-file-access.html" hreflang="en">English</a>
+        <a href="api-file-access.html" hreflang="ru" class="is-active" aria-current="page">Русский</a>
+        <a href="../uk/api-file-access.html" hreflang="uk">Українська</a>
     </nav>
   </header>
   <div class="layout">
@@ -82,7 +83,7 @@
           <li><a href="types-game.html">Игровые интеграции</a></li>
         </ul>
       </nav>
-    <main class="content">
+    <main class="content" tabindex="-1">
       <h1>Доступ к файлам (<code>files</code> API)</h1>
 <p>Требуется право <code>FILE_ACCESS</code> в манифесте. Прямой <code>require(&#39;fs&#39;)</code> недоступен (нужен <code>ROOT</code>). Используйте глобальный объект <code>files</code>: пользователь одобряет каждый путь; main process ограничивает область.</p>
 <p><strong>Исключение:</strong> у каждого аддона есть папка в temp ОС (<code>ADDON_TMP_DIR</code>). Пути внутри неё не требуют <code>files.requestAccess</code>.</p>

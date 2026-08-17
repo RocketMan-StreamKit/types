@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
+  <script src="../assets/docs.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,9 +16,9 @@
       <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
-        <a href="../en/index.html">English</a>
-        <a href="index.html" class="is-active">Русский</a>
-        <a href="../uk/index.html">Українська</a>
+        <a href="../en/api-language.html" hreflang="en">English</a>
+        <a href="api-language.html" hreflang="ru" class="is-active" aria-current="page">Русский</a>
+        <a href="../uk/api-language.html" hreflang="uk">Українська</a>
     </nav>
   </header>
   <div class="layout">
@@ -82,7 +83,7 @@
           <li><a href="types-game.html">Игровые интеграции</a></li>
         </ul>
       </nav>
-    <main class="content">
+    <main class="content" tabindex="-1">
       <h1>Определение языка (<code>language</code>)</h1>
 <p>Определяет язык произвольного текста той же моделью fastText, что и TTS (<code>lid.176.ftz</code>, ~176 языков). <strong>Дополнительное разрешение не требуется.</strong></p>
 <p>В отличие от автоопределения TTS (которое сводит результат только к <code>en</code> / <code>ru</code> / <code>uk</code>), этот API возвращает <strong>полный</strong> ISO-код языка из модели (например <code>de</code>, <code>fr</code>, <code>ja</code>, <code>pl</code>, <code>es</code>).</p>
