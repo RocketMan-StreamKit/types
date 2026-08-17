@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Main window — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html" class="is-active">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Main window</h1>
+<p>The main window is the control surface you keep open during a stream. It does not list every event — that is <a href="./user-events.html">Latest events</a>. It does not show chat — that is the <a href="./user-chat.html">Chat window</a>.</p>
+<h2>Donation timer</h2>
+<p>The left side shows remaining time, added time, and an optional limit. Values follow the format you set in <a href="./user-timer.html">Donation timer</a> settings.</p>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Toggle next to the title</td>
+<td>Turns the timer on or off without wiping stored values</td>
+</tr>
+<tr>
+<td>Gear on the timer title</td>
+<td>Opens Settings → Donation timer</td>
+</tr>
+<tr>
+<td>Remaining / Added / Limit</td>
+<td>Live values (added and limit rows appear when they are not zero)</td>
+</tr>
+<tr>
+<td>Clock / hourglass / calendar buttons</td>
+<td>Open a dialog to <strong>set</strong>, <strong>add</strong>, or <strong>subtract</strong> remaining time, added time, or the limit</td>
+</tr>
+</tbody></table>
+<p>If you joined a <a href="./user-coop-sync.html">cooperative sync</a> room with timer sharing, a <strong>Timer {ROOM_ID}</strong> row appears. Click it to open the folder where that room’s timer files are written.</p>
+<p>The timer can pause while the stream is offline, count up instead of down, and treat donations as subtracting time — those flags live in timer settings, not on this panel.</p>
+<h2>Quick actions</h2>
+<table>
+<thead>
+<tr>
+<th>Button</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Reboot the Overlay system</strong></td>
+<td>Restarts the in-app overlay window and the effect queue. Use this if effects freeze or stop appearing.</td>
+</tr>
+<tr>
+<td><strong>Chat window</strong></td>
+<td>Opens the streamer chat dashboard.</td>
+</tr>
+<tr>
+<td><strong>Latest events widget</strong></td>
+<td>Opens the live event feed.</td>
+</tr>
+<tr>
+<td><strong>Applications</strong></td>
+<td>Lists installed <a href="./user-widgets.html">application addons</a> so you can open their windows. Hidden when none are installed.</td>
+</tr>
+</tbody></table>
+<h2>Title bar</h2>
+<p>Every major window shares the same chrome:</p>
+<ul>
+<li>Minimize, maximize, close</li>
+<li><strong>Always on top</strong></li>
+<li><strong>Opacity</strong> slider (preview while you drag)</li>
+<li><strong>Notifications</strong> (bell) — unread badge; click an item to open the related settings (for example the catalog scrolled to an addon). Read items disappear after a few minutes once every window’s list is closed. Right-click deletes an item.</li>
+<li><strong>Settings</strong> (main window) and <strong>tutorial</strong> (question-mark) on main and settings windows</li>
+<li><strong>Restart application</strong> — use after settings that require a reload, or if something stops responding</li>
+</ul>
+<p>While a connected platform reports the stream as live, the title shows elapsed stream time (<code>StreamKit+ | HH:mm:ss</code>) on the main, chat, and events windows.</p>
+<h2>Status bar</h2>
+<p>The bottom bar shows:</p>
+<ul>
+<li><strong>Integration status</strong> — colored dots for installed platform addons. Hover for details. Some badges are clickable (the addon decides what happens).</li>
+<li><strong>Viewer counts</strong> — per platform and/or total. Click to choose how counts are shown (including offline platforms and deltas).</li>
+<li><strong>App version</strong> on the main window</li>
+</ul>
+<p>If a platform is disconnected, fix it in <a href="./user-addons.html">Addons</a> rather than on this bar.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

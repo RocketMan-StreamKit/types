@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Система оверлею — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html" class="is-active">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Система оверлею</h1>
+<p>Оверлеї — візуальні (часто й звукові) ефекти, коли подія дашборда збігається з тригером: спалах, розмиття, скрімер, власний web-ефект і подібне.</p>
+<p>Вони можуть грати:</p>
+<ul>
+<li>у <strong>прозорому повноекранному вікні</strong> на обраному моніторі та/або</li>
+<li>в <strong>OBS</strong> (чи іншому інструменті) через Browser Source.</li>
+</ul>
+<p>Ефекти в черзі йдуть <strong>по одному</strong> — не накладаються один на одного.</p>
+<p>Автовідтворення потребує активної <a href="./user-license.html">ліцензії</a>. Налаштовувати й тестувати оверлеї можна й без неї.</p>
+<h2>Загальні налаштування оверлею</h2>
+<p><strong>Налаштування → Система оверлею</strong> (список, не картка одного аддона):</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Монітор оверлею</strong></td>
+<td>На якому дисплеї вікно оверлею. <strong>Розпізнати монітори</strong> на кілька секунд показує номери.</td>
+</tr>
+<tr>
+<td><strong>Показувати оверлей у панелі завдань</strong></td>
+<td>Увімкніть, якщо захоплення вікна OBS не знаходить оверлей без пункту в панелі завдань.</td>
+</tr>
+<tr>
+<td><strong>URL Browser Source для OBS</strong></td>
+<td>Скопіюйте в Browser Source (зазвичай 1920×1080 або розмір полотна).</td>
+</tr>
+</tbody></table>
+<p>Після великих правок оверлею натисніть <strong>Перезавантажити систему оверлею</strong> на <a href="./user-main-window.html">головному вікні</a>.</p>
+<h2>Категорії</h2>
+<ul>
+<li><strong>Ефекти оверлею</strong> — скрімери та візуальні аддони. Можна <strong>створити простий оверлей</strong> (аудіо та/або відео, без коду).</li>
+<li><strong>Інфо-оверлеї</strong> — картки з ніком і повідомленням поверх ефекту. Можна вибрати конкретний аддон або <strong>випадковий</strong>.</li>
+</ul>
+<h2>Налаштування ефекту</h2>
+<p>Відкрийте аддон оверлею (або створений простий оверлей):</p>
+<ul>
+<li>Увімкнення, оновлення, видалення</li>
+<li><strong>Тестове відтворення</strong></li>
+<li><strong>Де показувати</strong>: вікно застосунку та/або OBS</li>
+<li><strong>Де може звучати</strong> для кожної цілі. Якщо звук вимкнено, відео йде, але гучність примусово нуль.</li>
+<li>Гучність, тривалість і (для простих оверлеїв) цикл / сховати наприкінці</li>
+<li>Чи показувати інфо-картку з ніком і повідомленням глядача</li>
+<li><strong>Тригери</strong> — коли запускати ефект (див. нижче)</li>
+</ul>
+<p>Зберігайте з панелі в картці оверлею.</p>
+<h2>Тригери</h2>
+<p>Та сама схема в оверлеїв, <a href="./user-sounds.html">звуків</a>, правил <a href="./user-timer.html">таймера</a>, <a href="./user-hotkeys.html">хоткеїв</a> і <a href="./user-games.html">ігор</a>:</p>
+<ol>
+<li>Оберіть <strong>аддон-джерело</strong> (або <strong>Усі</strong> джерела донатів — реакція на всі встановлені донат-платформи в обраній валюті; буде попередження, якщо платформа цю валюту не підтримує).</li>
+<li>Оберіть <strong>тип події</strong> (донат, фолов, підписка, власна дія на кшталт нагороди за бали каналу, …).</li>
+<li>Укажіть суму, рівень, валюту або значення, яке дає аддон.</li>
+</ol>
+<p>Платформені аддони мають бути ввімкнені, інакше їхні типи подій не з’являться в списках.</p>
+<h2>Типове налаштування</h2>
+<ol>
+<li>Установіть оверлеї з <a href="./user-addons.html">каталогу</a> або створіть простий медіа-оверлей.</li>
+<li>Вставте URL OBS у Browser Source, якщо ефект потрібен на трансляції.</li>
+<li>Оберіть монітор для оверлею в застосунку.</li>
+<li>Додайте тригери, гучність і тривалість, збережіть.</li>
+<li>Перевірте тестом або <strong>Тестовим відтворенням</strong>, потім чипи оверлею в <a href="./user-events.html">Останніх подіях</a>.</li>
+</ol>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

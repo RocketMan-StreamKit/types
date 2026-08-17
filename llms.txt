@@ -1,13 +1,33 @@
-# StreamKit+ Addon Developer Documentation
+# StreamKit+ Documentation
 
-> Integration addon API — manifest format, sandbox globals, permissions, and addon categories. Documentation for StreamKit+ v1.1.1.
+> User guides for streamers and integration addon API (manifest, sandbox globals, permissions, addon categories). Documentation for StreamKit+ v1.2.0.
 
 ## Web documentation
 
 - [Documentation home](https://rocketman-streamkit.github.io/types/): language picker and current version
 - [English documentation](https://rocketman-streamkit.github.io/types/en/index.html): table of contents (English)
 
-## English guides
+## For streamers
+
+- [Getting started](https://rocketman-streamkit.github.io/types/en/user-getting-started.html): First launch, license, what each module is
+- [Main window](https://rocketman-streamkit.github.io/types/en/user-main-window.html): Timer, quick actions, title bar, status
+- [Latest events](https://rocketman-streamkit.github.io/types/en/user-events.html): Live event feed and replay chips
+- [Chat window](https://rocketman-streamkit.github.io/types/en/user-chat.html): Combined chat, sending replies, appearance
+- [Settings](https://rocketman-streamkit.github.io/types/en/user-settings.html): Sidebar, save/reset, Main and Interface
+- [Addons and catalog](https://rocketman-streamkit.github.io/types/en/user-addons.html): Install platforms, permissions, updates
+- [Overlay](https://rocketman-streamkit.github.io/types/en/user-overlay.html): Effects on screen and in OBS
+- [Widgets and applications](https://rocketman-streamkit.github.io/types/en/user-widgets.html): OBS widgets and in-app windows
+- [Donation timer](https://rocketman-streamkit.github.io/types/en/user-timer.html): Countdown files and auto rules
+- [Sound effects](https://rocketman-streamkit.github.io/types/en/user-sounds.html): Alert sounds on events
+- [Hotkeys](https://rocketman-streamkit.github.io/types/en/user-hotkeys.html): Keyboard agent and presets
+- [Cooperative sync](https://rocketman-streamkit.github.io/types/en/user-coop-sync.html): Share overlay and hotkeys with other PCs
+- [Game integrations](https://rocketman-streamkit.github.io/types/en/user-games.html): Viewer actions inside a game
+- [Text to speech](https://rocketman-streamkit.github.io/types/en/user-tts.html): Piper, ElevenLabs, Windows voices
+- [LLM Access](https://rocketman-streamkit.github.io/types/en/user-llm.html): AI profiles for addons
+- [License and updates](https://rocketman-streamkit.github.io/types/en/user-license.html): License, app updates, changelog
+- [Backups](https://rocketman-streamkit.github.io/types/en/user-backup.html): Zip snapshots and restore
+
+## For addon developers
 
 - [Getting started](https://rocketman-streamkit.github.io/types/en/getting-started.html): Architecture, installation, project layout, `@rocketman-streamkit/addon-generator`
 - [Lifecycle](https://rocketman-streamkit.github.io/types/en/lifecycle.html): How addons are loaded, restarted, and crash-loop protection
@@ -19,6 +39,9 @@
 - [Localization](https://rocketman-streamkit.github.io/types/en/localization.html): Per-locale strings in addon code
 - [Security](https://rocketman-streamkit.github.io/types/en/security.html): Network restrictions, tokens, sandbox limits
 - [OAuth and secrets](https://rocketman-streamkit.github.io/types/en/oauth-and-secrets.html): Token exchange via outbound HTTP (no built-in auth server API)
+
+## Sandbox API
+
 - [API overview](https://rocketman-streamkit.github.io/types/en/api-overview.html): All globals at a glance
 - [events](https://rocketman-streamkit.github.io/types/en/api-events.html): Event bus and HTTP handler binding
 - [network](https://rocketman-streamkit.github.io/types/en/api-network.html): HTTP client, endpoints, WebSocket, SSE, SignalR, Socket.IO
@@ -34,6 +57,9 @@
 - [Currency](https://rocketman-streamkit.github.io/types/en/api-currency.html): User's primary currency and amount conversion
 - [Language detection (`language`)](https://rocketman-streamkit.github.io/types/en/api-language.html): Detect text language via fastText (~176 languages; no permission)
 - [Utilities](https://rocketman-streamkit.github.io/types/en/api-utilities.html): Timers, crypto, console, developer mode
+
+## Addon categories
+
 - [Platform addons](https://rocketman-streamkit.github.io/types/en/types-platform.html): `platform.streaming`, `platform.donation`
 - [Overlay addons](https://rocketman-streamkit.github.io/types/en/types-overlay.html): Effects, static web, simple media
 - [Widget addons](https://rocketman-streamkit.github.io/types/en/types-widget.html): Persistent web pages and OBS sources

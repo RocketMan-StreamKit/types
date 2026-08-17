@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html" class="is-active">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Settings</h1>
+<p>Open Settings from the gear on the <a href="./user-main-window.html">main window</a> title bar. The sidebar lists every module. The window remembers the last section you had open.</p>
+<p>Most sections share a <strong>Save / Reset</strong> bar at the bottom. Save applies changes; Reset discards unsaved edits. Some detail screens (an overlay, a sound, a hotkey preset, an addon) have their own save bar.</p>
+<p>A few options require an <strong>application restart</strong> (hardware acceleration, high-performance GPU, backup API / proxy). The UI warns you when that is the case. Use <strong>Restart application</strong> in the title bar after saving.</p>
+<p>Each settings section can replay its own tutorial from the guide icon in the title bar.</p>
+<h2>Sidebar map</h2>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Guide</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Main</td>
+<td>This page</td>
+</tr>
+<tr>
+<td>License &amp; updates</td>
+<td><a href="./user-license.html">License and updates</a></td>
+</tr>
+<tr>
+<td>Addon catalog / Integrations</td>
+<td><a href="./user-addons.html">Addons and catalog</a></td>
+</tr>
+<tr>
+<td>Overlay system</td>
+<td><a href="./user-overlay.html">Overlay</a></td>
+</tr>
+<tr>
+<td>Widgets / Internal applications</td>
+<td><a href="./user-widgets.html">Widgets and applications</a></td>
+</tr>
+<tr>
+<td>Donation timer</td>
+<td><a href="./user-timer.html">Donation timer</a></td>
+</tr>
+<tr>
+<td>Sound effects</td>
+<td><a href="./user-sounds.html">Sound effects</a></td>
+</tr>
+<tr>
+<td>Hotkey integrations</td>
+<td><a href="./user-hotkeys.html">Hotkeys</a></td>
+</tr>
+<tr>
+<td>Cooperative sync</td>
+<td><a href="./user-coop-sync.html">Cooperative sync</a></td>
+</tr>
+<tr>
+<td>Game integrations</td>
+<td><a href="./user-games.html">Game integrations</a></td>
+</tr>
+<tr>
+<td>Text to speech</td>
+<td><a href="./user-tts.html">Text to speech</a></td>
+</tr>
+<tr>
+<td>LLM Access</td>
+<td><a href="./user-llm.html">LLM Access</a></td>
+</tr>
+<tr>
+<td>Chat window</td>
+<td><a href="./user-chat.html">Chat window</a></td>
+</tr>
+<tr>
+<td>Update information</td>
+<td><a href="./user-license.html">License and updates</a></td>
+</tr>
+<tr>
+<td>Backups</td>
+<td><a href="./user-backup.html">Backups</a></td>
+</tr>
+<tr>
+<td>Interface</td>
+<td>This page</td>
+</tr>
+</tbody></table>
+<h2>Main</h2>
+<p>Global options for the whole app.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Language</strong></td>
+<td>Menus, settings, and notifications (English, Russian, Ukrainian)</td>
+</tr>
+<tr>
+<td><strong>Currency</strong></td>
+<td>Display currency for donations and amounts. Search by name or code.</td>
+</tr>
+<tr>
+<td><strong>Hardware acceleration</strong></td>
+<td>Uses the GPU for the app UI. Turn it off if a game is already loading the GPU. Restart required.</td>
+</tr>
+<tr>
+<td><strong>High-performance GPU</strong></td>
+<td>On laptops, prefers the discrete GPU. Shown only when hardware acceleration is on. Restart required.</td>
+</tr>
+<tr>
+<td><strong>Discord status</strong></td>
+<td>Rich Presence while Discord is running</td>
+</tr>
+<tr>
+<td><strong>Developer mode</strong></td>
+<td>Extra diagnostics in packaged builds (always on in development builds)</td>
+</tr>
+<tr>
+<td><strong>Backup API server</strong></td>
+<td>Uses a fallback API host when the main one is unreachable. Restart required.</td>
+</tr>
+<tr>
+<td><strong>Open logs folder</strong></td>
+<td>Opens the log directory in the system file manager</td>
+</tr>
+<tr>
+<td><strong>Reset window positions</strong></td>
+<td>Restores default window layout</td>
+</tr>
+<tr>
+<td><strong>Linux desktop shortcut</strong></td>
+<td>Packaged Linux builds can register StreamKit+ in KDE, GNOME, and other application menus</td>
+</tr>
+</tbody></table>
+<h2>Interface</h2>
+<p><strong>Settings → Interface</strong> controls color schemes.</p>
+<ul>
+<li>Built-in schemes include system, light, dark, and named presets (for example Dark Moon, Cyberpunk, Matrix).</li>
+<li><strong>Custom schemes</strong>: create, apply, export, or import a palette as a base64 string. Each preset has color pickers plus typography and corner radius.</li>
+<li>The preview updates across open windows <strong>before</strong> you save. Reset or leaving without saving clears the preview.</li>
+</ul>
+<p>Export and import are useful for sharing a theme between PCs. If the exported file was made in another StreamKit+ version, the app may ask you to confirm before importing.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

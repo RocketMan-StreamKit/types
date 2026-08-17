@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вікно чату — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html" class="is-active">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Вікно чату</h1>
+<p>Відкрийте <strong>Вікно чату</strong> з <a href="./user-main-window.html">головного вікна</a>. Чат із підключених стрімінгових аддонів збирається в один список: бейджі, емоути, аватари й кольори, якщо платформа їх віддає.</p>
+<h2>Читання</h2>
+<ul>
+<li>Нові повідомлення утримують вас унизу. Якщо прокрутили історію вгору, з’являється лічильник нових; клік (або прокрутка вниз) повертає до актуального.</li>
+<li>Прокрутка вгору підвантажує старі повідомлення.</li>
+<li>Системні рядки застосунку або аддонів позначаються як <strong>Системне повідомлення</strong> після іконки платформи.</li>
+<li>Згадки вас підсвічуються.</li>
+<li>ПКМ по ніку вставляє <code>@{username}</code> у поле введення.</li>
+<li>ПКМ по повідомленню видаляє його з цього вікна (як видалення рядка в <a href="./user-events.html">Останніх подіях</a>).</li>
+</ul>
+<p>Емоути, розпізнані в момент отримання, залишаються на рядку навіть якщо потім видалити аддон емоутів.</p>
+<h2>Відповіді</h2>
+<p>Якщо хоча б один стрімінговий аддон уміє надсилати чат, унизу з’являється поле. Enter — надіслати.</p>
+<p>Якщо таких аддонів кілька, ліворуч селектор цілі: за замовчуванням <strong>Усі</strong>. Можна вибрати одну платформу.</p>
+<p>Поле приховане, якщо жоден аддон не вміє надсилати чат.</p>
+<h2>Посилання</h2>
+<p>За ввімкнених клікабельних посилань URL у чаті (і в останніх подіях) відкриваються в <strong>зовнішньому браузері</strong>. Перший візит на домен — підтвердження; підтверджені домени запам’ятовуються.</p>
+<h2>Зовнішній вигляд чату</h2>
+<p><strong>Налаштування → Вікно чату</strong> (або шестірня в підвалі чату):</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Ефект</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Клікабельні посилання</td>
+<td>Розпізнавати URL; попередження під час першого візиту на домен</td>
+</tr>
+<tr>
+<td>Аватари</td>
+<td>Показувати аватари платформи</td>
+</tr>
+<tr>
+<td>Бейджі платформи</td>
+<td>Роль / підписка поруч із ніком</td>
+</tr>
+<tr>
+<td>Шрифт і розмір</td>
+<td>Типографіка повідомлень</td>
+</tr>
+</tbody></table>
+<p>Чернетки одразу видно у відкритому вікні чату. Скасування, вихід із розділу або закриття налаштувань без збереження відкочує попередній перегляд.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

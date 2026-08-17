@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Интеграции хоткеев — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримеров</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Начало работы</a></li>
+          <li><a href="user-main-window.html">Главное окно</a></li>
+          <li><a href="user-events.html">Последние события</a></li>
+          <li><a href="user-chat.html">Окно чата</a></li>
+          <li><a href="user-settings.html">Настройки</a></li>
+          <li><a href="user-addons.html">Аддоны и каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Виджеты и приложения</a></li>
+          <li><a href="user-timer.html">Таймер доната</a></li>
+          <li><a href="user-sounds.html">Звуковые эффекты</a></li>
+          <li><a href="user-hotkeys.html" class="is-active">Хоткеи</a></li>
+          <li><a href="user-coop-sync.html">Совместная синхронизация</a></li>
+          <li><a href="user-games.html">Игровые интеграции</a></li>
+          <li><a href="user-tts.html">Озвучка текста</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Лицензия и обновления</a></li>
+          <li><a href="user-backup.html">Резервные копии</a></li>
+        </ul>
+        <h2>Для разработчиков аддонов</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+        </ul>
+        <h2>API песочницы</h2>
+        <ul>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-file-access.html">Доступ к файлам</a></li>
+          <li><a href="api-tts.html">Озвучка текста (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Загрузки yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Оповещения (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Определение языка (`language`)</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+        </ul>
+        <h2>Категории аддонов</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Интеграции хоткеев</h1>
+<p><strong>Настройки → Интеграции хоткеев</strong> запускают клавиатурные сценарии по событию дашборда: паузы, блокировка клавиш, имитация нажатий, тапы и ввод текста.</p>
+<p>Типичные задачи: переключить сцену OBS горячей клавишей, которую нажимает приложение, отправить ввод в игру или напечатать команду — при желании только когда выбранная программа на переднем плане.</p>
+<p>Автозапуск требует активной <a href="./user-license.html">лицензии</a>. Античит может посчитать имитацию ввода подозрительной — используйте только там, где внешний ввод разрешён.</p>
+<h2>Клавиатурный агент</h2>
+<p>StreamKit+ сам клавиши не вставляет. Должен работать небольшой <strong>клавиатурный агент</strong>.</p>
+<ul>
+<li>Старт и стоп — в этом разделе настроек.</li>
+<li><strong>Автозапуск</strong> поднимает агента вместе с приложением.</li>
+<li>В Windows <strong>Запуск от администратора</strong> по умолчанию включён (нужен для части игр с повышением прав).</li>
+<li>Статус должен быть «подключён / готов», иначе пресеты не сработают.</li>
+<li>На Linux определение активного окна ожидает сессию X11. На macOS система безопасности может полностью заблокировать агента.</li>
+</ul>
+<p>Агент останавливается при выходе из StreamKit+.</p>
+<h2>Пресеты</h2>
+<p>У каждого пресета:</p>
+<ul>
+<li>Триггеры (как у <a href="./user-overlay.html">оверлеев</a>)</li>
+<li>Необязательная <strong>привязка к процессу</strong>: всегда, только если exe на переднем плане, или пока процесс запущен</li>
+<li><strong>Сценарий</strong>: упорядоченный список пауза / блокировка клавиши / разблокировка / вниз / вверх / тап / ввод текста (US QWERTY)</li>
+</ul>
+<p><strong>Проверить текущие настройки</strong> запускает сценарий после короткой задержки (по умолчанию 5 секунд), чтобы успеть переключиться в нужное окно.</p>
+<h2>Папки</h2>
+<p>Группируйте пресеты по папкам. Правила автоназначения — подстрока в имени пресета или exe целевого процесса. Папку (все пресеты и правила) можно экспортировать или импортировать одной строкой base64 — удобно перенести набор на другой ПК.</p>
+<h2>Совместная синхронизация</h2>
+<p>В <a href="./user-coop-sync.html">комнате</a> пресеты хоткеев могут выполняться и у участников. У каждого должен быть запущен свой клавиатурный агент. Звуки и игровые триггеры не синхронизируются.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

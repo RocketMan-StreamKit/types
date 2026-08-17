@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game integrations — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html" class="is-active">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Game integrations</h1>
+<p><strong>Settings → Game integrations</strong> is for addons that change what happens <strong>inside a game</strong> when a viewer event fires: spawn a mob, run a script, send a command, and similar.</p>
+<p>This is meant for single-player games or multiplayer titles <strong>without</strong> strict anti-cheat. Third-party game addons may need extra OS permissions. Use them only if you trust the addon and the game allows external input.</p>
+<p>Automatic in-game actions need an active <a href="./user-license.html">license</a>.</p>
+<h2>How to use</h2>
+<ol>
+<li>Install a game addon from the <a href="./user-addons.html">catalog</a>.</li>
+<li>Enable it and fill in any game-specific settings (process name, connection, …).</li>
+<li>Map <strong>input triggers</strong>: dashboard event → action the addon registered.</li>
+<li>Save, then test with a low-stakes event while the game is running.</li>
+</ol>
+<p>The trigger UI is the same idea as <a href="./user-overlay.html">overlays</a>: source addon, event type, amount or custom value.</p>
+<h2>Cooperative sync</h2>
+<p><a href="./user-coop-sync.html">Cooperative sync</a> compares game addon versions between host and members and may warn on mismatch. Game triggers themselves are <strong>not</strong> sent to members — they run on the host only. Overlay and hotkey effects are what get synced.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>StreamKit+ Addon Developer Documentation — StreamKit+ Addon Docs</title>
+  <title>StreamKit+ Documentation — StreamKit+ Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -12,7 +12,7 @@
   <header class="site-header">
     <a class="site-brand" href="../index.html">
       <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
-      <span>StreamKit+ Addon Docs</span>
+      <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
         <a href="index.html" class="is-active">English</a>
@@ -22,7 +22,27 @@
   </header>
   <div class="layout">
     <nav class="sidebar" aria-label="Table of contents">
-        <h2>Contents</h2>
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
         <ul>
           <li><a href="getting-started.html">Getting started</a></li>
           <li><a href="lifecycle.html">Lifecycle</a></li>
@@ -34,6 +54,9 @@
           <li><a href="localization.html">Localization</a></li>
           <li><a href="security.html">Security</a></li>
           <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
           <li><a href="api-overview.html">API overview</a></li>
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
@@ -49,6 +72,9 @@
           <li><a href="api-currency.html">Currency</a></li>
           <li><a href="api-language.html">Language detection (`language`)</a></li>
           <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
           <li><a href="types-platform.html">Platform addons</a></li>
           <li><a href="types-overlay.html">Overlay addons</a></li>
           <li><a href="types-widget.html">Widget addons</a></li>
@@ -57,9 +83,88 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>StreamKit+ Addon Developer Documentation</h1>
+      <h1>StreamKit+ Documentation</h1>
+<p>Guides for <strong>streamers</strong> (how to use the app) and for <strong>addon developers</strong> (sandbox API, manifest, permissions).</p>
 <p>Integration addons extend StreamKit+ from an isolated worker process. Addon code runs inside a VM sandbox and uses <strong>global</strong> APIs (<code>network</code>, <code>events</code>, <code>api</code>, …) — no SDK imports inside the worker.</p>
-<h2>Categories</h2>
+<h2>For streamers</h2>
+<p>How to use StreamKit+ as a viewer of the desktop app — not how to write addons.</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./user-getting-started.html">Getting started</a></td>
+<td>First launch, license, what each module is</td>
+</tr>
+<tr>
+<td><a href="./user-main-window.html">Main window</a></td>
+<td>Timer, quick actions, title bar, status</td>
+</tr>
+<tr>
+<td><a href="./user-events.html">Latest events</a></td>
+<td>Live event feed and replay chips</td>
+</tr>
+<tr>
+<td><a href="./user-chat.html">Chat window</a></td>
+<td>Combined chat, sending replies, appearance</td>
+</tr>
+<tr>
+<td><a href="./user-settings.html">Settings</a></td>
+<td>Sidebar, save/reset, Main and Interface</td>
+</tr>
+<tr>
+<td><a href="./user-addons.html">Addons and catalog</a></td>
+<td>Install platforms, permissions, updates</td>
+</tr>
+<tr>
+<td><a href="./user-overlay.html">Overlay</a></td>
+<td>Effects on screen and in OBS</td>
+</tr>
+<tr>
+<td><a href="./user-widgets.html">Widgets and applications</a></td>
+<td>OBS widgets and in-app windows</td>
+</tr>
+<tr>
+<td><a href="./user-timer.html">Donation timer</a></td>
+<td>Countdown files and auto rules</td>
+</tr>
+<tr>
+<td><a href="./user-sounds.html">Sound effects</a></td>
+<td>Alert sounds on events</td>
+</tr>
+<tr>
+<td><a href="./user-hotkeys.html">Hotkeys</a></td>
+<td>Keyboard agent and presets</td>
+</tr>
+<tr>
+<td><a href="./user-coop-sync.html">Cooperative sync</a></td>
+<td>Share overlay and hotkeys with other PCs</td>
+</tr>
+<tr>
+<td><a href="./user-games.html">Game integrations</a></td>
+<td>Viewer actions inside a game</td>
+</tr>
+<tr>
+<td><a href="./user-tts.html">Text to speech</a></td>
+<td>Piper, ElevenLabs, Windows voices</td>
+</tr>
+<tr>
+<td><a href="./user-llm.html">LLM Access</a></td>
+<td>AI profiles for addons</td>
+</tr>
+<tr>
+<td><a href="./user-license.html">License and updates</a></td>
+<td>License, app updates, changelog</td>
+</tr>
+<tr>
+<td><a href="./user-backup.html">Backups</a></td>
+<td>Zip snapshots and restore</td>
+</tr>
+</tbody></table>
+<h2>For addon developers</h2>
 <table>
 <thead>
 <tr>

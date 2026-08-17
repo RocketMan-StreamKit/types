@@ -8,7 +8,7 @@ Each release is published as a **version branch** in this repository (branch nam
 
 ## Documentation
 
-Full addon developer documentation (English, Русский, Українська):
+Full documentation (English, Русский, Українська) — **user guides for streamers** and **addon developer API**:
 
 **[Open documentation (web) →](https://rocketman-streamkit.github.io/types/)**
 

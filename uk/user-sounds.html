@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Звукові ефекти — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html" class="is-active">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Звукові ефекти</h1>
+<p><strong>Налаштування → Звукові ефекти</strong> — список ваших звуків сповіщення. Вони грають, коли подія дашборда збігається з тригерами — окремо від <a href="./user-overlay.html">оверлеїв</a>.</p>
+<p>Автовідтворення потребує активної <a href="./user-license.html">ліцензії</a>.</p>
+<h2>Список</h2>
+<ul>
+<li>Створіть звук і відкрийте його для правки.</li>
+<li>Вимкніть звук, щоб <strong>не видаляти</strong> правила тригерів.</li>
+<li>Попереднє прослуховування зі списку.</li>
+</ul>
+<h2>Редактор</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ім’я</td>
+<td>Підпис в інтерфейсі та в <a href="./user-events.html">Останніх подіях</a></td>
+</tr>
+<tr>
+<td>Файл або URL</td>
+<td>Локальний аудіофайл або посилання</td>
+</tr>
+<tr>
+<td>Гучність</td>
+<td>0–100</td>
+</tr>
+<tr>
+<td>Тригери</td>
+<td>Та сама модель подій, що в оверлеїв (джерело, тип, сума / нагорода / …)</td>
+</tr>
+<tr>
+<td>Увімкнений</td>
+<td>Головний перемикач</td>
+</tr>
+</tbody></table>
+<p>Зберігайте з панелі внизу картки.</p>
+<h2>Типове використання</h2>
+<ol>
+<li>Один звук на нових фоловерів, інший — на донати вище порога.</li>
+<li>Збережіть і перевірте тестовою або реальною подією.</li>
+<li>На рядку події буде чип звуку, якщо потрібно повторити.</li>
+</ol>
+<p><a href="./user-coop-sync.html">Спільна синхронізація</a> <strong>не</strong> передає звуки на інші ПК — лише оверлей і хоткеї.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

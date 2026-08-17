@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Access — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html" class="is-active">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>LLM Access</h1>
+<p><strong>Налаштування → LLM Access</strong> зберігає <strong>профілі</strong> мовних моделей: Ollama на вашому ПК, Gemini, Groq, OpenAI, OpenRouter та інші сумісні з OpenAI провайдери.</p>
+<p>Аддони з дозволом можуть надсилати запити через ці профілі. <strong>Ключі API не залишають StreamKit+</strong> і аддонам не видимі.</p>
+<p>Розділ потрібен, лише якщо аддон (або вбудований тестовий чат) має звертатися до моделі.</p>
+<h2>Глобальні параметри</h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Увімкнути LLM Access</strong></td>
+<td>Вимкнено — аддони не можуть викликати модель. Тестовий чат на цій сторінці все одно працює.</td>
+</tr>
+<tr>
+<td><strong>Профіль за замовчуванням</strong></td>
+<td><strong>Авто</strong> (найкращий доступний увімкнений профіль) або конкретний профіль</td>
+</tr>
+<tr>
+<td><strong>Дозволити аддонам обирати профіль</strong></td>
+<td>Вимкнено — аддони завжди йдуть через вибір за замовчуванням</td>
+</tr>
+<tr>
+<td><strong>Лише безкоштовні</strong></td>
+<td>Автомаршрутизація пропускає платні профілі й моделі</td>
+</tr>
+</tbody></table>
+<p>Після правок цих опцій або профілів натисніть <strong>Зберегти</strong> на спільній панелі налаштувань.</p>
+<h2>Профілі</h2>
+<p>Додавання, правка, видалення:</p>
+<ul>
+<li>Провайдер, модель, необов’язковий базовий URL, ключ API</li>
+<li>Креативність (temperature) і максимальна довжина відповіді</li>
+<li>Прапорці «увімкнений» / «платний»</li>
+</ul>
+<p><strong>Оновити моделі</strong> підтягує список моделей провайдера, якщо це підтримується. <strong>Знайти Ollama</strong> шукає локальне встановлення Ollama.</p>
+<p>За ліміту запитів авто-режим може перемкнутися на інший увімкнений профіль.</p>
+<h2>Тестовий чат</h2>
+<p><strong>Відкрити тестовий чат</strong> на цій сторінці: діалог (кілька реплік) або один запит, із вибором профілю. Так перевіряють ключ і модель до ввімкнення аддона, якому потрібен LLM Access.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

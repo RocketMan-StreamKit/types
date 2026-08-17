@@ -1,4 +1,4 @@
-# StreamKit+ — Addon Developer Documentation
+# StreamKit+ Documentation
 
 Choose your language:
 
@@ -8,4 +8,4 @@ Choose your language:
 | **Русский** | [addons_docs/ru/README.md](./ru/README.md) |
 | **Українська** | [addons_docs/uk/README.md](./uk/README.md) |
 
-This documentation describes the **integration addon API** — manifest format, sandbox globals, permissions, and addon categories. It is intended for third-party developers building addons for StreamKit+.
+This site includes **user guides** for streamers (windows, settings, overlays, addons) and **addon developer documentation** — manifest format, sandbox globals, permissions, and addon categories.

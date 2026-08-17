@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Widgets and applications — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html" class="is-active">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Widgets and applications</h1>
+<p>These are two addon types that add extra UI rather than a one-shot scare effect.</p>
+<h2>Widgets</h2>
+<p><strong>Settings → Widgets.</strong> Widgets are persistent web pages: chat panels, donation goals, polls, first-message alerts, and similar.</p>
+<p>Each widget can:</p>
+<ul>
+<li>expose a <strong>URL for an OBS Browser Source</strong></li>
+<li>optionally show inside the in-app overlay</li>
+<li>choose <strong>where sound may play</strong> (direct link, app window, and/or OBS embed). Silent targets keep video playing at volume zero.</li>
+</ul>
+<p>Install from the <a href="./user-addons.html">catalog</a>, open the widget, set display and sound flags, configure the addon’s own options, then Save. Add the widget URL to OBS like any other browser source.</p>
+<h2>Internal applications</h2>
+<p><strong>Settings → Internal applications.</strong> Application addons open as <strong>separate StreamKit+ windows</strong> — extra tools that stay inside the app.</p>
+<p>Open them from:</p>
+<ul>
+<li>the <strong>Applications</strong> button on the <a href="./user-main-window.html">main window</a> (shown only when at least one is installed), or</li>
+<li><strong>Open</strong> above the addon in Settings → Internal applications.</li>
+</ul>
+<p>If a window cannot open, the app explains why (disabled, crashed, banned, missing files).</p>
+<h2>Shared addon editor</h2>
+<p>Widget, application, overlay, and game addons use the same settings editor: generated fields from the addon, enable/disable, update, uninstall. Save with the bar at the bottom of the detail view. See <a href="./user-addons.html">Addons and catalog</a> for permissions and updates.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

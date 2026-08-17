@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Donation timer — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html" class="is-active">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Donation timer</h1>
+<p>The timer is a countdown (or count-up) for stream goals. You <strong>control it live</strong> on the <a href="./user-main-window.html">main window</a>. <strong>Settings → Donation timer</strong> defines files, format, behavior, and automatic rules.</p>
+<p>Automatic time changes from events need an active <a href="./user-license.html">license</a>. Manual edits on the main window always work.</p>
+<h2>Files for OBS</h2>
+<p>Pick a <strong>timer data folder</strong>. StreamKit+ writes files there (including <code>timer.txt</code> and <code>timerSeconds.txt</code>) so OBS can use a Text source. If the folder is empty, files go to the app data directory.</p>
+<p>Choose a <strong>display format</strong> such as <code>HH:mm:ss</code> or <code>mm:ss</code>. The same format is used in the main window and in the files.</p>
+<h2>Behavior flags</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Count manual changes in added time</strong></td>
+<td>Editing remaining time on the main window also updates the Added counter (on by default).</td>
+</tr>
+<tr>
+<td><strong>Show manual changes in latest events</strong></td>
+<td>Manual edits appear in <a href="./user-events.html">Latest events</a> (on by default).</td>
+</tr>
+<tr>
+<td><strong>Reverse timer mode</strong></td>
+<td>Counts up instead of down.</td>
+</tr>
+<tr>
+<td><strong>Run only during stream</strong></td>
+<td>Pauses while no platform reports the stream as online (on by default).</td>
+</tr>
+<tr>
+<td><strong>Reverse donations</strong></td>
+<td>Matching donations and trigger rules <strong>subtract</strong> time instead of adding it.</td>
+</tr>
+</tbody></table>
+<p>The <strong>limit</strong> on the main window compares to <strong>added time</strong>, not to remaining time. Use it as a cap on how much extra time donations can pile on.</p>
+<h2>Automatic adjustments</h2>
+<p>Add rules that add (or subtract) seconds when an event matches: source addon, event type, reference amount and currency, seconds to apply. Donation amounts can scale proportionally (for example +60 seconds per a set amount).</p>
+<p>The trigger model is the same as <a href="./user-overlay.html">overlays</a>: you can use <strong>All</strong> donation sources when you want every donation platform in one currency.</p>
+<h2>Cooperative rooms</h2>
+<p>If you join a room with timer sharing, members get a <code>timer-{ROOM_ID}</code> folder inside their timer folder. See <a href="./user-coop-sync.html">Cooperative sync</a>.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

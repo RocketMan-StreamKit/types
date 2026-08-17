@@ -1,8 +1,34 @@
-# StreamKit+ Addon Developer Documentation
+# StreamKit+ Documentation
+
+Guides for **streamers** (how to use the app) and for **addon developers** (sandbox API, manifest, permissions).
 
 Integration addons extend StreamKit+ from an isolated worker process. Addon code runs inside a VM sandbox and uses **global** APIs (`network`, `events`, `api`, …) — no SDK imports inside the worker.
 
-## Categories
+## For streamers
+
+How to use StreamKit+ as a viewer of the desktop app — not how to write addons.
+
+| Section | Description |
+| --- | --- |
+| [Getting started](./user-getting-started.md) | First launch, license, what each module is |
+| [Main window](./user-main-window.md) | Timer, quick actions, title bar, status |
+| [Latest events](./user-events.md) | Live event feed and replay chips |
+| [Chat window](./user-chat.md) | Combined chat, sending replies, appearance |
+| [Settings](./user-settings.md) | Sidebar, save/reset, Main and Interface |
+| [Addons and catalog](./user-addons.md) | Install platforms, permissions, updates |
+| [Overlay](./user-overlay.md) | Effects on screen and in OBS |
+| [Widgets and applications](./user-widgets.md) | OBS widgets and in-app windows |
+| [Donation timer](./user-timer.md) | Countdown files and auto rules |
+| [Sound effects](./user-sounds.md) | Alert sounds on events |
+| [Hotkeys](./user-hotkeys.md) | Keyboard agent and presets |
+| [Cooperative sync](./user-coop-sync.md) | Share overlay and hotkeys with other PCs |
+| [Game integrations](./user-games.md) | Viewer actions inside a game |
+| [Text to speech](./user-tts.md) | Piper, ElevenLabs, Windows voices |
+| [LLM Access](./user-llm.md) | AI profiles for addons |
+| [License and updates](./user-license.md) | License, app updates, changelog |
+| [Backups](./user-backup.md) | Zip snapshots and restore |
+
+## For addon developers
 
 | Section | Description |
 | --- | --- |

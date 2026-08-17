@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лицензия и обновления — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="index.html" class="is-active">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримеров</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Начало работы</a></li>
+          <li><a href="user-main-window.html">Главное окно</a></li>
+          <li><a href="user-events.html">Последние события</a></li>
+          <li><a href="user-chat.html">Окно чата</a></li>
+          <li><a href="user-settings.html">Настройки</a></li>
+          <li><a href="user-addons.html">Аддоны и каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Виджеты и приложения</a></li>
+          <li><a href="user-timer.html">Таймер доната</a></li>
+          <li><a href="user-sounds.html">Звуковые эффекты</a></li>
+          <li><a href="user-hotkeys.html">Хоткеи</a></li>
+          <li><a href="user-coop-sync.html">Совместная синхронизация</a></li>
+          <li><a href="user-games.html">Игровые интеграции</a></li>
+          <li><a href="user-tts.html">Озвучка текста</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html" class="is-active">Лицензия и обновления</a></li>
+          <li><a href="user-backup.html">Резервные копии</a></li>
+        </ul>
+        <h2>Для разработчиков аддонов</h2>
+        <ul>
+          <li><a href="getting-started.html">Начало работы</a></li>
+          <li><a href="lifecycle.html">Жизненный цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публикация и релизы</a></li>
+          <li><a href="typescript.html">Настройка TypeScript</a></li>
+          <li><a href="permissions.html">Разрешения</a></li>
+          <li><a href="settings-schema.html">Схема настроек</a></li>
+          <li><a href="localization.html">Локализация</a></li>
+          <li><a href="security.html">Безопасность</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth и секреты</a></li>
+        </ul>
+        <h2>API песочницы</h2>
+        <ul>
+          <li><a href="api-overview.html">Обзор API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config и storage</a></li>
+          <li><a href="api-file-access.html">Доступ к файлам</a></li>
+          <li><a href="api-tts.html">Озвучка текста (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Загрузки yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Оповещения (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Определение языка (`language`)</a></li>
+          <li><a href="api-utilities.html">Утилиты</a></li>
+        </ul>
+        <h2>Категории аддонов</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформенные аддоны</a></li>
+          <li><a href="types-overlay.html">Оверлеи</a></li>
+          <li><a href="types-widget.html">Виджеты</a></li>
+          <li><a href="types-application.html">Приложения</a></li>
+          <li><a href="types-game.html">Игровые интеграции</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Лицензия и обновления</h1>
+<p><strong>Настройки → Лицензия и обновления</strong> — один раздел из двух блоков: лицензия и обновления приложения. <strong>Информация об обновлении</strong> в боковой панели — список изменений.</p>
+<h2>Лицензия</h2>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Смысл</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Статус</td>
+<td>Активна или нет</td>
+</tr>
+<tr>
+<td>ID лицензии</td>
+<td>Номер заказа при активной лицензии</td>
+</tr>
+<tr>
+<td>Срок</td>
+<td>Дата или оставшееся время</td>
+</tr>
+<tr>
+<td>Ключ устройства</td>
+<td>Привязка этого ПК</td>
+</tr>
+<tr>
+<td>Панель управления</td>
+<td><a href="https://rocketman-streams.com/#dashboard">Онлайн-кабинет</a> — управление лицензией и привязка приложения</td>
+</tr>
+</tbody></table>
+<p><strong>Активная лицензия</strong> нужна для автоматических триггеров (оверлеи, звуки, правила таймера, хоткеи, игровые действия) и для <strong>создания</strong> комнаты <a href="./user-coop-sync.html">совместной синхронизации</a>. Подключение платформ, <a href="./user-chat.html">чат</a> и <a href="./user-events.html">события</a>, а также <strong>вход</strong> в комнату работают без лицензии.</p>
+<h2>Обновления приложения</h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Назначение</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Проверить обновления</strong></td>
+<td>Ручная проверка (в неупакованных dev-сборках не используется)</td>
+</tr>
+<tr>
+<td><strong>Режим обновления</strong></td>
+<td>Вручную / скачивать автоматически / устанавливать автоматически</td>
+</tr>
+<tr>
+<td><strong>Канал релизов</strong></td>
+<td><code>main</code>, <code>beta</code> или <code>develop</code>. Защищённые каналы открываются после проверки лицензии.</td>
+</tr>
+<tr>
+<td><strong>Скачать / Установить сейчас</strong></td>
+<td>Когда версия готова</td>
+</tr>
+<tr>
+<td>Прогресс</td>
+<td>Пока идёт загрузка</td>
+</tr>
+</tbody></table>
+<p>На неподписанных сборках macOS обновление скачивается само, пакет вы устанавливаете вручную.</p>
+<h2>Информация об обновлении</h2>
+<p>После обновления приложения раздел может открыться сам с заметками по версиям, которые вы ещё не видели (до только что установленной). Его всегда можно открыть из боковой панели.</p>
+<p>С активной лицензией каждую версию можно оценить от 1 до 10. Показываются среднее сообщества, число оценок и ваша оценка.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
