@@ -3,7 +3,7 @@
   "projectTitle": "StreamKit+ Integration Addons",
   "description": "Sandbox API, manifest format, permissions, and addon categories for StreamKit+ integration addons. Worker code runs in an isolated VM with global APIs (network, events, dashboard, api, …) — no SDK imports.",
   "folders": ["en"],
-  "excludeFiles": [],
+  "excludeFiles": ["user-*.md"],
   "rules": [
     "Addon worker code uses global sandbox APIs only — never import StreamKit+ SDK or main-app modules inside the VM.",
     "Never use app translation keys or LangData tuples in addon code; use plain strings or { en, ru?, uk? } objects.",

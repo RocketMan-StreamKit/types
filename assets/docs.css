@@ -109,12 +109,14 @@ a:hover { text-decoration: none; }
 }
 
 .sidebar h2 {
-  margin: 0 0 0.75rem;
+  margin: 1.15rem 0 0.55rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
 }
+
+.sidebar h2:first-child { margin-top: 0; }
 
 .sidebar ul {
   list-style: none;

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Початок роботи (для стримерів) — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html" class="is-active">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Початок роботи (для стримерів)</h1>
+<p>StreamKit+ — настільний центр керування прямим ефіром. Дії глядачів — донати, підписки, фолови, чат, рейди, бали каналу та інше — перетворюються на оверлеї, звуки, віджети, реакції в грі та клавіатурні сценарії.</p>
+<p>Цей розділ для <strong>стримерів</strong>. Тут описано, як користуватися застосунком, а не як писати аддони. Розробникам аддонів — <a href="./getting-started.html">Початок роботи</a>.</p>
+<p><strong>Платформи:</strong> Linux, Windows, macOS.<br><strong>Мови інтерфейсу:</strong> англійська, російська, українська.</p>
+<h2>Перший запуск</h2>
+<ol>
+<li>Відкрийте StreamKit+. У <strong>головному вікні</strong> — таймер донату, швидкі дії та статус інтеграцій.</li>
+<li>Відкрийте <strong>Налаштування</strong> шестірнею в заголовку вікна.</li>
+<li>У розділі <strong>Основні</strong> оберіть мову інтерфейсу та валюту відображення.</li>
+<li>У <strong>Ліцензія та оновлення</strong> активуйте ліцензію, якщо потрібні автоматичні реакції (оверлеї, звуки, правила таймера, хоткеї, ігрові дії). Чат і стрічка подій працюють і без ліцензії.</li>
+<li>Відкрийте <strong>Каталог аддонів</strong>, установіть аддон стрімінгової платформи (наприклад Twitch) і аддон донатів, якщо користуєтесь сервісом чайових.</li>
+<li>Увімкніть кожен аддон, увійдіть або вставте токени, потім <strong>Збережіть</strong>.</li>
+<li>На головному вікні в рядку статусу має з’явитися підключена інтеграція.</li>
+<li>За потреби налаштуйте <a href="./user-overlay.html">оверлеї</a>, <a href="./user-sounds.html">звуки</a> і <a href="./user-timer.html">таймер</a>.</li>
+<li>Під час стріму відкрийте <strong>Вікно чату</strong> та <strong>Останні події</strong> з головного вікна.</li>
+</ol>
+<p>Інтерактивний тур (іконка питання в заголовку) проводить головним вікном і поточним розділом налаштувань. Його можна пропустити й запустити знову з тієї ж іконки.</p>
+<h2>З чого складається застосунок</h2>
+<table>
+<thead>
+<tr>
+<th>Розділ</th>
+<th>Що це</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./user-main-window.html">Головне вікно</a></td>
+<td>Таймер, ярлики, статус, сповіщення</td>
+</tr>
+<tr>
+<td><a href="./user-events.html">Останні події</a></td>
+<td>Жива стрічка донатів, фоловів, підписок та іншої активності</td>
+</tr>
+<tr>
+<td><a href="./user-chat.html">Вікно чату</a></td>
+<td>Спільний чат із підключених платформ</td>
+</tr>
+<tr>
+<td><a href="./user-settings.html">Налаштування</a></td>
+<td>Усі модулі нижче — у бічній панелі налаштувань</td>
+</tr>
+<tr>
+<td><a href="./user-addons.html">Аддони та каталог</a></td>
+<td>Установлення платформ, ефектів, віджетів, ігор</td>
+</tr>
+<tr>
+<td><a href="./user-overlay.html">Оверлей</a></td>
+<td>Ефекти на екрані / в OBS за подіями</td>
+</tr>
+<tr>
+<td><a href="./user-widgets.html">Віджети та застосунки</a></td>
+<td>Постійні панелі OBS і окремі вікна всередині StreamKit+</td>
+</tr>
+<tr>
+<td><a href="./user-timer.html">Таймер донату</a></td>
+<td>Зворотний відлік із файлами для OBS</td>
+</tr>
+<tr>
+<td><a href="./user-sounds.html">Звукові ефекти</a></td>
+<td>Звуки за подіями</td>
+</tr>
+<tr>
+<td><a href="./user-hotkeys.html">Хоткеї</a></td>
+<td>Клавіатурні макроси за подіями</td>
+</tr>
+<tr>
+<td><a href="./user-coop-sync.html">Спільна синхронізація</a></td>
+<td>Оверлеї та хоткеї на інших комп’ютерах</td>
+</tr>
+<tr>
+<td><a href="./user-games.html">Ігрові інтеграції</a></td>
+<td>Дії глядачів усередині гри</td>
+</tr>
+<tr>
+<td><a href="./user-tts.html">Озвучення тексту</a></td>
+<td>Читання повідомлень уголос</td>
+</tr>
+<tr>
+<td><a href="./user-llm.html">LLM Access</a></td>
+<td>Профілі нейромереж для аддонів</td>
+</tr>
+<tr>
+<td><a href="./user-license.html">Ліцензія та оновлення</a></td>
+<td>Ліцензія, оновлення застосунку, список змін</td>
+</tr>
+<tr>
+<td><a href="./user-backup.html">Резервні копії</a></td>
+<td>Zip-знімки конфігу, аддонів і файлів</td>
+</tr>
+</tbody></table>
+<h2>Аддони простими словами</h2>
+<p>Ядро застосунку — хаб. Конкретні платформи й ефекти ставляться <strong>аддонами</strong>:</p>
+<ul>
+<li><strong>Стрімінгові та донат-аддони</strong> приносять події й чат у StreamKit+.</li>
+<li><strong>Оверлеї, віджети, застосунки та ігри</strong> реагують на ці події або додають свій інтерфейс.</li>
+</ul>
+<p>Установлення: з каталогу, з папки, за ID репозиторію або перетягуванням папки/zip на вікно. Перед установленням видно запитувані дозволи. Увімкнення, вимкнення й налаштування — у відповідному розділі.</p>
+<h2>Ліцензія</h2>
+<p>Без активної ліцензії можна підключати платформи, дивитися чат і події та все налаштовувати. Автоматичні <strong>тригери</strong> (оверлей, звук, секунди таймера, хоткеї, ігрові дії) і <strong>створення кімнати</strong> спільної синхронізації потребують ліцензію. Вхід до чужої кімнати — ні.</p>
+<p>Див. <a href="./user-license.html">Ліцензія та оновлення</a>.</p>
+<h2>Вікна пам’ятають розташування</h2>
+<p>Налаштування, чат і останні події запам’ятовують позицію, розмір, поверх усіх вікон і те, чи були вони відкриті. Під час наступного запуску вони відкриються знову, якщо ви їх не закривали. Налаштування також відновлюють останній розділ бічної панелі.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hotkey integrations — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html" class="is-active">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Hotkey integrations</h1>
+<p><strong>Settings → Hotkey integrations</strong> runs keyboard scenarios when a dashboard event fires: delays, blocking keys, simulated presses, taps, and typing text.</p>
+<p>Typical uses: switch an OBS scene from a hotkey the app presses, fire a game input, or type a chat command — optionally only while a chosen program is in the foreground.</p>
+<p>Automatic dispatch needs an active <a href="./user-license.html">license</a>. Some anti-cheat systems may flag simulated input — use this only in games and tools that allow it.</p>
+<h2>Keyboard agent</h2>
+<p>StreamKit+ does not inject keys by itself. A small <strong>keyboard agent</strong> must be running.</p>
+<ul>
+<li>Start or stop it from this settings section.</li>
+<li><strong>Auto-start</strong> launches the agent with the app.</li>
+<li>On Windows, <strong>Run as administrator</strong> is on by default (needed for some elevated games).</li>
+<li>Status should read connected / ready before presets will fire.</li>
+<li>On Linux, foreground-app detection expects an X11 session. On macOS, OS security may block the agent entirely.</li>
+</ul>
+<p>The agent stops when StreamKit+ exits.</p>
+<h2>Presets</h2>
+<p>Each preset has:</p>
+<ul>
+<li>Triggers (same model as <a href="./user-overlay.html">overlays</a>)</li>
+<li>Optional <strong>process gating</strong>: always, only when an executable is in the foreground, or only while it is running</li>
+<li>A <strong>scenario</strong>: an ordered list of delay / block key / unblock / key down / key up / tap / type text (US QWERTY)</li>
+</ul>
+<p><strong>Test current settings</strong> runs the scenario after a short delay (default 5 seconds) so you can switch to the target window.</p>
+<h2>Folders</h2>
+<p>Group presets into folders. Optional auto-assignment rules match a substring in the preset name or a target process executable. Export or import a folder (all presets and rules) as a single base64 string — useful for moving a setup between PCs.</p>
+<h2>Cooperative sync</h2>
+<p>If you are in a <a href="./user-coop-sync.html">room</a>, hotkey presets can run on members too. Each member needs the keyboard agent running locally. Sounds and game triggers are not synced.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

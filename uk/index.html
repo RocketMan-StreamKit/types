@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Документація для розробників аддонів StreamKit+ — StreamKit+ Addon Docs</title>
+  <title>Документація StreamKit+ — StreamKit+ Docs</title>
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
@@ -12,7 +12,7 @@
   <header class="site-header">
     <a class="site-brand" href="../index.html">
       <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
-      <span>StreamKit+ Addon Docs</span>
+      <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
         <a href="../en/index.html">English</a>
@@ -22,7 +22,27 @@
   </header>
   <div class="layout">
     <nav class="sidebar" aria-label="Table of contents">
-        <h2>Contents</h2>
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
         <ul>
           <li><a href="getting-started.html">Початок роботи</a></li>
           <li><a href="lifecycle.html">Життєвий цикл</a></li>
@@ -34,6 +54,9 @@
           <li><a href="localization.html">Локалізація</a></li>
           <li><a href="security.html">Безпека</a></li>
           <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
           <li><a href="api-overview.html">Огляд API</a></li>
           <li><a href="api-events.html">events</a></li>
           <li><a href="api-network.html">network</a></li>
@@ -49,6 +72,9 @@
           <li><a href="api-currency.html">Валюта</a></li>
           <li><a href="api-language.html">Визначення мови (`language`)</a></li>
           <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
           <li><a href="types-platform.html">Платформені аддони</a></li>
           <li><a href="types-overlay.html">Оверлеї</a></li>
           <li><a href="types-widget.html">Віджети</a></li>
@@ -57,9 +83,88 @@
         </ul>
       </nav>
     <main class="content">
-      <h1>Документація для розробників аддонів StreamKit+</h1>
+      <h1>Документація StreamKit+</h1>
+<p>Посібники для <strong>стримерів</strong> (як користуватися застосунком) і для <strong>розробників аддонів</strong> (API пісочниці, маніфест, дозволи).</p>
 <p>Інтеграційні аддони розширюють StreamKit+ з ізольованого worker-процесу. Код аддона виконується у VM-пісочниці та використовує <strong>глобальні</strong> API (<code>network</code>, <code>events</code>, <code>api</code>, …) — імпорт SDK всередині worker недоступний.</p>
-<h2>Розділи</h2>
+<h2>Для стримерів</h2>
+<p>Як користуватися StreamKit+ як настільним застосунком — не як писати аддони.</p>
+<table>
+<thead>
+<tr>
+<th>Розділ</th>
+<th>Опис</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./user-getting-started.html">Початок роботи</a></td>
+<td>Перший запуск, ліцензія, з чого складається застосунок</td>
+</tr>
+<tr>
+<td><a href="./user-main-window.html">Головне вікно</a></td>
+<td>Таймер, швидкі дії, заголовок, статус</td>
+</tr>
+<tr>
+<td><a href="./user-events.html">Останні події</a></td>
+<td>Жива стрічка подій і чипи повтору</td>
+</tr>
+<tr>
+<td><a href="./user-chat.html">Вікно чату</a></td>
+<td>Спільний чат, відповіді, зовнішній вигляд</td>
+</tr>
+<tr>
+<td><a href="./user-settings.html">Налаштування</a></td>
+<td>Бічна панель, збереження, Основні та Інтерфейс</td>
+</tr>
+<tr>
+<td><a href="./user-addons.html">Аддони та каталог</a></td>
+<td>Установлення платформ, дозволи, оновлення</td>
+</tr>
+<tr>
+<td><a href="./user-overlay.html">Оверлей</a></td>
+<td>Ефекти на екрані та в OBS</td>
+</tr>
+<tr>
+<td><a href="./user-widgets.html">Віджети та застосунки</a></td>
+<td>Віджети OBS і вікна всередині застосунку</td>
+</tr>
+<tr>
+<td><a href="./user-timer.html">Таймер донату</a></td>
+<td>Файли зворотного відліку та автоправила</td>
+</tr>
+<tr>
+<td><a href="./user-sounds.html">Звукові ефекти</a></td>
+<td>Звуки сповіщення за подіями</td>
+</tr>
+<tr>
+<td><a href="./user-hotkeys.html">Хоткеї</a></td>
+<td>Клавіатурний агент і пресети</td>
+</tr>
+<tr>
+<td><a href="./user-coop-sync.html">Спільна синхронізація</a></td>
+<td>Оверлеї та хоткеї на інших ПК</td>
+</tr>
+<tr>
+<td><a href="./user-games.html">Ігрові інтеграції</a></td>
+<td>Дії глядачів усередині гри</td>
+</tr>
+<tr>
+<td><a href="./user-tts.html">Озвучення тексту</a></td>
+<td>Голоси Piper, ElevenLabs, Windows</td>
+</tr>
+<tr>
+<td><a href="./user-llm.html">LLM Access</a></td>
+<td>Профілі нейромереж для аддонів</td>
+</tr>
+<tr>
+<td><a href="./user-license.html">Ліцензія та оновлення</a></td>
+<td>Ліцензія, оновлення застосунку, список змін</td>
+</tr>
+<tr>
+<td><a href="./user-backup.html">Резервні копії</a></td>
+<td>Zip-знімки та відновлення</td>
+</tr>
+</tbody></table>
+<h2>Для розробників аддонів</h2>
 <table>
 <thead>
 <tr>

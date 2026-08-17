@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Озвучення тексту — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html" class="is-active">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Озвучення тексту</h1>
+<p><strong>Налаштування → Озвучення тексту</strong> читає повідомлення вголос. Аддони з дозволом можуть надсилати текст у вибраний тут рушій (наприклад алерти донатів). Ви обираєте рушій, голоси й гучність; ключі API та локальні моделі залишаються в StreamKit+.</p>
+<h2>Загальні параметри</h2>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Призначення</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Увімкнути TTS</strong></td>
+<td>Головний перемикач</td>
+</tr>
+<tr>
+<td><strong>Рушій мовлення</strong></td>
+<td>Piper (локально), ElevenLabs (хмара) або Windows TTS</td>
+</tr>
+<tr>
+<td><strong>Гучність</strong></td>
+<td>0–200% (вище 100% підсилюється в головному вікні)</td>
+</tr>
+<tr>
+<td><strong>Мова, тестова фраза, Перевірити голос</strong></td>
+<td>Перевірка голосу до ефіру</td>
+</tr>
+</tbody></table>
+<p>Якщо аддон не вказав мову, StreamKit+ сам визначає англійську, російську або українську (запасний варіант — англійська).</p>
+<h2>Piper (за замовчуванням)</h2>
+<p>Локальні голоси <a href="https://github.com/rhasspy/piper">Piper</a>. Обліковий запис не потрібен.</p>
+<ul>
+<li>Завантаження й керування ONNX-моделями за мовами (англійська, російська, українська).</li>
+<li>Опційно <strong>CUDA</strong> на NVIDIA (Windows і Linux).</li>
+<li><strong>Режим запуску</strong>: одразу або за першої фрази (економить RAM; перша репліка може бути повільнішою).</li>
+<li>Швидкість і виразність.</li>
+<li>Індикатор, чи запущений воркер.</li>
+</ul>
+<p>Якщо воркер Piper відсутній у встановленні, розділ про це повідомляє.</p>
+<h2>ElevenLabs</h2>
+<p>Хмарні голоси через API <a href="https://elevenlabs.io/">ElevenLabs</a> (<code>eleven_multilingual_v2</code>).</p>
+<ul>
+<li>Один або кілька API-токенів із лімітом символів. StreamKit+ бере токен із найбільшим залишком квоти (кеш на кілька хвилин).</li>
+<li>Спільні налаштування голосу: стабільність, подібність, стиль, швидкість.</li>
+<li>Оновлення лімітів із панелі, коли потрібна актуальна квота.</li>
+</ul>
+<p>Потрібні мережа й чинний токен.</p>
+<h2>Windows TTS</h2>
+<p>Системні голоси (SAPI). <strong>Лише Windows</strong> — на Linux і macOS панель недоступна.</p>
+<p>Голос, швидкість і гучність задаються окремо для кожної мови.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

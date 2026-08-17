@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Addons and catalog — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html" class="is-active">Addons and catalog</a></li>
+          <li><a href="user-overlay.html">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Addons and catalog</h1>
+<p>StreamKit+ does not hard-code Twitch, DonationAlerts, or a particular overlay. Those come from <strong>addons</strong> you install. This page covers the catalog and <strong>platform</strong> addons (streaming and donation). Other types have their own guides: <a href="./user-overlay.html">overlay</a>, <a href="./user-widgets.html">widgets and applications</a>, <a href="./user-games.html">games</a>.</p>
+<h2>Addon catalog</h2>
+<p><strong>Settings → Addon catalog</strong> lists recommended addons from the online catalog.</p>
+<ul>
+<li>Filter by category and search by name.</li>
+<li>Download counts and star ratings (ratings need an active <a href="./user-license.html">license</a>).</li>
+<li><strong>Install</strong> downloads and registers the addon, then asks you to review <strong>permissions</strong>.</li>
+<li><strong>Install by ID</strong> accepts a catalog id or a GitHub repository URL.</li>
+<li>The full public catalog is also on <a href="https://rocketman-streams.com/#addons">rocketman-streams.com</a>.</li>
+<li>You can open an already installed addon’s folder from the catalog list.</li>
+</ul>
+<p>Local folder or zip installs (including drag-and-drop onto the window) are limited to <strong>10 MB</strong>. If the addon needs other addons, the confirmation dialog can install those first.</p>
+<p>If the app is older than the addon’s required version, install and update are blocked until you update StreamKit+.</p>
+<h2>Streaming and donation addons</h2>
+<p><strong>Settings → Integrations</strong> groups:</p>
+<ul>
+<li><strong>Streaming platforms</strong> — chat, follows, subs, bits, raids, channel points, and similar events</li>
+<li><strong>Donation platforms</strong> — tips from services such as DonationAlerts or DonatePay</li>
+</ul>
+<p>Typical flow:</p>
+<ol>
+<li>Install from the catalog.</li>
+<li>Open the addon, fill in tokens or complete sign-in, <strong>Save</strong>.</li>
+<li><strong>Enable</strong> the addon.</li>
+<li>Check the <a href="./user-main-window.html">main window</a> status bar for a connected state.</li>
+</ol>
+<p>Hover a locked enable switch to see why it cannot turn on (required addons missing or disabled, or a catalog ban).</p>
+<h2>Day-to-day management</h2>
+<ul>
+<li>Enable and disable without uninstalling. Uninstall <strong>keeps</strong> the addon’s saved settings, so a later reinstall restores tokens and preferences.</li>
+<li>Check for catalog updates from settings; update when a newer version is available.</li>
+<li>A one-time notification appears when a <strong>new</strong> addon shows up in the catalog.</li>
+<li>Banned catalog addons are disabled automatically and cannot be re-enabled.</li>
+<li>Running addons can show live CPU and RAM under the name. The process id is shown only in developer mode.</li>
+<li>If an addon crashes in a loop, auto-restart stops until you start it again from settings.</li>
+</ul>
+<h2>Permissions you may see</h2>
+<p>You approve these at install time. Common ones:</p>
+<table>
+<thead>
+<tr>
+<th>Permission (plain language)</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Network</td>
+<td>The addon may call websites and APIs</td>
+</tr>
+<tr>
+<td>Dashboard events</td>
+<td>It can post events and register trigger types</td>
+</tr>
+<tr>
+<td>File access</td>
+<td>It may read or write only folders you approve (plus an automatic temp folder)</td>
+</tr>
+<tr>
+<td>Text to speech</td>
+<td>It may speak through your <a href="./user-tts.html">TTS</a> engine</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>It may send prompts through your <a href="./user-llm.html">LLM</a> profiles (keys stay in StreamKit+)</td>
+</tr>
+<tr>
+<td>Chat send</td>
+<td>It can send messages through chat-capable addons</td>
+</tr>
+</tbody></table>
+<p>Revoke file grants later in that addon’s settings if you change your mind.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

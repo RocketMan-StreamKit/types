@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overlay system — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="index.html" class="is-active">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="../uk/index.html">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>For streamers</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Getting started</a></li>
+          <li><a href="user-main-window.html">Main window</a></li>
+          <li><a href="user-events.html">Latest events</a></li>
+          <li><a href="user-chat.html">Chat window</a></li>
+          <li><a href="user-settings.html">Settings</a></li>
+          <li><a href="user-addons.html">Addons and catalog</a></li>
+          <li><a href="user-overlay.html" class="is-active">Overlay</a></li>
+          <li><a href="user-widgets.html">Widgets and applications</a></li>
+          <li><a href="user-timer.html">Donation timer</a></li>
+          <li><a href="user-sounds.html">Sound effects</a></li>
+          <li><a href="user-hotkeys.html">Hotkeys</a></li>
+          <li><a href="user-coop-sync.html">Cooperative sync</a></li>
+          <li><a href="user-games.html">Game integrations</a></li>
+          <li><a href="user-tts.html">Text to speech</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">License and updates</a></li>
+          <li><a href="user-backup.html">Backups</a></li>
+        </ul>
+        <h2>For addon developers</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="lifecycle.html">Lifecycle</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Publishing and releases</a></li>
+          <li><a href="typescript.html">TypeScript setup</a></li>
+          <li><a href="permissions.html">Permissions</a></li>
+          <li><a href="settings-schema.html">Settings schema</a></li>
+          <li><a href="localization.html">Localization</a></li>
+          <li><a href="security.html">Security</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth and secrets</a></li>
+        </ul>
+        <h2>Sandbox API</h2>
+        <ul>
+          <li><a href="api-overview.html">API overview</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config & storage</a></li>
+          <li><a href="api-file-access.html">File access</a></li>
+          <li><a href="api-tts.html">Text-to-speech (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">yt-dlp downloads (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Alerts (`alerts`)</a></li>
+          <li><a href="api-currency.html">Currency</a></li>
+          <li><a href="api-language.html">Language detection (`language`)</a></li>
+          <li><a href="api-utilities.html">Utilities</a></li>
+        </ul>
+        <h2>Addon categories</h2>
+        <ul>
+          <li><a href="types-platform.html">Platform addons</a></li>
+          <li><a href="types-overlay.html">Overlay addons</a></li>
+          <li><a href="types-widget.html">Widget addons</a></li>
+          <li><a href="types-application.html">Application addons</a></li>
+          <li><a href="types-game.html">Game addons</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Overlay system</h1>
+<p>Overlays are visual (and often audio) effects that play when a dashboard event matches a trigger: screen flash, blur, a jump-scare, a custom web effect, and similar.</p>
+<p>They can play:</p>
+<ul>
+<li>in a <strong>fullscreen transparent window</strong> on a monitor you choose, and/or</li>
+<li>in <strong>OBS</strong> (or another tool) via a Browser Source.</li>
+</ul>
+<p>Effects in the queue play <strong>one after another</strong> — they do not overlap.</p>
+<p>Automatic playback needs an active <a href="./user-license.html">license</a>. You can still configure overlays and test them without one.</p>
+<h2>Global overlay settings</h2>
+<p><strong>Settings → Overlay system</strong> (list view, not inside a single addon):</p>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Overlay monitor</strong></td>
+<td>Which display hosts the in-app overlay. <strong>Identify displays</strong> shows each monitor number for a few seconds.</td>
+</tr>
+<tr>
+<td><strong>Show overlay in taskbar</strong></td>
+<td>Turn on if OBS window capture cannot find the overlay without a taskbar entry.</td>
+</tr>
+<tr>
+<td><strong>OBS browser source URL</strong></td>
+<td>Copy this URL into an OBS Browser Source (typically 1920×1080 or your canvas size).</td>
+</tr>
+</tbody></table>
+<p>After big overlay changes, use <strong>Reboot the Overlay system</strong> on the <a href="./user-main-window.html">main window</a>.</p>
+<h2>Categories</h2>
+<ul>
+<li><strong>Overlay effects</strong> — the scare / visual addons. You can also <strong>create a simple overlay</strong> (audio and/or video file, no extra code).</li>
+<li><strong>Info overlays</strong> — name and message cards shown with an effect. You can pick a specific info addon or <strong>random</strong>.</li>
+</ul>
+<h2>Per-effect settings</h2>
+<p>Open an overlay addon (or a simple overlay you created):</p>
+<ul>
+<li>Enable, update, uninstall</li>
+<li><strong>Test playback</strong></li>
+<li><strong>Where it may appear</strong>: app window and/or OBS</li>
+<li><strong>Where sound may play</strong> for each of those targets. If sound is off for a target, video still plays but audio is forced silent.</li>
+<li>Volume, duration, and (for simple overlays) loop / hide at end</li>
+<li>Whether to show an info card with the viewer’s name and message</li>
+<li><strong>Triggers</strong> — when this effect should run (see below)</li>
+</ul>
+<p>Save from the overlay detail bar.</p>
+<h2>Triggers</h2>
+<p>The same idea is used for overlays, <a href="./user-sounds.html">sounds</a>, <a href="./user-timer.html">timer</a> rules, <a href="./user-hotkeys.html">hotkeys</a>, and <a href="./user-games.html">games</a>:</p>
+<ol>
+<li>Choose the <strong>source addon</strong> (or <strong>All</strong> donation sources to react to every installed donation platform in the selected currency — you get a warning if a platform cannot use that currency).</li>
+<li>Choose the <strong>event type</strong> (donation, follow, subscription, custom action such as a channel point reward, …).</li>
+<li>Fill in amount, tier, currency, or the custom value the addon provides.</li>
+</ol>
+<p>Platform addons must be enabled before their event types appear in the lists.</p>
+<h2>Typical setup</h2>
+<ol>
+<li>Install overlay addons from the <a href="./user-addons.html">catalog</a>, or create a simple media overlay.</li>
+<li>Paste the OBS URL into a Browser Source if you want the effect on stream.</li>
+<li>Pick the monitor for the in-app overlay.</li>
+<li>Add triggers, set volume and duration, Save.</li>
+<li>Fire a test event or use <strong>Test playback</strong>, then watch <a href="./user-events.html">Latest events</a> for overlay chips.</li>
+</ol>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>

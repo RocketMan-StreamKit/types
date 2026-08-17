@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аддони та каталог — StreamKit+ Docs</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="stylesheet" href="../assets/docs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" width="28" height="28" alt="">
+      <span>StreamKit+ Docs</span>
+    </a>
+    <nav class="lang-switch" aria-label="Language">
+        <a href="../en/index.html">English</a>
+        <a href="../ru/index.html">Русский</a>
+        <a href="index.html" class="is-active">Українська</a>
+    </nav>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Table of contents">
+        <h2>Для стримерів</h2>
+        <ul>
+          <li><a href="user-getting-started.html">Початок роботи</a></li>
+          <li><a href="user-main-window.html">Головне вікно</a></li>
+          <li><a href="user-events.html">Останні події</a></li>
+          <li><a href="user-chat.html">Вікно чату</a></li>
+          <li><a href="user-settings.html">Налаштування</a></li>
+          <li><a href="user-addons.html" class="is-active">Аддони та каталог</a></li>
+          <li><a href="user-overlay.html">Оверлей</a></li>
+          <li><a href="user-widgets.html">Віджети та застосунки</a></li>
+          <li><a href="user-timer.html">Таймер донату</a></li>
+          <li><a href="user-sounds.html">Звукові ефекти</a></li>
+          <li><a href="user-hotkeys.html">Хоткеї</a></li>
+          <li><a href="user-coop-sync.html">Спільна синхронізація</a></li>
+          <li><a href="user-games.html">Ігрові інтеграції</a></li>
+          <li><a href="user-tts.html">Озвучення тексту</a></li>
+          <li><a href="user-llm.html">LLM Access</a></li>
+          <li><a href="user-license.html">Ліцензія та оновлення</a></li>
+          <li><a href="user-backup.html">Резервні копії</a></li>
+        </ul>
+        <h2>Для розробників аддонів</h2>
+        <ul>
+          <li><a href="getting-started.html">Початок роботи</a></li>
+          <li><a href="lifecycle.html">Життєвий цикл</a></li>
+          <li><a href="manifest.html">manifest.json</a></li>
+          <li><a href="publishing.html">Публікація та релізи</a></li>
+          <li><a href="typescript.html">Налаштування TypeScript</a></li>
+          <li><a href="permissions.html">Дозволи</a></li>
+          <li><a href="settings-schema.html">Схема налаштувань</a></li>
+          <li><a href="localization.html">Локалізація</a></li>
+          <li><a href="security.html">Безпека</a></li>
+          <li><a href="oauth-and-secrets.html">OAuth і секрети</a></li>
+        </ul>
+        <h2>API пісочниці</h2>
+        <ul>
+          <li><a href="api-overview.html">Огляд API</a></li>
+          <li><a href="api-events.html">events</a></li>
+          <li><a href="api-network.html">network</a></li>
+          <li><a href="api-config-storage.html">api.config і storage</a></li>
+          <li><a href="api-file-access.html">Доступ до файлів</a></li>
+          <li><a href="api-tts.html">Озвучення тексту (`tts`)</a></li>
+          <li><a href="api-llm.html">LLM Access (`llm`)</a></li>
+          <li><a href="api-ytdlp.html">Завантаження yt-dlp (`ytdlp`)</a></li>
+          <li><a href="api-addons-rpc.html">addons (RPC)</a></li>
+          <li><a href="api-dashboard.html">dashboard</a></li>
+          <li><a href="api-status-notify-ui.html">status, notify, ui</a></li>
+          <li><a href="api-alerts.html">Сповіщення (`alerts`)</a></li>
+          <li><a href="api-currency.html">Валюта</a></li>
+          <li><a href="api-language.html">Визначення мови (`language`)</a></li>
+          <li><a href="api-utilities.html">Утиліти</a></li>
+        </ul>
+        <h2>Категорії аддонів</h2>
+        <ul>
+          <li><a href="types-platform.html">Платформені аддони</a></li>
+          <li><a href="types-overlay.html">Оверлеї</a></li>
+          <li><a href="types-widget.html">Віджети</a></li>
+          <li><a href="types-application.html">Застосунки</a></li>
+          <li><a href="types-game.html">Ігрові інтеграції</a></li>
+        </ul>
+      </nav>
+    <main class="content">
+      <h1>Аддони та каталог</h1>
+<p>StreamKit+ не «зашиває» Twitch, DonationAlerts чи конкретний оверлей. Це <strong>аддони</strong>, які ви ставите самі. Тут — каталог і <strong>платформені</strong> аддони (стрімінг і донати). Інші типи: <a href="./user-overlay.html">оверлей</a>, <a href="./user-widgets.html">віджети та застосунки</a>, <a href="./user-games.html">ігри</a>.</p>
+<h2>Каталог аддонів</h2>
+<p><strong>Налаштування → Каталог аддонів</strong> — рекомендовані аддони з онлайн-каталогу.</p>
+<ul>
+<li>Фільтр за категорією та пошук за іменем.</li>
+<li>Лічильники завантажень і зірковий рейтинг (оцінки — за активної <a href="./user-license.html">ліцензії</a>).</li>
+<li><strong>Установити</strong> завантажує аддон і показує <strong>дозволи</strong>.</li>
+<li><strong>Установити за ID</strong> — id каталогу або URL репозиторію GitHub.</li>
+<li>Повний каталог також на <a href="https://rocketman-streams.com/#addons">rocketman-streams.com</a>.</li>
+<li>Папку вже встановленого аддона можна відкрити зі списку каталогу.</li>
+</ul>
+<p>Установлення з локальної папки або zip (включно з перетягуванням на вікно) обмежене <strong>10 МБ</strong>. Якщо аддону потрібні інші аддони, діалог підтвердження може поставити їх спочатку.</p>
+<p>Якщо застосунок старший за потрібну версію аддона, установлення й оновлення блокуються, доки не оновите StreamKit+.</p>
+<h2>Стрімінг і донати</h2>
+<p><strong>Налаштування → Інтеграції</strong> поділяються на:</p>
+<ul>
+<li><strong>Стрімінгові платформи</strong> — чат, фолови, підписки, біти, рейди, бали каналу та подібні події</li>
+<li><strong>Донат-платформи</strong> — чайові сервісів на кшталт DonationAlerts або DonatePay</li>
+</ul>
+<p>Звичайний порядок:</p>
+<ol>
+<li>Установити з каталогу.</li>
+<li>Відкрити аддон, ввести токени або увійти, <strong>Зберегти</strong>.</li>
+<li><strong>Увімкнути</strong> аддон.</li>
+<li>Перевірити підключення в рядку статусу <a href="./user-main-window.html">головного вікна</a>.</li>
+</ol>
+<p>Наведіть на заблокований перемикач увімкнення — побачите причину (немає обов’язкових аддонів, вони вимкнені або аддон забанений у каталозі).</p>
+<h2>Повсякденна робота</h2>
+<ul>
+<li>Вмикайте й вимикайте без видалення. Видалення <strong>зберігає</strong> налаштування аддона: під час повторного встановлення токени й уподобання повернуться.</li>
+<li>Перевіряйте оновлення каталогу в налаштуваннях і оновлюйте аддон за нової версії.</li>
+<li>Одноразове сповіщення, коли в каталозі з’являється <strong>новий</strong> аддон.</li>
+<li>Забанені аддони каталогу вимикаються самі, і знову ввімкнути їх не можна.</li>
+<li>У робочих аддонів під іменем можуть бути CPU і RAM. PID видно лише в режимі розробника.</li>
+<li>Якщо аддон падає по колу, автоперезапуск зупиняється, доки ви не запустите його знову з налаштувань.</li>
+</ul>
+<h2>Які дозволи бувають</h2>
+<p>Їх підтверджують під час установлення. Часто трапляються:</p>
+<table>
+<thead>
+<tr>
+<th>Дозвіл (простими словами)</th>
+<th>Зміст</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Мережа</td>
+<td>Аддон може звертатися до сайтів і API</td>
+</tr>
+<tr>
+<td>Події дашборда</td>
+<td>Може публікувати події й реєструвати типи тригерів</td>
+</tr>
+<tr>
+<td>Доступ до файлів</td>
+<td>Читання й запис лише в схвалених вами папках (плюс автоматична тимчасова папка)</td>
+</tr>
+<tr>
+<td>Озвучення</td>
+<td>Може говорити через ваш рушій <a href="./user-tts.html">TTS</a></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>Може надсилати запити через ваші профілі <a href="./user-llm.html">LLM</a> (ключі залишаються в StreamKit+)</td>
+</tr>
+<tr>
+<td>Надсилання в чат</td>
+<td>Може надсилати повідомлення через аддони, що вміють писати в чат</td>
+</tr>
+</tbody></table>
+<p>Надані шляхи до файлів можна відкликати пізніше в налаштуваннях цього аддона.</p>
+
+    </main>
+  </div>
+  <script src="https://context7.com/widget.js" data-library="/rocketman-streamkit/types"></script>
+</body>
+</html>
