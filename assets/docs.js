@@ -102,25 +102,118 @@
     window.scrollTo(0, 0);
   }
 
+  /** Fade-out duration in milliseconds before swapping article HTML. */
+  var LEAVE_MS = 180;
+
+  /** Fade-in duration in milliseconds after swapping article HTML. */
+  var ENTER_MS = 280;
+
   /**
-   * Marks the article layout as busy while a page is fetching.
-   * @param {boolean} loading - Whether navigation is in progress.
+   * Returns whether the user prefers reduced motion.
+   * @returns {boolean}
    * @example
-   * setLayoutLoading(true);
+   * prefersReducedMotion();
    */
-  function setLayoutLoading(loading) {
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * Resolves after the given delay.
+   * @param {number} ms - Delay in milliseconds.
+   * @returns {Promise<void>}
+   * @example
+   * wait(180);
+   */
+  function wait(ms) {
+    return new Promise(function (resolve) {
+      window.setTimeout(resolve, ms);
+    });
+  }
+
+  /**
+   * Creates or returns the persistent top progress bar (outside swapped chrome).
+   * @returns {HTMLElement}
+   * @example
+   * ensureProgressBar();
+   */
+  function ensureProgressBar() {
+    var bar = document.querySelector('.docs-progress');
+    if (bar instanceof HTMLElement) {
+      return bar;
+    }
+    bar = document.createElement('div');
+    bar.className = 'docs-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.insertBefore(bar, document.body.firstChild);
+    return bar;
+  }
+
+  /**
+   * Starts the top progress bar animation.
+   * @example
+   * startProgress();
+   */
+  function startProgress() {
+    var bar = ensureProgressBar();
+    bar.classList.remove('is-finishing');
+    bar.classList.remove('is-running');
+    void bar.offsetWidth;
+    bar.classList.add('is-running');
+  }
+
+  /**
+   * Completes and hides the top progress bar.
+   * @example
+   * finishProgress();
+   */
+  function finishProgress() {
+    var bar = document.querySelector('.docs-progress');
+    if (!(bar instanceof HTMLElement)) {
+      return;
+    }
+    bar.classList.add('is-finishing');
+    window.setTimeout(function () {
+      bar.classList.remove('is-running');
+      bar.classList.remove('is-finishing');
+    }, 420);
+  }
+
+  /**
+   * Plays the outgoing page transition and marks content as busy.
+   * @example
+   * beginLeaveAnimation();
+   */
+  function beginLeaveAnimation() {
     var layout = document.querySelector('.layout');
     var content = document.querySelector('main.content');
     if (layout) {
-      layout.classList.toggle('is-loading', loading);
+      layout.classList.add('is-leaving');
     }
     if (content) {
-      if (loading) {
-        content.setAttribute('aria-busy', 'true');
-      } else {
-        content.removeAttribute('aria-busy');
-      }
+      content.setAttribute('aria-busy', 'true');
     }
+  }
+
+  /**
+   * Plays the incoming page transition after the new article is in the DOM.
+   * @example
+   * playEnterAnimation();
+   */
+  function playEnterAnimation() {
+    var layout = document.querySelector('.layout');
+    var content = document.querySelector('main.content');
+    if (content) {
+      content.removeAttribute('aria-busy');
+    }
+    if (!layout) {
+      return;
+    }
+    layout.classList.remove('is-leaving');
+    layout.classList.add('is-entering');
+    window.setTimeout(function () {
+      layout.classList.remove('is-entering');
+    }, ENTER_MS + 40);
   }
 
   /**
@@ -172,21 +265,28 @@
     }
     navigateAbort = new AbortController();
     var signal = navigateAbort.signal;
-    setLayoutLoading(true);
+    startProgress();
+    beginLeaveAnimation();
 
-    return fetch(url.href, {
+    var pageRequest = fetch(url.href, {
       credentials: 'same-origin',
       signal: signal,
       headers: { Accept: 'text/html' },
-    })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('HTTP ' + response.status);
+    }).then(function (response) {
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+      return response.text();
+    });
+
+    var leaveWait = prefersReducedMotion() ? Promise.resolve() : wait(LEAVE_MS);
+
+    return Promise.all([pageRequest, leaveWait])
+      .then(function (results) {
+        if (signal.aborted) {
+          return;
         }
-        return response.text();
-      })
-      .then(function (html) {
-        var parsed = new DOMParser().parseFromString(html, 'text/html');
+        var parsed = new DOMParser().parseFromString(results[0], 'text/html');
         if (!hasArticleLayout(parsed) || !hasArticleLayout(document)) {
           window.location.assign(url.href);
           return;
@@ -195,15 +295,14 @@
           window.history.pushState({ docsSpa: true }, parsed.title, url.href);
         }
         applyArticleDocument(parsed, url);
+        finishProgress();
+        playEnterAnimation();
       })
       .catch(function (error) {
         if (error && error.name === 'AbortError') {
           return;
         }
         window.location.assign(url.href);
-      })
-      .then(function () {
-        setLayoutLoading(false);
       });
   }
 
