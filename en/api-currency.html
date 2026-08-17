@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
+  <script src="../assets/docs.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,9 +16,9 @@
       <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
-        <a href="index.html" class="is-active">English</a>
-        <a href="../ru/index.html">Русский</a>
-        <a href="../uk/index.html">Українська</a>
+        <a href="api-currency.html" hreflang="en" class="is-active" aria-current="page">English</a>
+        <a href="../ru/api-currency.html" hreflang="ru">Русский</a>
+        <a href="../uk/api-currency.html" hreflang="uk">Українська</a>
     </nav>
   </header>
   <div class="layout">
@@ -82,7 +83,7 @@
           <li><a href="types-game.html">Game addons</a></li>
         </ul>
       </nav>
-    <main class="content">
+    <main class="content" tabindex="-1">
       <h1>Currency</h1>
 <p>Read the user&#39;s primary currency from app settings and convert amounts using the same exchange rates as the main application. No extra permissions are required.</p>
 <p>Rates are loaded and refreshed by the main process (<code>Config.data.CURRENCY_RATES</code>). Conversion uses the shared <code>ConvertCurrencyShared</code> helper (USD as the intermediate rate).</p>

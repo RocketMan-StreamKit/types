@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
+  <script src="../assets/docs.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,9 +16,9 @@
       <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
-        <a href="../en/index.html">English</a>
-        <a href="index.html" class="is-active">Русский</a>
-        <a href="../uk/index.html">Українська</a>
+        <a href="../en/settings-schema.html" hreflang="en">English</a>
+        <a href="settings-schema.html" hreflang="ru" class="is-active" aria-current="page">Русский</a>
+        <a href="../uk/settings-schema.html" hreflang="uk">Українська</a>
     </nav>
   </header>
   <div class="layout">
@@ -82,7 +83,7 @@
           <li><a href="types-game.html">Игровые интеграции</a></li>
         </ul>
       </nav>
-    <main class="content">
+    <main class="content" tabindex="-1">
       <h1>Схема настроек (<code>GenerateConfig</code>)</h1>
 <p>Вызывайте <code>GenerateConfig([...])</code> при загрузке аддона, чтобы объявить поля настроек. Схемы хранятся в конфиге приложения; значения — в <code>addonsParams[id]</code>. Значения по умолчанию подмешиваются при регистрации и при открытии страницы настроек.</p>
 <h2>Структура поля</h2>

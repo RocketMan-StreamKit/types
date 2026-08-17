@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../assets/logo.png">
   <link rel="stylesheet" href="../assets/docs.css">
+  <script src="../assets/docs.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,9 +16,9 @@
       <span>StreamKit+ Docs</span>
     </a>
     <nav class="lang-switch" aria-label="Language">
-        <a href="index.html" class="is-active">English</a>
-        <a href="../ru/index.html">Русский</a>
-        <a href="../uk/index.html">Українська</a>
+        <a href="api-file-access.html" hreflang="en" class="is-active" aria-current="page">English</a>
+        <a href="../ru/api-file-access.html" hreflang="ru">Русский</a>
+        <a href="../uk/api-file-access.html" hreflang="uk">Українська</a>
     </nav>
   </header>
   <div class="layout">
@@ -82,7 +83,7 @@
           <li><a href="types-game.html">Game addons</a></li>
         </ul>
       </nav>
-    <main class="content">
+    <main class="content" tabindex="-1">
       <h1>Scoped file access (<code>files</code> API)</h1>
 <p>Requires manifest permission <code>FILE_ACCESS</code>. Addons <strong>never</strong> get direct <code>require(&#39;fs&#39;)</code> (that needs <code>ROOT</code>). Instead they use the global <code>files</code> object: the user approves each path at runtime, and the main process enforces scope.</p>
 <p><strong>Exception:</strong> every addon gets a dedicated OS temp folder exposed as <code>ADDON_TMP_DIR</code> (<code>{tmpdir}/StreamKitPlusAddons/{addonId}</code>). Paths inside that folder do <strong>not</strong> require <code>files.requestAccess</code> consent. See <a href="./api-utilities.html#addon_tmp_dir">Utilities</a>.</p>
