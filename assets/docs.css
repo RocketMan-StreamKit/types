@@ -141,13 +141,76 @@ a:hover { text-decoration: none; }
   font-weight: 600;
 }
 
-.layout.is-loading {
-  opacity: 0.55;
+.docs-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  height: 3px;
+  width: 0;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.docs-progress.is-running {
+  opacity: 1;
+  width: 78%;
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.12s ease;
+}
+
+.docs-progress.is-finishing {
+  width: 100%;
+  opacity: 0;
+  transition: width 0.16s ease, opacity 0.28s ease 0.06s;
+}
+
+.layout.is-leaving {
   pointer-events: none;
 }
 
+.layout.is-leaving .content,
+.layout.is-leaving .sidebar {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.layout.is-entering .content,
+.layout.is-entering .sidebar {
+  animation: docs-page-enter 0.28s ease both;
+}
+
+@keyframes docs-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .layout { transition: opacity 0.12s ease; }
+  .content,
+  .sidebar {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-progress,
+  .docs-progress.is-running,
+  .docs-progress.is-finishing,
+  .layout.is-leaving .content,
+  .layout.is-leaving .sidebar,
+  .layout.is-entering .content,
+  .layout.is-entering .sidebar {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
 }
 
 .content {
