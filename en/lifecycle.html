@@ -104,7 +104,7 @@
 <p><code>storage.Read()</code> / <code>storage.Write()</code> persist across worker restarts within the same install. <code>api.config</code> params persist in app config.</p>
 <p>Active <code>alerts.started()</code> counts for this addon are cleared by the host on disable, uninstall, reload, and crash-stop — other addons receive <code>{ active: false }</code> via <code>alerts.onChange</code> when that clears the last in-flight alert. See <a href="./api-alerts.html">Alerts</a>.</p>
 <h2>Graceful stop — <code>addon:prepare-stop</code></h2>
-<p>Before StreamKit+ kills the addon worker, the main process fires the built-in event <code>addon:prepare-stop</code> and waits for the handler to finish (with a short timeout, about <strong>2.5 seconds</strong>). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.</p>
+<p>Before StreamKit+ kills the addon worker, the main process fires the built-in event <code>addon:prepare-stop</code> and waits for the handler to finish (with a short timeout, about <strong>5 seconds</strong>). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.</p>
 <p><strong>When it fires</strong></p>
 <ul>
 <li>The user <strong>disables</strong> the addon in settings</li>
@@ -140,7 +140,7 @@
 </tr>
 <tr>
 <td>Timeout</td>
-<td>~2.5s — keep work short; unfinished work is abandoned and the worker is killed</td>
+<td>~5s — keep work short; unfinished work is abandoned and the worker is killed</td>
 </tr>
 <tr>
 <td>Optional</td>
