@@ -146,7 +146,7 @@ events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
 <tbody><tr>
 <td><code>addon:prepare-stop</code></td>
 <td>Before the worker is killed (disable, uninstall, or app quit)</td>
-<td><code>{}</code> — finish remote cleanup; keep handlers short (~2.5s timeout). See <a href="./lifecycle.html#graceful-stop--addonprepare-stop">Lifecycle — Graceful stop</a></td>
+<td><code>{}</code> — finish remote cleanup; keep handlers short (~5s timeout). See <a href="./lifecycle.html#graceful-stop--addonprepare-stop">Lifecycle — Graceful stop</a></td>
 </tr>
 <tr>
 <td><code>triggers:validate</code></td>

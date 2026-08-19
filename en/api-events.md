@@ -65,7 +65,7 @@ The main process can also push named events into your worker via `events.On`. Th
 
 | Event | When | Payload |
 | --- | --- | --- |
-| `addon:prepare-stop` | Before the worker is killed (disable, uninstall, or app quit) | `{}` — finish remote cleanup; keep handlers short (~2.5s timeout). See [Lifecycle — Graceful stop](./lifecycle.md#graceful-stop--addonprepare-stop) |
+| `addon:prepare-stop` | Before the worker is killed (disable, uninstall, or app quit) | `{}` — finish remote cleanup; keep handlers short (~5s timeout). See [Lifecycle — Graceful stop](./lifecycle.md#graceful-stop--addonprepare-stop) |
 | `triggers:validate` | Before settings save when trigger bindings may change | `{ draft }` — return `{ success: false, message }` to block save |
 | `triggers:applied-changed` | After settings save when this addon’s trigger bindings changed | `{ previous, current }` |
 | `overlayTriggerValue:{provider}:list\|create\|release` | Dynamic trigger value UI | See [dashboard triggers](./api-dashboard.md) |

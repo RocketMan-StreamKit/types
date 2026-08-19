@@ -437,7 +437,7 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
   // overlay, timer, game, gameInput, sounds, hotkeys
 });
 </code></pre>
-<p>Use this to release internal resources when bindings are removed.</p>
+<p>Use this to release internal resources when bindings are removed <strong>or</strong> a consumer becomes inactive. Overlay and game rules include <code>enabled</code> (<code>false</code> when that overlay/game addon is disabled, crash-stopped, or both overlay displays are off). Sounds and hotkeys already expose <code>enabled</code> from their own toggles. The event also fires when overlay display flags or addon enable state change, not only when trigger rows are edited.</p>
 <h3>Validate trigger bindings before settings save</h3>
 <p>Before the app persists trigger-related settings, it calls each related addon:</p>
 <pre><code class="language-js">events.On(&#39;triggers:validate&#39;, ({ draft }) =&gt; {

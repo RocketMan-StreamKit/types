@@ -24,7 +24,7 @@ Active `alerts.started()` counts for this addon are cleared by the host on disab
 
 ## Graceful stop — `addon:prepare-stop`
 
-Before StreamKit+ kills the addon worker, the main process fires the built-in event `addon:prepare-stop` and waits for the handler to finish (with a short timeout, about **2.5 seconds**). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.
+Before StreamKit+ kills the addon worker, the main process fires the built-in event `addon:prepare-stop` and waits for the handler to finish (with a short timeout, about **5 seconds**). Use it to finish remote cleanup that must run while the OAuth token / network stack are still available.
 
 **When it fires**
 
@@ -51,7 +51,7 @@ events.On('addon:prepare-stop', async () => {
 | --- | --- |
 | Payload | `{}` (empty object) |
 | Permission | None |
-| Timeout | ~2.5s — keep work short; unfinished work is abandoned and the worker is killed |
+| Timeout | ~5s — keep work short; unfinished work is abandoned and the worker is killed |
 | Optional | Omitting the handler is fine; other addons are unaffected |
 
 Do **not** rely on this event for data that must survive forever — persist important state with `storage` / `api.config` during normal operation. Prefer `addon:prepare-stop` for best-effort remote teardown (pause rewards, close sessions, revoke short-lived hooks).

@@ -344,7 +344,7 @@ events.On('triggers:applied-changed', ({ previous, current }) => {
 });
 ```
 
-Use this to release internal resources when bindings are removed.
+Use this to release internal resources when bindings are removed **or** a consumer becomes inactive. Overlay and game rules include `enabled` (`false` when that overlay/game addon is disabled, crash-stopped, or both overlay displays are off). Sounds and hotkeys already expose `enabled` from their own toggles. The event also fires when overlay display flags or addon enable state change, not only when trigger rows are edited.
 
 ### Validate trigger bindings before settings save
 
