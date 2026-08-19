@@ -65,7 +65,7 @@ return { redirect: ui.auth.generateSuccess() };
 
 | Подія | Коли | Payload |
 | --- | --- | --- |
-| `addon:prepare-stop` | Перед убивством worker (вимкнення, видалення або вихід із застосунку) | `{}` — завершіть віддалений cleanup; тримайте обробник коротким (~5 с таймаут). Див. [Життєвий цикл — Коректна зупинка](./lifecycle.md#коректна-зупинка--addonprepare-stop) |
+| `addon:prepare-stop` | Перед убивством worker (вимкнення, видалення або вихід із застосунку) | `{}` — завершіть віддалений cleanup; тримайте обробник коротким (~10 с таймаут). Див. [Життєвий цикл — Коректна зупинка](./lifecycle.md#коректна-зупинка--addonprepare-stop) |
 | `triggers:validate` | Перед збереженням налаштувань, якщо можуть змінитися прив’язки тригерів | `{ draft }` — поверніть `{ success: false, message }`, щоб заблокувати збереження |
 | `triggers:applied-changed` | Після збереження налаштувань, якщо прив’язки тригерів цього аддона змінилися | `{ previous, current }` |
 | `overlayTriggerValue:{provider}:list\|create\|release` | UI динамічних значень тригерів | Див. [dashboard triggers](./api-dashboard.md) |
