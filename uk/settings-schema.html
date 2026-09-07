@@ -101,7 +101,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
+<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>triggers</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>default</code></td>
@@ -129,7 +129,15 @@
 </tr>
 <tr>
 <td><code>event</code></td>
-<td>Для <code>button</code>: ім&#39;я події при натисканні (обробляйте через <code>events.On</code>)</td>
+<td>Для <code>button</code>: ім&#39;я події при натисканні. Для <code>triggers</code>: ім&#39;я події, коли збережене правило збігається з dashboard-подією (обробляйте через <code>events.On</code>)</td>
+</tr>
+<tr>
+<td><code>types</code></td>
+<td>Для <code>triggers</code>: необов&#39;язковий білий список типів (<code>donation</code>, <code>subscribe</code>, <code>subgift</code>, <code>follow</code>, <code>custom</code>)</td>
+</tr>
+<tr>
+<td><code>excludeTypes</code></td>
+<td>Для <code>triggers</code>: необов&#39;язковий чорний список типів (наприклад <code>[&#39;donation&#39;]</code>)</td>
 </tr>
 </tbody></table>
 <p>Поля <strong>без</strong> <code>editor</code> зберігаються (внутрішні лічильники, токени), але не показуються в UI.</p>
@@ -154,6 +162,7 @@
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> має відповідати опції, інакше використовується перша опція</li>
 <li><strong>choice</strong> — зберігання як у <code>select</code>, але UI показує обраний пункт і кнопку <strong>Обрати…</strong> з модалкою (назва, опис, кнопка вибору)</li>
 <li><strong>button</strong> — значення не зберігається; при натисканні викликає <code>events.On(event, …)</code> (обмежено оголошеними іменами подій)</li>
+<li><strong>triggers</strong> — масив правил dashboard-тригерів (аддон-джерело, тип, key, value). Рендериться окремим блоком налаштувань з кнопками додати/видалити, як у оверлеїв і ігор. Обов&#39;язковий <code>event</code> викликається в цього аддона, коли правило збіглося з <code>dashboard.addRecord</code> (<code>{ key, trigger, record, user }</code>). Необов&#39;язкові <code>types</code> / <code>excludeTypes</code> фільтрують види подій. Приклад: показати всі зареєстровані тригери крім донатів — <code>excludeTypes: [&#39;donation&#39;]</code>.</li>
 <li><strong>spoiler</strong> — значення не зберігається; кнопка розкриває/ховає вкладені <code>items</code> на місці (ті самі записи схеми, що й у <code>GenerateConfig</code>, включно з рядками та вкладеними spoiler/page)</li>
 <li><strong>page</strong> — значення не зберігається; кнопка відкриває окремий екран з <code>items</code> і кнопкою «Назад» (рекурсія дозволена)</li>
 </ul>
@@ -223,6 +232,29 @@ events.On(&#39;onReconnect&#39;, async () =&gt; {
   // user clicked Reconnect in settings
 });
 </code></pre>
+<h2>Приклад поля <code>triggers</code></h2>
+<p>Поле <code>triggers</code> потрібне, коли аддон має реагувати на dashboard-події, які користувач обирає в налаштуваннях (нагороди Twitch, фоллоу тощо) — окремо від вбудованої обробки донатів.</p>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;order_triggers&#39;,
+    type: &#39;triggers&#39;,
+    event: &#39;onOrderTrigger&#39;,
+    excludeTypes: [&#39;donation&#39;],
+    editor: {
+      label: { en: &#39;Extra triggers&#39;, ru: &#39;Дополнительные триггеры&#39;, uk: &#39;Додаткові тригери&#39; },
+      description: {
+        en: &#39;Channel point rewards and other events besides donations&#39;,
+        uk: &#39;Нагороди за бали каналу та інші події, крім донатів&#39;,
+      },
+    },
+  },
+]);
+
+events.On(&#39;onOrderTrigger&#39;, ({ key, trigger, record, user }) =&gt; {
+  console.log(key, trigger.type, trigger.value, record, user);
+});
+</code></pre>
+<p><code>key</code> — ключ поля схеми (<code>order_triggers</code>). <code>trigger</code> — вхідна dashboard-подія. Прив’язки потрапляють у <code>triggers.getApplied()</code> як <code>addon</code> / <code>addonInput</code>.</p>
 <h2>Читання params</h2>
 <pre><code class="language-js">const params = await api.config.getParams();
 await api.config.updateParams({ last_sync: Date.now() });

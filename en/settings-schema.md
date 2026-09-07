@@ -9,7 +9,7 @@ Each field has:
 | Property | Description |
 | --- | --- |
 | `key` | Storage key in params object |
-| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
+| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `triggers`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `pathPicker` | For `folder` / `file`: `title`, `filters` (file only), `filename` (exact basename), `namePattern` (regex on basename, file only) |
 | `default` | Initial value |
 | `editor` | If present, field appears in settings UI with label, validation, etc. |
@@ -17,7 +17,9 @@ Each field has:
 | `visibleWhen` | Optional `{ key, equals }` — hide the field unless `params[key] === equals` |
 | `items` | For `array`: `'text'` or `'number'`. For `spoiler` / `page`: nested schema entries (same shape as `GenerateConfig` arguments; recursion allowed) |
 | `fields` | For `object`: nested fields |
-| `event` | For `button`: event name fired on click (handle with `events.On`) |
+| `event` | For `button`: event name fired on click. For `triggers`: event name fired when a saved rule matches a dashboard event (handle with `events.On`) |
+| `types` | For `triggers`: optional allow-list of trigger kinds (`donation`, `subscribe`, `subgift`, `follow`, `custom`) |
+| `excludeTypes` | For `triggers`: optional deny-list of trigger kinds (for example `['donation']`) |
 
 Fields **without** `editor` are persisted (internal counters, tokens) but not shown in the UI.
 
@@ -46,6 +48,7 @@ GenerateConfig([
 - **select** — `options: { value, label? }[]`; `default` must match an option or the first option is used
 - **choice** — same storage as `select`, but the settings UI shows the selected label/description and a **Choose…** button that opens a modal list (each option: title, description, Select)
 - **button** — no stored value; triggers `events.On(event, …)` when clicked (gated to declared event names)
+- **triggers** — array of dashboard trigger rules (source addon, type, key, value). Renders as a settings block with add/remove rows, same picker as overlay/game triggers. Required `event` is fired on this addon when a rule matches `dashboard.addRecord` (`{ key, trigger, record, user }`). Optional `types` / `excludeTypes` filter which event kinds appear. Example: show every registered trigger except donations with `excludeTypes: ['donation']`.
 - **folder** — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)
 - **file** — absolute file path; read-only display, browse with `filters` / `filename` / `namePattern`, open in file manager (highlights the file when possible)
 - **info** — read-only text block for hints and warnings; `editor.description` is the body; optional `editor.infoBorder`: `blue`, `red`, or `yellow`
@@ -145,6 +148,33 @@ events.On('onReconnect', async () => {
   // user clicked Reconnect in settings
 });
 ```
+
+## Triggers field example
+
+Use a `triggers` field when the addon should react to dashboard events the user picks in settings (Twitch rewards, follows, and so on) — separately from any built-in donation handling.
+
+```js
+GenerateConfig([
+  {
+    key: 'order_triggers',
+    type: 'triggers',
+    event: 'onOrderTrigger',
+    excludeTypes: ['donation'],
+    editor: {
+      label: { en: 'Extra triggers', ru: 'Дополнительные триггеры', uk: 'Додаткові тригери' },
+      description: {
+        en: 'Channel point rewards and other events besides donations',
+      },
+    },
+  },
+]);
+
+events.On('onOrderTrigger', ({ key, trigger, record, user }) => {
+  console.log(key, trigger.type, trigger.value, record, user);
+});
+```
+
+`key` is the schema field key (`order_triggers`). `trigger` is the incoming dashboard event. Bindings are included in `triggers.getApplied()` as `addon` / `addonInput`.
 
 ## Reading params
 

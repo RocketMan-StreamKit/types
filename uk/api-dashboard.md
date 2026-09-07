@@ -340,11 +340,11 @@ events.On('overlayTriggerValue:rewards:create', async ({ title, context }) => ({
 ```js
 events.On('triggers:applied-changed', ({ previous, current }) => {
   // previous / current групують правила за системами:
-  // overlay, timer, game, gameInput, sounds, hotkeys
+  // overlay, timer, game, gameInput, sounds, hotkeys, addon, addonInput
 });
 ```
 
-Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив'язок **або** коли споживач стає неактивним. Правила overlay і game мають `enabled` (`false`, якщо оверлей/ігрову інтеграцію вимкнено, зупинено після збоїв або обидва display-канали оверлею вимкнено). У звуків і хоткеїв `enabled` уже береться з їхніх перемикачів. Подія також надходить при зміні прапорців показу оверлею або вмиканні/вимиканні аддона, а не лише при редагуванні рядків тригерів.
+Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив'язок **або** коли споживач стає неактивним. Правила overlay і game мають `enabled` (`false`, якщо оверлей/ігрову інтеграцію вимкнено, зупинено після збоїв або обидва display-канали оверлею вимкнено). У звуків і хоткеїв `enabled` уже береться з їхніх перемикачів. `addon` — правила в полях `GenerateConfig` `triggers` інших аддонів, де цей аддон — джерело дашборду; `addonInput` — власні поля `triggers` цього аддона. Подія також надходить при зміні прапорців показу оверлею або вмиканні/вимиканні аддона, а не лише при редагуванні рядків тригерів.
 
 ### Валідація прив'язок перед збереженням налаштувань
 
@@ -375,18 +375,19 @@ const res = await triggers.getApplied();
 if (res.success) {
   const { categories } = res;
   // categories.overlay, categories.timer, categories.game,
-  // categories.gameInput, categories.sounds, categories.hotkeys
+  // categories.gameInput, categories.sounds, categories.hotkeys,
+  // categories.addon, categories.addonInput
   // У кожній категорії: addonId → rules[]
   const twitchOverlay = categories.overlay['twitch'] || [];
   const allHotkeys = categories.hotkeys;
 }
 ```
 
-Містить прив'язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім `gameInput` (ключі — id ігрових аддонів).
+Містить прив'язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім `gameInput` і `addonInput` (ключі — id аддонів-споживачів).
 
 ### Видалення своїх прив'язок — `triggers.removeApplied()`
 
-Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов'язані overlay/game target-правила), без додаткових прав:
+Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов'язані overlay/game/`addonInput` target-правила), без додаткових прав:
 
 ```js
 await triggers.removeApplied(); // усі системи

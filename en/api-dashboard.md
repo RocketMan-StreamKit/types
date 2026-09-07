@@ -340,11 +340,11 @@ When saved trigger rules for your addon change, the main process fires:
 ```js
 events.On('triggers:applied-changed', ({ previous, current }) => {
   // previous / current group rules by system:
-  // overlay, timer, game, gameInput, sounds, hotkeys
+  // overlay, timer, game, gameInput, sounds, hotkeys, addon, addonInput
 });
 ```
 
-Use this to release internal resources when bindings are removed **or** a consumer becomes inactive. Overlay and game rules include `enabled` (`false` when that overlay/game addon is disabled, crash-stopped, or both overlay displays are off). Sounds and hotkeys already expose `enabled` from their own toggles. The event also fires when overlay display flags or addon enable state change, not only when trigger rows are edited.
+Use this to release internal resources when bindings are removed **or** a consumer becomes inactive. Overlay and game rules include `enabled` (`false` when that overlay/game addon is disabled, crash-stopped, or both overlay displays are off). Sounds and hotkeys already expose `enabled` from their own toggles. `addon` is rules in other addons’ `GenerateConfig` `triggers` fields where this addon is the dashboard source; `addonInput` is this addon’s own `triggers` fields. The event also fires when overlay display flags or addon enable state change, not only when trigger rows are edited.
 
 ### Validate trigger bindings before settings save
 
@@ -375,18 +375,19 @@ const res = await triggers.getApplied();
 if (res.success) {
   const { categories } = res;
   // categories.overlay, categories.timer, categories.game,
-  // categories.gameInput, categories.sounds, categories.hotkeys
+  // categories.gameInput, categories.sounds, categories.hotkeys,
+  // categories.addon, categories.addonInput
   // Each is a map: addonId → rules[]
   const twitchOverlay = categories.overlay['twitch'] || [];
   const allHotkeys = categories.hotkeys;
 }
 ```
 
-Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except `gameInput` where keys are game addon ids.
+Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except `gameInput` and `addonInput` where keys are the consumer addon ids.
 
 ### Delete this addon's trigger bindings — `triggers.removeApplied()`
 
-Remove persisted rules where this addon is the dashboard source (and related overlay/game target bindings) without extra permissions:
+Remove persisted rules where this addon is the dashboard source (and related overlay/game/`addonInput` target bindings) without extra permissions:
 
 ```js
 await triggers.removeApplied(); // every system

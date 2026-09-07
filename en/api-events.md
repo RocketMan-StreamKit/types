@@ -70,6 +70,7 @@ The main process can also push named events into your worker via `events.On`. Th
 | `triggers:applied-changed` | After settings save when this addon’s trigger bindings changed | `{ previous, current }` |
 | `overlayTriggerValue:{provider}:list\|create\|release` | Dynamic trigger value UI | See [dashboard triggers](./api-dashboard.md) |
 | `gameInputTrigger` | Matching dashboard event for a game input rule | `{ actionId, trigger, record, user }` |
+| *(schema `triggers.event`)* | Matching dashboard event for a `GenerateConfig` `type: 'triggers'` field | `{ key, trigger, record, user }` — listen with `events.On(event, …)` |
 | `ytdlp:download-progress` | While `ytdlp.downloadFile` runs | `{ downloadId, progress }` |
 | `fileAccessGranted` / `fileAccessRevoked` | User grants or revokes file access | See [file access](./api-file-access.md) |
 

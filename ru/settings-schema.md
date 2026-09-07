@@ -9,14 +9,16 @@
 | Свойство | Описание |
 | --- | --- |
 | `key` | Ключ хранения в объекте params |
-| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `folder`, `file`, `info`, `spoiler`, `page` |
+| `type` | `text`, `textarea`, `hidden`, `color`, `number`, `boolean`, `array`, `object`, `select`, `choice`, `button`, `triggers`, `folder`, `file`, `info`, `spoiler`, `page` |
 | `default` | Начальное значение |
 | `editor` | Если задан — поле показывается в UI настроек с подписью, валидацией и т.д. |
 | `options` | Для `select` / `choice`: `{ value, label?, description? }[]` |
 | `visibleWhen` | Опционально `{ key, equals }` — скрыть поле, пока `params[key] !== equals` |
 | `items` | Для `array`: `'text'` или `'number'`. Для `spoiler` / `page`: вложенные записи схемы (тот же формат, что у аргументов `GenerateConfig`; рекурсия допускается) |
 | `fields` | Для `object`: вложенные поля |
-| `event` | Для `button`: имя события при клике (обрабатывается через `events.On`) |
+| `event` | Для `button`: имя события при клике. Для `triggers`: имя события при совпадении сохранённого правила с dashboard-событием (обрабатывается через `events.On`) |
+| `types` | Для `triggers`: необязательный белый список типов (`donation`, `subscribe`, `subgift`, `follow`, `custom`) |
+| `excludeTypes` | Для `triggers`: необязательный чёрный список типов (например `['donation']`) |
 
 Поля **без** `editor` сохраняются (внутренние счётчики, токены), но не показываются в UI.
 
@@ -45,6 +47,7 @@ GenerateConfig([
 - **select** — `options: { value, label? }[]`; `default` должен совпадать с опцией, иначе берётся первая
 - **choice** — хранение как у `select`, но UI показывает выбранный пункт и кнопку **Выбрать…** с модалкой (название, описание, кнопка выбора)
 - **button** — значение не хранится; при клике вызывает `events.On(event, …)` (только для объявленных имён событий)
+- **triggers** — массив правил dashboard-триггеров (аддон-источник, тип, key, value). Рендерится отдельным блоком настроек с кнопками добавить/удалить, как у оверлеев и игр. Обязательный `event` вызывается у этого аддона, когда правило совпало с `dashboard.addRecord` (`{ key, trigger, record, user }`). Опциональные `types` / `excludeTypes` фильтруют виды событий. Пример: показать все зарегистрированные триггеры кроме донатов — `excludeTypes: ['donation']`.
 - **spoiler** — значение не хранится; кнопка раскрывает/скрывает вложенные `items` на месте (те же записи схемы, что у `GenerateConfig`, включая строки и вложенные spoiler/page)
 - **page** — значение не хранится; кнопка открывает отдельный экран с `items` и кнопкой «Назад» (рекурсия допускается)
 
@@ -121,6 +124,34 @@ events.On('onReconnect', async () => {
   // пользователь нажал «Переподключиться» в настройках
 });
 ```
+
+## Пример поля `triggers`
+
+Поле `triggers` нужно, когда аддон должен реагировать на dashboard-события, которые пользователь выбирает в настройках (награды Twitch, фоллоу и т.д.) — отдельно от встроенной обработки донатов.
+
+```js
+GenerateConfig([
+  {
+    key: 'order_triggers',
+    type: 'triggers',
+    event: 'onOrderTrigger',
+    excludeTypes: ['donation'],
+    editor: {
+      label: { en: 'Extra triggers', ru: 'Дополнительные триггеры', uk: 'Додаткові тригери' },
+      description: {
+        en: 'Channel point rewards and other events besides donations',
+        ru: 'Награды за баллы канала и другие события, кроме донатов',
+      },
+    },
+  },
+]);
+
+events.On('onOrderTrigger', ({ key, trigger, record, user }) => {
+  console.log(key, trigger.type, trigger.value, record, user);
+});
+```
+
+`key` — ключ поля схемы (`order_triggers`). `trigger` — входящее dashboard-событие. Привязки попадают в `triggers.getApplied()` как `addon` / `addonInput`.
 
 ## Чтение params
 

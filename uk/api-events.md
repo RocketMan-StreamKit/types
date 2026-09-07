@@ -70,6 +70,7 @@ return { redirect: ui.auth.generateSuccess() };
 | `triggers:applied-changed` | Після збереження налаштувань, якщо прив’язки тригерів цього аддона змінилися | `{ previous, current }` |
 | `overlayTriggerValue:{provider}:list\|create\|release` | UI динамічних значень тригерів | Див. [dashboard triggers](./api-dashboard.md) |
 | `gameInputTrigger` | Збіглася dashboard-подія для game input | `{ actionId, trigger, record, user }` |
+| *(schema `triggers.event`)* | Збіглася dashboard-подія для поля `GenerateConfig` `type: 'triggers'` | `{ key, trigger, record, user }` — слухайте через `events.On(event, …)` |
 | `ytdlp:download-progress` | Поки виконується `ytdlp.downloadFile` | `{ downloadId, progress }` |
 | `fileAccessGranted` / `fileAccessRevoked` | Користувач надав або відкликав доступ до файлів | Див. [file access](./api-file-access.md) |
 

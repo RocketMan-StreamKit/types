@@ -101,7 +101,7 @@
 </tr>
 <tr>
 <td><code>type</code></td>
-<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
+<td><code>text</code>, <code>textarea</code>, <code>hidden</code>, <code>color</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>select</code>, <code>choice</code>, <code>button</code>, <code>triggers</code>, <code>folder</code>, <code>file</code>, <code>info</code>, <code>spoiler</code>, <code>page</code></td>
 </tr>
 <tr>
 <td><code>pathPicker</code></td>
@@ -133,7 +133,15 @@
 </tr>
 <tr>
 <td><code>event</code></td>
-<td>For <code>button</code>: event name fired on click (handle with <code>events.On</code>)</td>
+<td>For <code>button</code>: event name fired on click. For <code>triggers</code>: event name fired when a saved rule matches a dashboard event (handle with <code>events.On</code>)</td>
+</tr>
+<tr>
+<td><code>types</code></td>
+<td>For <code>triggers</code>: optional allow-list of trigger kinds (<code>donation</code>, <code>subscribe</code>, <code>subgift</code>, <code>follow</code>, <code>custom</code>)</td>
+</tr>
+<tr>
+<td><code>excludeTypes</code></td>
+<td>For <code>triggers</code>: optional deny-list of trigger kinds (for example <code>[&#39;donation&#39;]</code>)</td>
 </tr>
 </tbody></table>
 <p>Fields <strong>without</strong> <code>editor</code> are persisted (internal counters, tokens) but not shown in the UI.</p>
@@ -158,6 +166,7 @@
 <li><strong>select</strong> — <code>options: { value, label? }[]</code>; <code>default</code> must match an option or the first option is used</li>
 <li><strong>choice</strong> — same storage as <code>select</code>, but the settings UI shows the selected label/description and a <strong>Choose…</strong> button that opens a modal list (each option: title, description, Select)</li>
 <li><strong>button</strong> — no stored value; triggers <code>events.On(event, …)</code> when clicked (gated to declared event names)</li>
+<li><strong>triggers</strong> — array of dashboard trigger rules (source addon, type, key, value). Renders as a settings block with add/remove rows, same picker as overlay/game triggers. Required <code>event</code> is fired on this addon when a rule matches <code>dashboard.addRecord</code> (<code>{ key, trigger, record, user }</code>). Optional <code>types</code> / <code>excludeTypes</code> filter which event kinds appear. Example: show every registered trigger except donations with <code>excludeTypes: [&#39;donation&#39;]</code>.</li>
 <li><strong>folder</strong> — absolute folder path; read-only display field, browse button, open-folder button (disabled until selected)</li>
 <li><strong>file</strong> — absolute file path; read-only display, browse with <code>filters</code> / <code>filename</code> / <code>namePattern</code>, open in file manager (highlights the file when possible)</li>
 <li><strong>info</strong> — read-only text block for hints and warnings; <code>editor.description</code> is the body; optional <code>editor.infoBorder</code>: <code>blue</code>, <code>red</code>, or <code>yellow</code></li>
@@ -245,6 +254,28 @@ events.On(&#39;onReconnect&#39;, async () =&gt; {
   // user clicked Reconnect in settings
 });
 </code></pre>
+<h2>Triggers field example</h2>
+<p>Use a <code>triggers</code> field when the addon should react to dashboard events the user picks in settings (Twitch rewards, follows, and so on) — separately from any built-in donation handling.</p>
+<pre><code class="language-js">GenerateConfig([
+  {
+    key: &#39;order_triggers&#39;,
+    type: &#39;triggers&#39;,
+    event: &#39;onOrderTrigger&#39;,
+    excludeTypes: [&#39;donation&#39;],
+    editor: {
+      label: { en: &#39;Extra triggers&#39;, ru: &#39;Дополнительные триггеры&#39;, uk: &#39;Додаткові тригери&#39; },
+      description: {
+        en: &#39;Channel point rewards and other events besides donations&#39;,
+      },
+    },
+  },
+]);
+
+events.On(&#39;onOrderTrigger&#39;, ({ key, trigger, record, user }) =&gt; {
+  console.log(key, trigger.type, trigger.value, record, user);
+});
+</code></pre>
+<p><code>key</code> is the schema field key (<code>order_triggers</code>). <code>trigger</code> is the incoming dashboard event. Bindings are included in <code>triggers.getApplied()</code> as <code>addon</code> / <code>addonInput</code>.</p>
 <h2>Reading params</h2>
 <pre><code class="language-js">const params = await api.config.getParams();
 await api.config.updateParams({ last_sync: Date.now() });
