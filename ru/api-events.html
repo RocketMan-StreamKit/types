@@ -169,6 +169,11 @@ events.On(&#39;onWebhook&#39;, ({ body, headers, rawBody }) =&gt; {
 <td><code>{ actionId, trigger, record, user }</code></td>
 </tr>
 <tr>
+<td><em>(schema <code>triggers.event</code>)</em></td>
+<td>Совпавшее dashboard-событие для поля <code>GenerateConfig</code> <code>type: &#39;triggers&#39;</code></td>
+<td><code>{ key, trigger, record, user }</code> — слушайте через <code>events.On(event, …)</code></td>
+</tr>
+<tr>
 <td><code>ytdlp:download-progress</code></td>
 <td>Пока выполняется <code>ytdlp.downloadFile</code></td>
 <td><code>{ downloadId, progress }</code></td>

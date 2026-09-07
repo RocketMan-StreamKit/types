@@ -434,10 +434,10 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 <p>Коли збережені правила для вашого аддона змінюються, main process викликає:</p>
 <pre><code class="language-js">events.On(&#39;triggers:applied-changed&#39;, ({ previous, current }) =&gt; {
   // previous / current групують правила за системами:
-  // overlay, timer, game, gameInput, sounds, hotkeys
+  // overlay, timer, game, gameInput, sounds, hotkeys, addon, addonInput
 });
 </code></pre>
-<p>Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив&#39;язок <strong>або</strong> коли споживач стає неактивним. Правила overlay і game мають <code>enabled</code> (<code>false</code>, якщо оверлей/ігрову інтеграцію вимкнено, зупинено після збоїв або обидва display-канали оверлею вимкнено). У звуків і хоткеїв <code>enabled</code> уже береться з їхніх перемикачів. Подія також надходить при зміні прапорців показу оверлею або вмиканні/вимиканні аддона, а не лише при редагуванні рядків тригерів.</p>
+<p>Використовуйте це, щоб звільняти внутрішні ресурси при видаленні прив&#39;язок <strong>або</strong> коли споживач стає неактивним. Правила overlay і game мають <code>enabled</code> (<code>false</code>, якщо оверлей/ігрову інтеграцію вимкнено, зупинено після збоїв або обидва display-канали оверлею вимкнено). У звуків і хоткеїв <code>enabled</code> уже береться з їхніх перемикачів. <code>addon</code> — правила в полях <code>GenerateConfig</code> <code>triggers</code> інших аддонів, де цей аддон — джерело дашборду; <code>addonInput</code> — власні поля <code>triggers</code> цього аддона. Подія також надходить при зміні прапорців показу оверлею або вмиканні/вимиканні аддона, а не лише при редагуванні рядків тригерів.</p>
 <h3>Валідація прив&#39;язок перед збереженням налаштувань</h3>
 <p>Перед записом налаштувань, пов&#39;язаних із тригерами, застосунок викликає кожен пов&#39;язаний аддон:</p>
 <pre><code class="language-js">events.On(&#39;triggers:validate&#39;, ({ draft }) =&gt; {
@@ -459,15 +459,16 @@ events.On(&#39;overlayTriggerValue:rewards:create&#39;, async ({ title, context 
 if (res.success) {
   const { categories } = res;
   // categories.overlay, categories.timer, categories.game,
-  // categories.gameInput, categories.sounds, categories.hotkeys
+  // categories.gameInput, categories.sounds, categories.hotkeys,
+  // categories.addon, categories.addonInput
   // У кожній категорії: addonId → rules[]
   const twitchOverlay = categories.overlay[&#39;twitch&#39;] || [];
   const allHotkeys = categories.hotkeys;
 }
 </code></pre>
-<p>Містить прив&#39;язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім <code>gameInput</code> (ключі — id ігрових аддонів).</p>
+<p>Містить прив&#39;язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім <code>gameInput</code> і <code>addonInput</code> (ключі — id аддонів-споживачів).</p>
 <h3>Видалення своїх прив&#39;язок — <code>triggers.removeApplied()</code></h3>
-<p>Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов&#39;язані overlay/game target-правила), без додаткових прав:</p>
+<p>Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов&#39;язані overlay/game/<code>addonInput</code> target-правила), без додаткових прав:</p>
 <pre><code class="language-js">await triggers.removeApplied(); // усі системи
 await triggers.removeApplied({ systems: [&#39;sounds&#39;, &#39;hotkeys&#39;] });
 </code></pre>
