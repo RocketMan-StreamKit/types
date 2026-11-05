@@ -20,6 +20,7 @@ Each field has:
 | `event` | For `button`: event name fired on click. For `triggers`: event name fired when a saved rule matches a dashboard event (handle with `events.On`) |
 | `types` | For `triggers`: optional allow-list of trigger kinds (`donation`, `subscribe`, `subgift`, `follow`, `custom`) |
 | `excludeTypes` | For `triggers`: optional deny-list of trigger kinds (for example `['donation']`) |
+| `valueContext` | For `triggers`: optional context merged into dynamic value `create` calls (for example `{ userInput: true }` — a generated Twitch reward then asks the viewer for text) |
 
 Fields **without** `editor` are persisted (internal counters, tokens) but not shown in the UI.
 

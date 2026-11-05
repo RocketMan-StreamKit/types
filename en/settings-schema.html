@@ -143,6 +143,10 @@
 <td><code>excludeTypes</code></td>
 <td>For <code>triggers</code>: optional deny-list of trigger kinds (for example <code>[&#39;donation&#39;]</code>)</td>
 </tr>
+<tr>
+<td><code>valueContext</code></td>
+<td>For <code>triggers</code>: optional context merged into dynamic value <code>create</code> calls (for example <code>{ userInput: true }</code> — a generated Twitch reward then asks the viewer for text)</td>
+</tr>
 </tbody></table>
 <p>Fields <strong>without</strong> <code>editor</code> are persisted (internal counters, tokens) but not shown in the UI.</p>
 <h2>Inline rows</h2>

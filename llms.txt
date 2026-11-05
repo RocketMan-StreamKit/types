@@ -1,6 +1,6 @@
 # StreamKit+ Documentation
 
-> User guides for streamers and integration addon API (manifest, sandbox globals, permissions, addon categories). Documentation for StreamKit+ v1.3.6.
+> User guides for streamers and integration addon API (manifest, sandbox globals, permissions, addon categories). Documentation for StreamKit+ v1.3.8.
 
 ## Web documentation
 
