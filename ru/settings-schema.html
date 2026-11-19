@@ -168,8 +168,9 @@
 <li><strong>button</strong> — значение не хранится; при клике вызывает <code>events.On(event, …)</code> (только для объявленных имён событий)</li>
 <li><strong>triggers</strong> — массив правил dashboard-триггеров (аддон-источник, тип, key, value). Рендерится отдельным блоком настроек с кнопками добавить/удалить, как у оверлеев и игр. Обязательный <code>event</code> вызывается у этого аддона, когда правило совпало с <code>dashboard.addRecord</code> (<code>{ key, trigger, record, user }</code>). Опциональные <code>types</code> / <code>excludeTypes</code> фильтруют виды событий. Пример: показать все зарегистрированные триггеры кроме донатов — <code>excludeTypes: [&#39;donation&#39;]</code>.</li>
 <li><strong>spoiler</strong> — значение не хранится; кнопка раскрывает/скрывает вложенные <code>items</code> на месте (те же записи схемы, что у <code>GenerateConfig</code>, включая строки и вложенные spoiler/page)</li>
-<li><strong>page</strong> — значение не хранится; кнопка открывает отдельный экран с <code>items</code> и кнопкой «Назад» (рекурсия допускается)</li>
+<li><strong>page</strong> — значение не хранится; кнопка «Открыть» показывает отдельный экран с <code>items</code>, кнопкой «Назад» и кликабельным путём (хлебные крошки; рекурсия допускается)</li>
 </ul>
+<p>Подсказки в UI (схему менять не нужно): поля с <code>editor.required</code> или <code>editor.validation.required</code> помечаются красной <code>*</code>; <code>validation.min</code> / <code>validation.max</code> применяются к полям <code>number</code> (границы стрелок), <code>validation.maxLength</code> — к <code>text</code> / <code>textarea</code>. Проверка значений при сохранении не изменилась.</p>
 <p>Поля внутри <code>spoiler</code> / <code>page</code> хранятся на <strong>уровне родительских params</strong> (ключи-соседи контейнера), а не под ключом контейнера.</p>
 <p>Опциональный <code>visibleWhen: { key, equals }</code> скрывает поле в UI, пока значение соседнего параметра не совпадёт.</p>
 <h2>Пример spoiler / page</h2>
