@@ -168,8 +168,9 @@
 <li><strong>button</strong> — значення не зберігається; при натисканні викликає <code>events.On(event, …)</code> (обмежено оголошеними іменами подій)</li>
 <li><strong>triggers</strong> — масив правил dashboard-тригерів (аддон-джерело, тип, key, value). Рендериться окремим блоком налаштувань з кнопками додати/видалити, як у оверлеїв і ігор. Обов&#39;язковий <code>event</code> викликається в цього аддона, коли правило збіглося з <code>dashboard.addRecord</code> (<code>{ key, trigger, record, user }</code>). Необов&#39;язкові <code>types</code> / <code>excludeTypes</code> фільтрують види подій. Приклад: показати всі зареєстровані тригери крім донатів — <code>excludeTypes: [&#39;donation&#39;]</code>.</li>
 <li><strong>spoiler</strong> — значення не зберігається; кнопка розкриває/ховає вкладені <code>items</code> на місці (ті самі записи схеми, що й у <code>GenerateConfig</code>, включно з рядками та вкладеними spoiler/page)</li>
-<li><strong>page</strong> — значення не зберігається; кнопка відкриває окремий екран з <code>items</code> і кнопкою «Назад» (рекурсія дозволена)</li>
+<li><strong>page</strong> — значення не зберігається; кнопка «Відкрити» показує окремий екран з <code>items</code>, кнопкою «Назад» і клікабельним шляхом (хлібні крихти; рекурсія дозволена)</li>
 </ul>
+<p>Підказки в UI (схему змінювати не потрібно): поля з <code>editor.required</code> або <code>editor.validation.required</code> позначаються червоною <code>*</code>; <code>validation.min</code> / <code>validation.max</code> застосовуються до полів <code>number</code> (межі стрілок), <code>validation.maxLength</code> — до <code>text</code> / <code>textarea</code>. Перевірка значень під час збереження не змінилася.</p>
 <p>Поля всередині <code>spoiler</code> / <code>page</code> зберігаються на <strong>рівні батьківських params</strong> (ключі-сусіди контейнера), а не під ключем контейнера.</p>
 <p>Необов&#39;язковий <code>visibleWhen: { key, equals }</code> ховає поле в UI, поки значення сусіднього параметра не збіжиться.</p>
 <h2>Приклад spoiler / page</h2>

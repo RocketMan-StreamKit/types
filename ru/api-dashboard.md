@@ -385,6 +385,37 @@ if (res.success) {
 
 Включает привязки всех аддонов (не только вызывающего). Ключи — id аддона-источника событий дашборда, кроме `gameInput` и `addonInput` (ключи — id аддонов-потребителей).
 
+### Каталог триггеров — `triggers.getRegistered()` (1.3.10+)
+
+Каждый включённый аддон-источник публикует свои триггеры через `dashboard.registerTriggers()` (битсы и награды за баллы Twitch, донат-сервисы, игровые аддоны, …). Любой аддон может прочитать этот каталог (без дополнительных прав) и построить свой выбор событий, не зашивая в код ключи конкретных площадок:
+
+```js
+const res = await triggers.getRegistered();
+if (res.success) {
+  for (const source of res.sources) {
+    // source.addonId, source.addonName (локализовано), source.options[]
+    for (const option of source.options) {
+      console.log(source.addonName, option.type, option.key, option.label?.ru, option.valueType);
+    }
+  }
+}
+```
+
+Во входящих `dashboard.onRecord` совпавшие записи приходят в `payload.triggers` (`{ type, key?, value? }`) вместе с `payload.sourceAddonId` — запись сопоставляется с опцией каталога по `sourceAddonId` + `type` + `key`. Каталог меняется при включении, выключении и перезапуске аддонов — запрашивайте его повторно, когда нужны свежие данные.
+
+### Значения динамических триггеров — `triggers.listValues()` (1.3.10+)
+
+Для опций с `valueType: 'dynamic'` (например, награды за баллы Twitch) читает текущие значения у аддона-источника. Требует `DASHBOARD_EVENTS_INCOMING`. Только чтение: вызывается тот же обработчик `overlayTriggerValue:{provider}:list`, что и в окне настроек.
+
+```js
+const res = await triggers.listValues({ addonId: 'twitch', provider: 'rewards' });
+if (res.success) {
+  res.items.forEach(item => console.log(item.id, item.label, item.meta, item.disabled));
+}
+```
+
+`item.id` совпадает с `trigger.value` в соответствующих записях дашборда.
+
 ### Удаление своих привязок — `triggers.removeApplied()`
 
 Удаляет сохранённые правила, где этот аддон — источник событий дашборда (и связанные overlay/game/`addonInput` target-правила), без дополнительных прав:

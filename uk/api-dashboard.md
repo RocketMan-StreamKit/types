@@ -385,6 +385,37 @@ if (res.success) {
 
 Містить прив'язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім `gameInput` і `addonInput` (ключі — id аддонів-споживачів).
 
+### Каталог тригерів — `triggers.getRegistered()` (1.3.10+)
+
+Кожен увімкнений аддон-джерело публікує свої тригери через `dashboard.registerTriggers()` (бітси та нагороди за бали Twitch, донат-сервіси, ігрові аддони, …). Будь-який аддон може прочитати цей каталог (без додаткових прав) і побудувати власний вибір подій, не зашиваючи в код ключі конкретних платформ:
+
+```js
+const res = await triggers.getRegistered();
+if (res.success) {
+  for (const source of res.sources) {
+    // source.addonId, source.addonName (локалізовано), source.options[]
+    for (const option of source.options) {
+      console.log(source.addonName, option.type, option.key, option.label?.uk, option.valueType);
+    }
+  }
+}
+```
+
+У вхідних `dashboard.onRecord` збіглі записи приходять у `payload.triggers` (`{ type, key?, value? }`) разом із `payload.sourceAddonId` — запис зіставляється з опцією каталогу за `sourceAddonId` + `type` + `key`. Каталог змінюється під час увімкнення, вимкнення та перезапуску аддонів — запитуйте його повторно, коли потрібні свіжі дані.
+
+### Значення динамічних тригерів — `triggers.listValues()` (1.3.10+)
+
+Для опцій з `valueType: 'dynamic'` (наприклад, нагороди за бали Twitch) читає поточні значення в аддона-джерела. Потребує `DASHBOARD_EVENTS_INCOMING`. Лише читання: викликається той самий обробник `overlayTriggerValue:{provider}:list`, що й у вікні налаштувань.
+
+```js
+const res = await triggers.listValues({ addonId: 'twitch', provider: 'rewards' });
+if (res.success) {
+  res.items.forEach(item => console.log(item.id, item.label, item.meta, item.disabled));
+}
+```
+
+`item.id` збігається з `trigger.value` у відповідних записах дашборду.
+
 ### Видалення своїх прив'язок — `triggers.removeApplied()`
 
 Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов'язані overlay/game/`addonInput` target-правила), без додаткових прав:

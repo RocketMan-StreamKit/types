@@ -54,7 +54,9 @@ GenerateConfig([
 - **file** — absolute file path; read-only display, browse with `filters` / `filename` / `namePattern`, open in file manager (highlights the file when possible)
 - **info** — read-only text block for hints and warnings; `editor.description` is the body; optional `editor.infoBorder`: `blue`, `red`, or `yellow`
 - **spoiler** — no stored value; button that expands/collapses nested `items` inline (same schema entries as `GenerateConfig`, including rows and nested spoilers/pages)
-- **page** — no stored value; button that opens a nested settings view for `items` with a Back control (recursion allowed)
+- **page** — no stored value; **Open** button that shows a nested settings view for `items` with a Back control and a clickable breadcrumb path (recursion allowed)
+
+UI hints (no schema changes needed): fields with `editor.required` or `editor.validation.required` show a red `*`; `validation.min` / `validation.max` are applied to `number` inputs (spinner bounds) and `validation.maxLength` to `text` / `textarea` inputs. Server-side validation on save is unchanged.
 
 Nested fields inside `spoiler` / `page` store values at the **parent params level** (sibling keys to the container), not under the container key.
 

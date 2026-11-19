@@ -467,6 +467,27 @@ if (res.success) {
 }
 </code></pre>
 <p>Містить прив&#39;язки всіх аддонів (не лише того, що викликає). Ключі — id аддона-джерела подій дашборду, окрім <code>gameInput</code> і <code>addonInput</code> (ключі — id аддонів-споживачів).</p>
+<h3>Каталог тригерів — <code>triggers.getRegistered()</code> (1.3.10+)</h3>
+<p>Кожен увімкнений аддон-джерело публікує свої тригери через <code>dashboard.registerTriggers()</code> (бітси та нагороди за бали Twitch, донат-сервіси, ігрові аддони, …). Будь-який аддон може прочитати цей каталог (без додаткових прав) і побудувати власний вибір подій, не зашиваючи в код ключі конкретних платформ:</p>
+<pre><code class="language-js">const res = await triggers.getRegistered();
+if (res.success) {
+  for (const source of res.sources) {
+    // source.addonId, source.addonName (локалізовано), source.options[]
+    for (const option of source.options) {
+      console.log(source.addonName, option.type, option.key, option.label?.uk, option.valueType);
+    }
+  }
+}
+</code></pre>
+<p>У вхідних <code>dashboard.onRecord</code> збіглі записи приходять у <code>payload.triggers</code> (<code>{ type, key?, value? }</code>) разом із <code>payload.sourceAddonId</code> — запис зіставляється з опцією каталогу за <code>sourceAddonId</code> + <code>type</code> + <code>key</code>. Каталог змінюється під час увімкнення, вимкнення та перезапуску аддонів — запитуйте його повторно, коли потрібні свіжі дані.</p>
+<h3>Значення динамічних тригерів — <code>triggers.listValues()</code> (1.3.10+)</h3>
+<p>Для опцій з <code>valueType: &#39;dynamic&#39;</code> (наприклад, нагороди за бали Twitch) читає поточні значення в аддона-джерела. Потребує <code>DASHBOARD_EVENTS_INCOMING</code>. Лише читання: викликається той самий обробник <code>overlayTriggerValue:{provider}:list</code>, що й у вікні налаштувань.</p>
+<pre><code class="language-js">const res = await triggers.listValues({ addonId: &#39;twitch&#39;, provider: &#39;rewards&#39; });
+if (res.success) {
+  res.items.forEach(item =&gt; console.log(item.id, item.label, item.meta, item.disabled));
+}
+</code></pre>
+<p><code>item.id</code> збігається з <code>trigger.value</code> у відповідних записах дашборду.</p>
 <h3>Видалення своїх прив&#39;язок — <code>triggers.removeApplied()</code></h3>
 <p>Видаляє збережені правила, де цей аддон — джерело подій дашборду (і пов&#39;язані overlay/game/<code>addonInput</code> target-правила), без додаткових прав:</p>
 <pre><code class="language-js">await triggers.removeApplied(); // усі системи

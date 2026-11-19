@@ -385,6 +385,37 @@ if (res.success) {
 
 Includes bindings for every addon (not only the caller). Keys in each category are dashboard event source addon ids, except `gameInput` and `addonInput` where keys are the consumer addon ids.
 
+### Read the trigger catalog — `triggers.getRegistered()` (1.3.10+)
+
+Every enabled source addon publishes its triggers with `dashboard.registerTriggers()` (Twitch bits and channel-point rewards, donation services, game addons, …). Any addon can read that catalog (no extra permission) and build its own event picker instead of hardcoding platform-specific keys:
+
+```js
+const res = await triggers.getRegistered();
+if (res.success) {
+  for (const source of res.sources) {
+    // source.addonId, source.addonName (localized), source.options[]
+    for (const option of source.options) {
+      console.log(source.addonName, option.type, option.key, option.label?.en, option.valueType);
+    }
+  }
+}
+```
+
+Incoming `dashboard.onRecord` payloads carry the matching entries in `payload.triggers` (`{ type, key?, value? }`) together with `payload.sourceAddonId`, so a record can be mapped back to a catalog option by `sourceAddonId` + `type` + `key`. The catalog changes when addons are enabled, disabled or restarted — call it again when you need fresh data.
+
+### Read dynamic trigger values — `triggers.listValues()` (1.3.10+)
+
+For options with `valueType: 'dynamic'` (for example Twitch channel-point rewards), read the current values from the source addon. Requires `DASHBOARD_EVENTS_INCOMING`. Read-only: it calls the same `overlayTriggerValue:{provider}:list` handler the settings UI uses.
+
+```js
+const res = await triggers.listValues({ addonId: 'twitch', provider: 'rewards' });
+if (res.success) {
+  res.items.forEach(item => console.log(item.id, item.label, item.meta, item.disabled));
+}
+```
+
+`item.id` equals `trigger.value` on matching dashboard records.
+
 ### Delete this addon's trigger bindings — `triggers.removeApplied()`
 
 Remove persisted rules where this addon is the dashboard source (and related overlay/game/`addonInput` target bindings) without extra permissions:
