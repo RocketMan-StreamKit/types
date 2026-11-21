@@ -61,6 +61,29 @@ await dashboard.addRecord(
 
 Кілька тригерів: `{ triggers: [...] }`.
 
+### Ручні записи — `manual`
+
+Передайте `manual: true`, якщо подію додано вручну (наприклад, донат, який стример вніс руками в донат-сервісі), а не отримано як реальний платіж/подію платформи. Тригери (оверлеї, звуки, таймер, хоткеї, ігри, поля `triggers` аддонів) спрацьовують як зазвичай — прапорець описує лише походження. Зберігається лише літерал `true`, інші значення відкидаються.
+
+```js
+await dashboard.addRecord(
+  { type: 'donation', platform: 'myplatform', amount: [100, 'RUB'], manual: true },
+  undefined,
+  { trigger: { type: 'donation', key: 'RUB', value: 100 } },
+);
+```
+
+Прапорець доходить до всіх споживачів як `record.manual === true`:
+
+- `record` у `dashboard.onRecord`
+- `record` у `dashboard.onAttachPlay`
+- `events.On('gameInputTrigger', { record })` в ігрових аддонах
+- події полів `triggers` з `GenerateConfig` (`{ key, trigger, record, user }`)
+- кооп-синхронізація: гості отримують запис `coop-sync` з `manual: true`
+- iframe `overlay.info`: query-параметр `manual=1`
+
+У віджеті останніх подій до підказки іконки типу додається «(додано вручну)».
+
 ### Типи аттачів — `registerAttaches`
 
 **Потрібно:** `DASHBOARD_EVENTS`

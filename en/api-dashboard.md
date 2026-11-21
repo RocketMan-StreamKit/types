@@ -61,6 +61,29 @@ await dashboard.addRecord(
 
 Multiple triggers: `{ triggers: [...] }`.
 
+### Manual entries — `manual`
+
+Set `manual: true` on the record when the event was entered by hand (for example, a donation the streamer added manually in the donation service) instead of a real platform payment/event. Triggers (overlay, sounds, timer, hotkeys, game, addon `triggers` fields) still fire as usual; the flag only describes the origin. Only literal `true` is stored; anything else is dropped.
+
+```js
+await dashboard.addRecord(
+  { type: 'donation', platform: 'myplatform', amount: [100, 'RUB'], manual: true },
+  undefined,
+  { trigger: { type: 'donation', key: 'RUB', value: 100 } },
+);
+```
+
+The flag reaches every consumer as `record.manual === true`:
+
+- `dashboard.onRecord` payload `record`
+- `dashboard.onAttachPlay` payload `record`
+- `events.On('gameInputTrigger', { record })` in game addons
+- `GenerateConfig` `triggers` field events (`{ key, trigger, record, user }`)
+- cooperative sync: guests get a `coop-sync` record with `manual: true`
+- `overlay.info` iframes: query param `manual=1`
+
+The latest-events widget appends “(added manually)” to the type icon tooltip.
+
 ### Attach types — `registerAttaches`
 
 **Requires:** `DASHBOARD_EVENTS`

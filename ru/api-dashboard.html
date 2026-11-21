@@ -131,6 +131,24 @@
 </code></pre>
 <p><code>message</code> принимает простую <code>string</code>, <code>{ en, ru?, uk? }</code> или кортеж <code>LangData</code> приложения.</p>
 <p>Несколько триггеров: <code>{ triggers: [...] }</code>.</p>
+<h3>Ручные записи — <code>manual</code></h3>
+<p>Передайте <code>manual: true</code>, если событие добавлено вручную (например, донат, который стример внёс руками в донат-сервисе), а не пришло как реальный платёж/событие платформы. Триггеры (оверлеи, звуки, таймер, хоткеи, игры, поля <code>triggers</code> аддонов) срабатывают как обычно — флаг описывает только происхождение. Сохраняется только литерал <code>true</code>, остальные значения отбрасываются.</p>
+<pre><code class="language-js">await dashboard.addRecord(
+  { type: &#39;donation&#39;, platform: &#39;myplatform&#39;, amount: [100, &#39;RUB&#39;], manual: true },
+  undefined,
+  { trigger: { type: &#39;donation&#39;, key: &#39;RUB&#39;, value: 100 } },
+);
+</code></pre>
+<p>Флаг доходит до всех потребителей как <code>record.manual === true</code>:</p>
+<ul>
+<li><code>record</code> в <code>dashboard.onRecord</code></li>
+<li><code>record</code> в <code>dashboard.onAttachPlay</code></li>
+<li><code>events.On(&#39;gameInputTrigger&#39;, { record })</code> в игровых аддонах</li>
+<li>события полей <code>triggers</code> из <code>GenerateConfig</code> (<code>{ key, trigger, record, user }</code>)</li>
+<li>кооп-синхронизация: гости получают запись <code>coop-sync</code> с <code>manual: true</code></li>
+<li>iframe <code>overlay.info</code>: query-параметр <code>manual=1</code></li>
+</ul>
+<p>В виджете последних событий к подсказке иконки типа добавляется «(добавлено вручную)».</p>
 <h3>Типы аттачей — <code>registerAttaches</code></h3>
 <p><strong>Требуется:</strong> <code>DASHBOARD_EVENTS</code></p>
 <p>Регистрируйте типы аттачей при загрузке. <code>type</code> должен быть уникальным и не совпадать с системными (<code>overlay</code>, <code>sound</code>, <code>timer</code>, <code>hotkey</code>, <code>coop-sync</code>).</p>

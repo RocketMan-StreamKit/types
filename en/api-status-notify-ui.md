@@ -69,6 +69,8 @@ notify.Send({
 
 When `id` is set, the previous notification with the same id is replaced. Use stable ids for connection-state updates.
 
+During the first 10 seconds after the addon starts, notifications are held back: only the latest version of each `id` is shown when this period ends, and `notify.Remove(id)` called within it drops the notification entirely. This hides transient startup errors (e.g. "connection error" before reconnecting) — no code changes are needed.
+
 ```js
 notify.Remove(`${data.id}_status`);
 ```

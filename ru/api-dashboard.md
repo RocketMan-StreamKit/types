@@ -61,6 +61,29 @@ await dashboard.addRecord(
 
 Несколько триггеров: `{ triggers: [...] }`.
 
+### Ручные записи — `manual`
+
+Передайте `manual: true`, если событие добавлено вручную (например, донат, который стример внёс руками в донат-сервисе), а не пришло как реальный платёж/событие платформы. Триггеры (оверлеи, звуки, таймер, хоткеи, игры, поля `triggers` аддонов) срабатывают как обычно — флаг описывает только происхождение. Сохраняется только литерал `true`, остальные значения отбрасываются.
+
+```js
+await dashboard.addRecord(
+  { type: 'donation', platform: 'myplatform', amount: [100, 'RUB'], manual: true },
+  undefined,
+  { trigger: { type: 'donation', key: 'RUB', value: 100 } },
+);
+```
+
+Флаг доходит до всех потребителей как `record.manual === true`:
+
+- `record` в `dashboard.onRecord`
+- `record` в `dashboard.onAttachPlay`
+- `events.On('gameInputTrigger', { record })` в игровых аддонах
+- события полей `triggers` из `GenerateConfig` (`{ key, trigger, record, user }`)
+- кооп-синхронизация: гости получают запись `coop-sync` с `manual: true`
+- iframe `overlay.info`: query-параметр `manual=1`
+
+В виджете последних событий к подсказке иконки типа добавляется «(добавлено вручную)».
+
 ### Типы аттачей — `registerAttaches`
 
 **Требуется:** `DASHBOARD_EVENTS`

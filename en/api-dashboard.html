@@ -131,6 +131,24 @@
 </code></pre>
 <p><code>message</code> accepts plain <code>string</code>, <code>{ en, ru?, uk? }</code>, or app <code>LangData</code> tuple.</p>
 <p>Multiple triggers: <code>{ triggers: [...] }</code>.</p>
+<h3>Manual entries — <code>manual</code></h3>
+<p>Set <code>manual: true</code> on the record when the event was entered by hand (for example, a donation the streamer added manually in the donation service) instead of a real platform payment/event. Triggers (overlay, sounds, timer, hotkeys, game, addon <code>triggers</code> fields) still fire as usual; the flag only describes the origin. Only literal <code>true</code> is stored; anything else is dropped.</p>
+<pre><code class="language-js">await dashboard.addRecord(
+  { type: &#39;donation&#39;, platform: &#39;myplatform&#39;, amount: [100, &#39;RUB&#39;], manual: true },
+  undefined,
+  { trigger: { type: &#39;donation&#39;, key: &#39;RUB&#39;, value: 100 } },
+);
+</code></pre>
+<p>The flag reaches every consumer as <code>record.manual === true</code>:</p>
+<ul>
+<li><code>dashboard.onRecord</code> payload <code>record</code></li>
+<li><code>dashboard.onAttachPlay</code> payload <code>record</code></li>
+<li><code>events.On(&#39;gameInputTrigger&#39;, { record })</code> in game addons</li>
+<li><code>GenerateConfig</code> <code>triggers</code> field events (<code>{ key, trigger, record, user }</code>)</li>
+<li>cooperative sync: guests get a <code>coop-sync</code> record with <code>manual: true</code></li>
+<li><code>overlay.info</code> iframes: query param <code>manual=1</code></li>
+</ul>
+<p>The latest-events widget appends “(added manually)” to the type icon tooltip.</p>
 <h3>Attach types — <code>registerAttaches</code></h3>
 <p><strong>Requires:</strong> <code>DASHBOARD_EVENTS</code></p>
 <p>Register attach types at load time. <code>type</code> must be unique and must not use system ids (<code>overlay</code>, <code>sound</code>, <code>timer</code>, <code>hotkey</code>, <code>coop-sync</code>).</p>

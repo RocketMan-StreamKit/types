@@ -11,6 +11,8 @@ Overlays are short-lived effects triggered by rules, timers, or dashboard events
 
 `overlay.info` panels render after or during the main effect when `showInfo` is enabled on the parent overlay.
 
+Info panel URL query params: `settings`, `token`, optional `who` / `message` (when enabled in `showInfo`), and `manual=1` when the source dashboard record was added manually (`record.manual`).
+
 ## Variants
 
 ### Simple media overlay (no worker)

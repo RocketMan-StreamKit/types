@@ -147,6 +147,7 @@ viewers.Update({ platform: &#39;twitch&#39;, count: viewerCount });
 });
 </code></pre>
 <p>When <code>id</code> is set, the previous notification with the same id is replaced. Use stable ids for connection-state updates.</p>
+<p>During the first 10 seconds after the addon starts, notifications are held back: only the latest version of each <code>id</code> is shown when this period ends, and <code>notify.Remove(id)</code> called within it drops the notification entirely. This hides transient startup errors (e.g. &quot;connection error&quot; before reconnecting) — no code changes are needed.</p>
 <pre><code class="language-js">notify.Remove(`${data.id}_status`);
 </code></pre>
 <p>Removes a notification only when this addon created it. Notifications from other addons or the main process are ignored.</p>
